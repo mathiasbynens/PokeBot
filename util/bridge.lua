@@ -1,5 +1,10 @@
 local bridge = {}
 
+local socket
+if INTERNAL then
+	socket = require("socket")
+end
+
 local utils = require("util.utils")
 
 local client = nil
@@ -11,19 +16,19 @@ local function send(prefix, body)
 		if (body) then
 			message = message..","..body
 		end
-		client:send(message..'\n')
+		client:send(message.."\n")
 		return true
 	end
 end
 
 local function readln()
 	if (client) then
-		local s, status, partial = client:receive('*l')
+		local s, status, partial = client:receive("*l")
 		if status == "closed" then
 			client = nil
 			return nil
 		end
-		if s and s ~= '' then
+		if s and s ~= "" then
 			return s
 		end
 	end
@@ -32,10 +37,22 @@ end
 -- Wrapper functions
 
 function bridge.init()
+	if socket then
+		-- io.popen("java -jar Main.jar")
+		client = socket.connect("127.0.0.1", 13378)
+		if (client) then
+			client:settimeout(0.005)
+			client:setoption("keepalive", true)
+			print("Connected to Java!");
+			return true
+		else
+			print("Error connecting to Java!");
+		end
+	end
 end
 
 function bridge.tweet(message) -- Two of the same tweet in a row will only send one
-	print('tweet::'..message)
+	print("tweet::"..message)
 	return send("tweet", message)
 end
 
@@ -64,17 +81,17 @@ function bridge.stats(message)
 end
 
 function bridge.command(command)
-	return send("livesplit_command", command)
+	return send("livesplit_command", command);
 end
 
 function bridge.comparisonTime()
-	return send("livesplit_getcomparisontime")
+	return send("livesplit_getcomparisontime");
 end
 
 function bridge.process()
 	local response = readln()
 	if (response) then
-		-- print('>'..response)
+		-- print(">"..response)
 		if (response:find("name:")) then
 			return response:gsub("name:", "")
 		else

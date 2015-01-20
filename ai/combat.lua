@@ -291,7 +291,7 @@ local function isSleeping()
 end
 combat.isSleeping = isSleeping
 
--- Combat AI functions
+-- Combat AI
 
 function combat.factorPP(enabled)
 	enablePP = enabled

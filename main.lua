@@ -1,15 +1,15 @@
 -- Customization settings
 
-GAME_NAME		= "red" -- Only currently supported option
-RESET_FOR_TIME	= true	-- Set to false if you just want to see the bot finish a run
+GAME_NAME      = "red" -- Only currently supported option
+RESET_FOR_TIME = true	-- Set to false if you just want to see the bot finish a run
 
-local CUSTOM_SEED	= nil -- Set to a known seed to replay it, or leave nil for random ones
-local PAINT_ON		= true -- Displays contextual information while the bot runs
+local CUSTOM_SEED = nil -- Set to a known seed to replay it, or leave nil for random runs
+local PAINT_ON    = true -- Display contextual information while the bot runs
 
 -- Start code (hard hats on)
 
 local START_WAIT = 99
-local VERSION = "1.0"
+local VERSION = "1.1"
 
 local battle = require "action.battle"
 local textbox = require "action.textbox"
@@ -29,7 +29,8 @@ local settings = require "util.settings"
 
 local pokemon = require "storage.pokemon"
 
-local YELLOW = GAME_NAME == "yellow"
+YELLOW = GAME_NAME == "yellow"
+INTERNAL = false
 
 local hasAlreadyStartedPlaying = false
 local inBattle, oldSecs
@@ -58,7 +59,7 @@ end
 local function choosePlayerNames()
 	local name
 	if (memory.value("player", "name2") == 80) then
-		name = "W"
+		name = "E"
 	else
 		name = "B"
 	end
@@ -84,6 +85,7 @@ local function resetAll()
 	running = false
 	previousPartySize = 0
 	-- client.speedmode = 200
+
 	if (CUSTOM_SEED) then
 		strategies.seed = CUSTOM_SEED
 		print("RUNNING WITH A FIXED SEED ("..strategies.seed.."), every run will play out identically!")
@@ -96,7 +98,11 @@ end
 -- Execute
 
 print("Welcome to PokeBot "..GAME_NAME.." version "..VERSION)
-local productionMode = not walk.init() and false
+STREAMING_MODE = not walk.init()
+if STREAMING_MODE then
+	RESET_FOR_TIME = true
+end
+-- STREAMING_MODE = false --TODO disable
 if (CUSTOM_SEED) then
 	client.reboot_core()
 else
@@ -108,11 +114,13 @@ if (RESET_FOR_TIME and hasAlreadyStartedPlaying) then
 	RESET_FOR_TIME = false
 	print("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.")
 end
-if (productionMode) then
+if (STREAMING_MODE) then
 	bridge.init()
 else
 	input.setDebug(true)
 end
+
+-- Main loop
 
 local previousMap
 
@@ -122,6 +130,16 @@ while true do
 		input.clear()
 		previousMap = currentMap
 	end
+	if (strategies.frames) then
+		if (memory.value("game", "battle") == 0) then
+			strategies.frames = strategies.frames + 1
+		end
+		gui.text(0, 80, strategies.frames)
+	end
+	if (bridge.polling) then
+		pollForResponse()
+	end
+
 	if (not input.update()) then
 		if (not utils.ingame()) then
 			if (currentMap == 0) then
@@ -171,6 +189,10 @@ while true do
 				inBattle = false
 			end
 			local currentHP = pokemon.index(0, "hp")
+			-- if (currentHP ~= lastHP) then
+			-- 	bridge.hp(currentHP, pokemon.index(0, "max_hp"))
+			-- 	lastHP = currentHP
+			-- end
 			if (currentHP == 0 and not strategies.canDie and pokemon.index(0) > 0) then
 				strategies.death(currentMap)
 			elseif (walk.strategy) then
@@ -187,7 +209,13 @@ while true do
 		end
 	end
 
-	if (PAINT_ON) then
+	if (STREAMING_MODE) then
+		local newSecs = memory.raw(0xDA44)
+		if (newSecs ~= oldSecs and (newSecs > 0 or memory.raw(0xDA45) > 0)) then
+			bridge.time(paint.elapsedTime())
+			oldSecs = newSecs
+		end
+	elseif (PAINT_ON) then
 		paint.draw(currentMap)
 	end
 

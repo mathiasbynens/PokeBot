@@ -24,6 +24,11 @@ local function setPath(index, region)
 	path = paths[index]
 end
 
+local function completeStep(region)
+	stepIdx = stepIdx + 1
+	return walk.traverse(region)
+end
+
 -- Helper functions
 
 function dir(px, py, dx, dy)
@@ -49,11 +54,6 @@ function step(dx, dy)
 	input.press(dir(px, py, dx, dy), 0)
 end
 walk.step = step
-
-local function completeStep(region)
-	stepIdx = stepIdx + 1
-	return walk.traverse(region)
-end
 
 -- Table functions
 

@@ -42,7 +42,8 @@ function textbox.name(letter, randomize)
 			end
 		end
 	else
-		-- TODO cancel more when menu isn't up
+		-- TODO cancel when menu isn't up
+		-- if (memory.value("menu", "current") == 7) then
 		if (memory.raw(0x10B7) == 3) then
 			input.press("A", 2)
 		elseif (randomize) then
