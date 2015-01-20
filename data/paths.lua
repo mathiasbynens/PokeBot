@@ -42,7 +42,7 @@ local paths = {
 -- 2: NIDORAN
 
 	-- Out of Viridian City
-	{1, {0,17}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17, 0}, {17, -1}},
+	{1, {0,17}, {c="encounters",limit=10,extra="spearow"}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17, 0}, {17, -1}},
 	-- To the Forest
 	{13, {7,71}, {7,57}, {4,57}, {4,52}, {10,52}, {10,44}, {3,44}, {3,43}},
 	-- Forest entrance
@@ -78,11 +78,11 @@ local paths = {
 -- 4: ROUTE 3
 
 	-- Mt. Moon F1
-	{59, {14,35}, {s="startMtMoon"}, {c="catchParas"}, {14,29}, {5,29}, {5,31}, {s="interact",dir="Down"}, {5,26}, {14,26}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {34,7}, {30,7}, {s="evolveNidorino"}, {28,7}, {s="teachWaterGun"}, {c="moon1Exp"}, {16,7}, {16,17}, {7,17}, {7,6}, {6,6}, {s="fightHiker"}, {6,2}, {3,2}, {s="interact",dir="Left"}, {5,2}, {5,5}},
+	{59, {14,35}, {s="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {34,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
 	-- Mt. Moon B2
 	{60, {5,5}, {5,17}, {21,17}},
 	-- Mt. Moon B3
-	{61, {21,17}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="evolveNidoking"}, {c="encounters",limit=nil}, {10,17}, {12,17}, {c="moon2Exp"}, {13,17}, {13,15}, {s="potion",hp=7}, {13,7}, {c="moon3Exp"}, {s="helix"}, {13,4}, {3,4}, {3,7}, {5,7}},
+	{61, {21,17}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="evolveNidoking"}, {c="encounters",limit=nil}, {10,17}, {12,17}, {c="moon2Exp"}, {12,9}, {s="potion",hp=7}, {s="interact",dir="Up"}, {13,9}, {c="moon3Exp"}, {13,7}, {s="helix"}, {13,5}, {12,5}, {12,4}, {3,4}, {3,7}, {5,7}},
 	-- Mt. Moon escape
 	{60, {23,3}, {27,3}},
 
@@ -110,7 +110,7 @@ local paths = {
 -- 6: NUGGET BRIDGE
 
 	-- To Bill's
-	{36, {0,8}, {9,8}, {9,7}, {11,7}, {11,9}, {14,9}, {14,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="interact",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="interact",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="interact",dir="Up"}, {45,4}, {45,3}},
+	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="interact",dir="Up"}, {s="thrashGeodude"}, {10,5}, {10,2}, {s="interact",dir="Up"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="interact",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="interact",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="interact",dir="Up"}, {45,4}, {45,3}},
 	-- Save Bill
 	{88, {2,7}, {2,5}, {5,5}, {s="confirm",dir="Right"}, {1,5}, {s="interact",dir="Up"}, {4,5}, {s="interact",dir="Up"}, {s="waitToTalk"}, {s="potionBeforeGoldeen"}, {s="item",item="escape_rope"}},
 	-- To Misty
@@ -135,12 +135,12 @@ local paths = {
 	-- Underground exit
 	{74, {4,4}, {3,8}},
 	-- Oddish
-	-- TODO Bubblebeam split
-	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=9,yolo=5}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=9,yolo=5}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=9,yolo=5}, {10,31}, {9,31}, {9,32}, {s="potion",hp=20,yolo=18,chain=true}, {s="teach",move="bubblebeam",replace="water_gun"}, {9,36}},
+	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=9,yolo=5}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=9,yolo=5}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=9,yolo=5}, {10,31}, {9,31}, {9,32}, {s="potion",hp=20,yolo=18,chain=true}, {9,36}},
 	-- Enter Vermilion
 	{5, {19,0}, {c="disableCatch"}, {19,6}, {21,6}, {21,14}, {23,14}, {23,13}},
 	-- Vermilion mart
-	{91, {3,7}, {3,5}, {2,5}, {s="vermilionMart"}, {3,5}, {3,8}},
+	-- TODO Bubblebeam split?
+	{91, {3,7}, {3,5}, {2,5}, {s="vermilionMart"}, {3,5}, {s="teach",move="bubblebeam",replace="tackle"}, {3,8}},
 	-- To S.S. Anne
 	{5, {23,14}, {30,14}, {30,26}, {18,26}, {18,31}},
 	-- Mew
@@ -205,6 +205,7 @@ local paths = {
 	-- Celadon
 	{6, {49,11}, {s="a",a="Celadon Mart"}, {14,11}, {14,14}, {10,14}, {10,13}},
 	-- Department store
+	--TODO elevator down
 	{122, {16,7}, {c="potion",b=true,yolo=true}, {c="pp",on=true}, {16,3}, {12,3}, {12,1}},
 	-- F2
 	{123, {12,2}, {16,2}, {16,1}},
@@ -392,6 +393,7 @@ local paths = {
 	-- Saffron again
 	{10, {0,18}, {3,18}, {3,6}, {31,6}, {31,4}, {34,4}, {34,3}},
 	-- Sabrina
+	--TODO verify strats
 	{178, {8,17}, {s="a",a="Sabrina's Gym"}, {8,16}, {11,16}, {11,15}, {16,17}, {16,15}, {15,15}, {18,3}, {18,5}, {15,5}, {1,5}, {11,11}, {11,8}, {10,8}, {s="waitToFight",dir="Left"}, {s="split"}, {11,8}, {11,11}, {s="earthquakeElixer",min=4,chain=true}, {s="skill",move="dig",map=178}},
 
 -- 15: SABRINA
@@ -401,6 +403,7 @@ local paths = {
 	-- Viridian again
 	{1, {23,26}, {s="bicycle"}, {19,26}, {19,4}, {27,4}, {27,3}, {34,3}, {34,8}, {32,8}, {32,7}},
 	-- Giovanni Gym
+	--TODO reeval earthquake machoke
 	{45, {16,17}, {c="potion",b=false}, {s="a",a="Giovanni's Gym"}, {16,16}, {14,16}, {14,9}, {13,9}, {13,7}, {15,7}, {15,4}, {12,4}, {12,5}, {10,5}, {s="a",a="Machoke"}, {10,4}, {s="fightGiovanniMachoke"}, {10,5}, {s="a",a="Giovanni's Gym"}, {13,5}, {13,4}, {15,4}, {15,7}, {13,7}, {13,11}, {14,11}, {14,16}, {16,16}, {16,18}},
 	-- Reset Gym
 	{1, {32,8}, {32,7}},

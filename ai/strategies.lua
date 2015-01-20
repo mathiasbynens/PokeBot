@@ -25,8 +25,10 @@ local areaName
 local nidoAttack, nidoSpeed, nidoSpecial = 0, 0, 0
 local squirtleAtt, squirtleDef, squirtleSpd, squirtleScl
 local deepRun, resetting
-local level4Nidoran = true
-local skipHiker, yolo, riskGiovanni, maxEtherSkip
+local level4Nidoran = true -- 57 vs 96 (d39)
+local yolo, riskGiovanni, maxEtherSkip
+
+-- Reset cutoff times
 
 local timeRequirements = {
 	mankey = function()
@@ -400,6 +402,9 @@ local function nidoranDSum(disabled)
 				-- tries = {0, 0, 10} -- TODO can't escape
 			end
 		elseif (opName == "spearow") then
+			if (opLevel == 5) then
+				-- can't escape
+			end
 		elseif (opName == "nidoran") then
 			tries = {0, 6, 12}
 		elseif (opName == "nidoranf") then
@@ -471,14 +476,31 @@ strategyFunctions = {
 
 	tweetMisty = function()
 		local elt = paint.elapsedTime()
-		setYolo("misty")
-		print("Misty: "..elt)
+		if (setYolo("misty")) then
+			print("Misty: "..elt)
+		else
+			local timeReq = 40
+			if (pokemon.inParty("paras")) then
+				timeReq = timeReq + 0.75
+			end
+			timeReq = timeReq - 1.75
+			local pbn = "!"
+			if (not overMinute(timeReq)) then
+				pbn = " (PB pace)"
+			end
+			bridge.tweet("Got a run going, just beat Misty "..elt.." in"..pbn.." http://www.twitch.tv/thepokebot")
+		end
 		return true
 	end,
 
 	tweetVictoryRoad = function()
 		local elt = paint.elapsedTime()
-		bridge.tweet("Entering Victory Road at "..elt.." on our way to the Elite Four! http://www.twitch.tv/thepokebot")
+		local pbn = ""
+		if (not overMinute(98)) then -- TODO verify
+			pbn = " (PB pace)"
+		end
+		local elt = paint.elapsedTime()
+		bridge.tweet("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four! http://www.twitch.tv/thepokebot")
 		return true
 	end,
 
@@ -991,6 +1013,7 @@ strategyFunctions = {
 					if (turnsToKill) then
 						local forced
 						if (turnsToDie < 2 or turnsToKill < 2 or tempDir - bideTurns > 1) then
+						-- elseif (turnsToKill < 3 and tempDir == bideTurns) then
 						elseif (onixHP == canProgress) then
 							forced = "tail_whip"
 						end
@@ -1205,10 +1228,6 @@ strategyFunctions = {
 	startMtMoon = function()
 		strategies.moonEncounters = 0
 		strategies.canDie = nil
-		skipHiker = nidoAttack > 15 -- RISK or level4Nidoran
-		if (skipHiker) then
-			control.mtMoonExp()
-		end
 		return true
 	end,
 
@@ -1234,27 +1253,6 @@ strategyFunctions = {
 			end
 			input.press("A")
 		end
-	end,
-
-	teachWaterGun = function()
-		if (battle.handleWild()) then
-			if (not pokemon.inParty("nidorino")) then
-				print("")
-				print("")
-				print("")
-				print("")
-				print("")
-				return reset("Did not evolve to Nidorino", pokemon.info("nidoran", "level"))
-			end
-			return strategyFunctions.teach({move="water_gun",replace="tackle"})
-		end
-	end,
-
-	fightHiker = function()
-		if (skipHiker) then
-			return true
-		end
-		return strategyFunctions.interact({dir="Left"})
 	end,
 
 	evolveNidoking = function()
@@ -1310,9 +1308,6 @@ strategyFunctions = {
 
 		local timeLimit = 26
 		if (nidoAttack > 15 and nidoSpeed > 14) then
-			timeLimit = timeLimit + 0.25
-		end
-		if (not skipHiker) then
 			timeLimit = timeLimit + 0.25
 		end
 		if (pokemon.inParty("paras")) then
@@ -1470,7 +1465,29 @@ strategyFunctions = {
 		end
 	end,
 
+	thrashGeodude = function()
+		if (battle.isActive()) then
+			canProgress = true
+			if (pokemon.isOpponent("geodude") and pokemon.isDeployed("nidoking")) then
+				local sacrifice = pokemon.inParty("squirtle")
+				if (sacrifice and pokemon.info(sacrifice, "hp") > 0) then
+					battle.swap(sacrifice)
+					return false
+				end
+			end
+			battle.automate()
+		elseif (canProgress) then
+			return true
+		else
+			textbox.handle()
+		end
+
+	end,
+
 	potionBeforeGoldeen = function()
+		if (not STREAMING_MODE and nidoSpeed == 51) then
+			return false --TEST
+		end
 		if (initialize()) then
 			if (setYolo("goldeen") or pokemon.index(0, "hp") > 7) then
 				return true
@@ -1623,7 +1640,6 @@ strategyFunctions = {
 				local px, py = player.position()
 				if (px == 4 and py == 6) then
 					tries = tries + 1
-
 					local timeLimit = getTimeRequirement("trash") + 1
 					if (resetTime(timeLimit, "complete Trashcans ("..tries.." tries)")) then
 						return true
@@ -1642,7 +1658,7 @@ strategyFunctions = {
 					elseif (tries < 24) then
 						prefix = "Ugh"
 						suffix = "."
-					else
+					else -- TODO trashcans WR
 						prefix = "Reset me now"
 						suffix = " BibleThump"
 					end
@@ -2661,6 +2677,7 @@ strategyFunctions = {
 			end
 			if (tries == 0) then
 				bridge.tweet("Beat Pokemon Red in "..canProgress.."!")
+				-- strategyFunctions.reportFrames()
 				if (strategies.seed) then
 					print(memory.value("game", "frames").." frames, with seed "..strategies.seed)
 					print("Please save this seed number to share, if you would like proof of your run!")
@@ -2691,6 +2708,14 @@ function strategies.execute(data)
 end
 
 function strategies.init(midGame)
+	if (not STREAMING_MODE) then --TODO remove
+		-- setYolo(0)
+		nidoAttack = 55
+		nidoSpeed = 50
+		nidoSpecial = 45
+		riskGiovanni = true
+		print(nidoAttack.." x "..nidoSpeed.." "..nidoSpecial)
+	end
 	if (midGame) then
 		combat.factorPP(true)
 	end

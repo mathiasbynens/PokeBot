@@ -14,16 +14,16 @@ local pokemon = require "storage.pokemon"
 
 local game_controls
 
-local shouldFight, minExp, skipHiker
+local shouldFight, minExp
 local shouldCatch, attackIdx
 local encounters = 0, extraEncounter
-local potionIn = true
+local potionInBattle = true
 local fightEncounter, caveFights = 0, 0
 local maxEncounters
 local isYolo, battleYolo
 
 local function battlePotion(enable)
-	potionIn = enable
+	potionInBattle = enable
 end
 control.battlePotion = battlePotion
 
@@ -73,24 +73,19 @@ local controlFunctions = {
 	end,
 
 	moon1Exp = function()
-		if (skipHiker) then
-			minExp = 2704
-			shouldFight = {{name="zubat",lvl={9,10}}, {name="geodude"}}
-			oneHits = true
-		end
+		minExp = 2704
+		shouldFight = {{name="zubat",lvl={9,10}}}
+		oneHits = true
 	end,
 
 	moon2Exp = function()
-		if (skipHiker) then
-			minExp = 3011
-			shouldFight = {{name="zubat"}, {name="geodude"}, {name="paras"}}
-		end
+		minExp = 3011
+		shouldFight = {{name="zubat"}, {name="paras"}}
 	end,
 
 	moon3Exp = function()
-		if (skipHiker) then
-			minExp = 3798
-		end
+		minExp = 3798
+		shouldFight = {{name="zubat"}, {name="geodude",lvl={9}}, {name="paras"}} --TODO geodude?
 	end,
 
 	catchNidoran = function()
@@ -199,7 +194,7 @@ end
 -- Items
 
 function control.canRecover()
-	return potionIn and (not battleYolo or not isYolo)
+	return potionInBattle and (not battleYolo or not isYolo)
 end
 
 function control.set(data)
@@ -211,16 +206,11 @@ function control.setYolo(enabled)
 end
 
 function control.setPotion(enabled)
-	potionIn = enabled
+	potionInBattle = enabled
 end
 
 function control.encounters()
 	return encounters
-end
-
-function control.mtMoonExp()
-	print("Skipping Hiker strats")
-	skipHiker = true
 end
 
 function control.wildEncounter()
@@ -234,8 +224,7 @@ function control.reset()
 	shouldCatch = nil
 	shouldFight = nil
 	extraEncounter = nil
-	skipHiker = false
-	potionIn = true
+	potionInBattle = true
 	encounters = 0
 	fightEncounter = 0
 	caveFights = 0
