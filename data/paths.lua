@@ -42,13 +42,13 @@ local paths = {
 -- 2: NIDORAN
 
 	-- Out of Viridian City
-	{1, {0,17}, {c="encounters",limit=10,extra="spearow"}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17, 0}, {17, -1}},
+	{1, {0,17}, {c="encounters",limit=10,extra="spearow"}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17,4}, {15,4}, {s="interact",dir="Left"}, {17,4}, {17, 0}, {17, -1}},
 	-- To the Forest
 	{13, {7,71}, {7,57}, {4,57}, {4,52}, {10,52}, {10,44}, {3,44}, {3,43}},
 	-- Forest entrance
 	{50, {4,7}, {s="a",a="Viridian Forest"}, {4,1}, {5,1}, {5,0}},
 	-- Viridian Forest
-	{51, {17,47}, {17,43}, {26,43}, {26,34}, {25,34}, {25,32}, {27,32}, {27,20}, {25,20}, {25,12}, {s="grabAntidote"}, {25,9}, {17,9}, {17,16}, {13,16}, {13,3}, {7,3}, {7,22}, {1,22}, {1,19}, {s="interact",dir="Up"}, {1,18}, {s="fightWeedle"}, {c="encounters",limit=22,extra="paras"}, {1,16}, {c="potion",b=false}, {s="equipForBrock",anti=true}, {1,5}, {s="equipForBrock"}, {1,-1}},
+	{51, {17,47}, {17,43}, {26,43}, {26,34}, {25,34}, {25,32}, {27,32}, {27,20}, {25,20}, {25,12}, {s="grabAntidote"}, {25,9}, {17,9}, {17,16}, {13,16}, {13,3}, {7,3}, {7,22}, {1,22}, {1,19}, {s="grabForestPotion"}, {1,18}, {s="fightWeedle"}, {c="encounters",limit=22,extra="paras"}, {1,16}, {c="potion",b=false}, {s="equipForBrock",anti=true}, {1,5}, {s="equipForBrock"}, {1,-1}},
 	-- Forest exit
 	{47, {4,7}, {4,1}, {5,1}, {5,0}},
 	-- Road to Pewter City
@@ -135,7 +135,7 @@ local paths = {
 	-- Underground exit
 	{74, {4,4}, {3,8}},
 	-- Oddish
-	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=9,yolo=5}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=9,yolo=5}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=9,yolo=5}, {10,31}, {9,31}, {9,32}, {s="potion",hp=20,yolo=18,chain=true}, {9,36}},
+	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=9,yolo=5}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=9,yolo=5}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=9,yolo=5}, {10,31}, {9,31}, {9,32}, {s="potion",hp=20,yolo=18}, {9,36}},
 	-- Enter Vermilion
 	{5, {19,0}, {c="disableCatch"}, {19,6}, {21,6}, {21,14}, {23,14}, {23,13}},
 	-- Vermilion mart

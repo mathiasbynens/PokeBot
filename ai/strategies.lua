@@ -806,7 +806,7 @@ strategyFunctions = {
 		local pokeballs = inventory.count("pokeball")
 		local caught = memory.value("player", "party_size") - 1
 		if (pokeballs < 5 - caught * 2) then
-			return reset("Ran out of PokeBalls", pokeballs)
+			return reset("Ran too low on PokeBalls", pokeballs)
 		end
 		if (battle.isActive()) then
 			local isNidoran = pokemon.isOpponent("nidoran")
@@ -891,6 +891,20 @@ strategyFunctions = {
 			player.interact("Up")
 		end
 		walk.step(px, py)
+	end,
+
+	grabForestPotion = function()
+		if (inventory.contains("potion")) then
+			if (pokemon.info("squirtle", "hp") <= 10) then
+				if (menu.pause()) then
+					inventory.use("potion", "squirtle")
+				end
+			else
+				return true
+			end
+		elseif (menu.close()) then
+			player.interact("Up")
+		end
 	end,
 
 	fightWeedle = function()
