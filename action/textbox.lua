@@ -74,5 +74,4 @@ function textbox.handle()
 	input.cancel()
 end
 
-
 return textbox

@@ -12,14 +12,13 @@ local utils = require "util.utils"
 local inventory = require "storage.inventory"
 local pokemon = require "storage.pokemon"
 
-local game_controls
+local potionInBattle = true
+local fightEncounter, caveFights = 0, 0
+local encounters = 0
 
 local shouldFight, minExp
 local shouldCatch, attackIdx
-local encounters = 0, extraEncounter
-local potionInBattle = true
-local fightEncounter, caveFights = 0, 0
-local maxEncounters
+local extraEncounter, maxEncounters
 local isYolo, battleYolo
 
 local function battlePotion(enable)
@@ -55,7 +54,7 @@ local controlFunctions = {
 		shouldFight = nil
 	end,
 
--- RED
+	-- RED
 
 	viridianExp = function()
 		minExp = 210
@@ -114,7 +113,6 @@ local function isNewFight()
 		return true
 	end
 end
-
 
 function control.shouldFight()
 	if (not shouldFight) then

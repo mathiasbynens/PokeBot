@@ -33,7 +33,7 @@ local paths = {
 	-- Back to the Mart
 	{1, {21,35}, {21,30}, {19,30}, {19,20}, {29,20}, {29,19}},
 	-- Viridian Mart redux
-	{42, {3,7}, {3,5}, {2,5}, {s="viridianBuyPokeballs"}, {3,5}, {3,8}},
+	{42, {3,7}, {3,5}, {2,5}, {s="shopViridianPokeballs"}, {3,5}, {3,8}},
 	-- Sidequest
 	{1, {29,20}, {15,20}, {15,17}, {-1, 17}},
 	-- Nidoran
@@ -63,7 +63,7 @@ local paths = {
 	-- To Pewter Mart
 	{2, {16,18}, {c="potion",b=true}, {10,18}, {10,13}, {21,13}, {21,18}, {23,18}, {23,17}},
 	-- Pewter Mart
-	{56, {3,7}, {3,5}, {2,5}, {s="pewterMart"}, {2,6}, {3,6}, {3,8}},
+	{56, {3,7}, {3,5}, {2,5}, {s="shopPewterMart"}, {2,6}, {3,6}, {3,8}},
 	-- Leaving Pewter City
 	{2, {23,18}, {40,18}},
 	-- Route 3
@@ -78,7 +78,7 @@ local paths = {
 -- 4: ROUTE 3
 
 	-- Mt. Moon F1
-	{59, {14,35}, {s="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {34,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
+	{59, {14,35}, {s="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {35,31}, {35,23}, {s="interact",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
 	-- Mt. Moon B2
 	{60, {5,5}, {5,17}, {21,17}},
 	-- Mt. Moon B3
@@ -116,7 +116,7 @@ local paths = {
 	-- To Misty
 	{3, {19,18}, {19,20}, {30,20}, {30,19}},
 	-- Misty
-	{65, {4,13}, {s="a",a="Misty's Gym"}, {c="potion",b=false}, {4,8}, {2,8}, {2,5}, {7,5}, {7,3}, {6,3}, {5,3}, {s="waitToFight"}, {s="potionBeforeMisty"}, {5,2}, {s="waitToFight",dir="Left"}, {s="split"}, {s="tweetMisty"}, {5,3}, {7,3}, {7,5}, {5,5}, {5,14}},
+	{65, {4,13}, {s="a",a="Misty's Gym"}, {c="potion",b=false}, {4,8}, {2,8}, {2,5}, {7,5}, {7,3}, {6,3}, {5,3}, {s="waitToFight"}, {s="potionBeforeMisty"}, {5,2}, {s="interact",dir="Left"}, {s="fightMisty"}, {s="split"}, {s="tweetMisty"}, {5,3}, {7,3}, {7,5}, {5,5}, {5,14}},
 
 -- 7: MISTY
 
@@ -140,7 +140,7 @@ local paths = {
 	{5, {19,0}, {c="disableCatch"}, {19,6}, {21,6}, {21,14}, {23,14}, {23,13}},
 	-- Vermilion mart
 	-- TODO Bubblebeam split?
-	{91, {3,7}, {3,5}, {2,5}, {s="vermilionMart"}, {3,5}, {s="teach",move="bubblebeam",replace="tackle"}, {3,8}},
+	{91, {3,7}, {3,5}, {2,5}, {s="shopVermilionMart"}, {3,5}, {s="teach",move="bubblebeam",replace="tackle"}, {3,8}},
 	-- To S.S. Anne
 	{5, {23,14}, {30,14}, {30,26}, {18,26}, {18,31}},
 	-- Mew
@@ -171,7 +171,7 @@ local paths = {
 	-- Cerulean warp
 	{3, {19,18}, {19,23}, {16,23}, {16,26}, {13,26}, {13,25}},
 	-- Bicycle shop
-	{66, {2,7}, {2,5}, {4,5}, {s="dodgeBicycleGirlRight"}, {6,4}, {6,4}, {s="procureBicycle"}, {s="dodgeBicycleGirlLeft"}, {3,8}},
+	{66, {2,7}, {2,3}, {4,3}, {4,2}, {s="procureBicycle"}, {4,7}, {3,7}, {3,8}},
 	-- Bicycle out of Cerulean
 	{3, {13,26}, {s="swapBicycle"}, {s="teach",move="thunderbolt",replace="horn_attack",chain=true}, {s="bicycle"}, {19,26}, {19,27}, {s="skill",move="cut",done=0x0D4D}, {19,29}, {36,29}, {36,16}, {40,16}},
 	-- TPP's Bane
@@ -204,31 +204,26 @@ local paths = {
 	{18, {5,14}, {s="bicycle"}, {8,14}, {8,8}, {4,8}, {4,3}, {-1,3}},
 	-- Celadon
 	{6, {49,11}, {s="a",a="Celadon Mart"}, {14,11}, {14,14}, {10,14}, {10,13}},
-	-- Department store
-	--TODO elevator down
+	-- F1: Department store
 	{122, {16,7}, {c="potion",b=true,yolo=true}, {c="pp",on=true}, {16,3}, {12,3}, {12,1}},
 	-- F2
-	{123, {12,2}, {16,2}, {16,1}},
+	{123, {12,2}, {8,2}, {8,5}, {6,5}, {s="shopTM07"}, {5,5}, {s="shopRepels"}, {15,5}, {15,2}, {16,2}, {16,1}},
 	-- F3
 	{124, {16,2}, {12,2}, {12,1}},
 	-- F4: Poke Doll
 	{125, {12,2}, {10,2}, {10,5}, {5,5}, {s="shopPokeDoll"}, {11,5}, {11,2}, {16,2}, {16,1}},
-	-- F5: Buffs
-	{136, {16,2}, {8,2}, {8,5}, {5,5}, {s="shopBuffs"}, {9,5}, {9,2}, {12,2}, {12,1}},
+	-- F5
+	{136, {16,2}, {12,2}, {12,1}},
 	-- Roof
 	{126, {15,3}, {12,3}, {s="shopVending"}, {6,3}, {6,4}, {s="giveWater"}, {6,4}, {7,3}, {12,3}, {s="shopExtraWater"}, {15,3}, {15,2}},
-	-- F5
-	{136, {12,2}, {16,2}, {16,1}},
-	-- F4
-	{125, {16,2}, {12,2}, {12,1}},
-	-- F3
-	{124, {12,2}, {16,2}, {16,1}},
-	-- F2: TM and repel
-	{123, {16,2}, {8,2}, {8,5}, {6,5}, {s="shopTM07"}, {5,5}, {s="shopRepels"}, {9,5}, {9,2}, {12,2}, {12,1}},
-	-- Exit department store
-	{122, {12, 2}, {12,6}, {16,6}, {16,8}},
+	-- F5: Buffs
+	{136, {12,2}, {8,2}, {8,5}, {5,5}, {s="shopBuffs"}, {1,5}, {1,1}},
+	-- Elevator
+	{127, {1,3}, {1,2}, {3,2}, {3,1}, {s="deptElevator"}, {2,1}, {2,4}},
+	-- F1: Exit department store
+	{122, {1, 2}, {1,7}, {2,7}, {2,8}},
 	-- Leave Celadon
-	{6, {10,14}, {s="bicycle"}, {10,15}, {2,15}, {2,18}, {-1,18}},
+	{6, {8,14}, {s="bicycle"}, {8,15}, {2,15}, {2,18}, {-1,18}},
 	-- Cut out of Celadon
 	{27, {39,10}, {34,10}, {s="teach",move="horn_drill",replace="bubblebeam",full=true,chain=true}, {s="skill",move="cut",dir="Up",done=0x0D4D}, {34,6}, {27,6}, {27,4}, {23,4}},
 	-- Old man's hall

@@ -96,8 +96,8 @@ local function calcDamage(move, attacker, defender, rng)
 end
 
 local function getOpponentType(ty)
-	local t1= types[memory.value("battle", "opponent_type1")]
-	if ty~=0 then
+	local t1 = types[memory.value("battle", "opponent_type1")]
+	if ty ~= 0 then
 		t1 = types[memory.value("battle", "opponent_type2")]
 		if not t1 then
 			return memory.value("battle", "opponent_type2")
@@ -291,6 +291,11 @@ local function isSleeping()
 end
 combat.isSleeping = isSleeping
 
+local function isConfused()
+	return memory.raw(0x106B) > 0
+end
+combat.isConfused = isConfused
+
 -- Combat AI
 
 function combat.factorPP(enabled)
@@ -319,7 +324,7 @@ function combat.inKillRange(draw)
 		gui.text(0, 28, turnsToDie.." "..ours.hp.." | "..turnsToKill.." "..enemy.hp)
 	end
 	local hpReq = enemyAttack.damage
-	local isConfused = memory.value("battle", "confused") > 0
+	local isConfused = isConfused()
 	if (isConfused) then
 		hpReq = hpReq + math.floor(ours.hp * 0.2)
 	end

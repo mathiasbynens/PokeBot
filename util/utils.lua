@@ -49,7 +49,6 @@ function utils.igt()
 	return secs + mins * 60 + hours * 3600
 end
 
-
 function utils.onPokemonSelect(battleMenu)
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
 end

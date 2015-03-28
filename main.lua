@@ -11,6 +11,9 @@ local PAINT_ON    = true -- Display contextual information while the bot runs
 local START_WAIT = 99
 local VERSION = "1.1"
 
+YELLOW = GAME_NAME == "yellow"
+INTERNAL = false
+
 local battle = require "action.battle"
 local textbox = require "action.textbox"
 local walk = require "action.walk"
@@ -28,9 +31,6 @@ local utils = require "util.utils"
 local settings = require "util.settings"
 
 local pokemon = require "storage.pokemon"
-
-YELLOW = GAME_NAME == "yellow"
-INTERNAL = false
 
 local hasAlreadyStartedPlaying = false
 local inBattle, oldSecs

@@ -793,7 +793,7 @@ strategyFunctions = {
 		return dodgeUp(0x0223, 14, 14, 15, 7)
 	end,
 
-	viridianBuyPokeballs = function()
+	shopViridianPokeballs = function()
 		return shop.transaction{
 			buy = {{name="pokeball", index=0, amount=8}}
 		}
@@ -895,7 +895,8 @@ strategyFunctions = {
 
 	grabForestPotion = function()
 		if (inventory.contains("potion")) then
-			if (pokemon.info("squirtle", "hp") <= 10) then
+			local healthNeeded = (pokemon.info("spearow", "level") == 3) and 6 or 10
+			if (pokemon.info("squirtle", "hp") <= healthNeeded) then
 				if (menu.pause()) then
 					inventory.use("potion", "squirtle")
 				end
@@ -1107,9 +1108,9 @@ strategyFunctions = {
 
 -- 2: BROCK
 
-	pewterMart = function()
+	shopPewterMart = function()
 		return shop.transaction{
-			buy = {{name="potion", index=1, amount=7}, {name="escape_rope", index=2}}
+			buy = {{name="potion", index=1, amount=8}}
 		}
 	end,
 
@@ -1157,7 +1158,8 @@ strategyFunctions = {
 	end,
 
 	shortsKid = function()
-		control.battlePotion(not pokemon.isOpponent("rattata") or damaged(2))
+		local fightingEkans = pokemon.isOpponent("ekans")
+		control.battlePotion(fightingEkans or damaged(2))
 		return strategyFunctions.leer({{"rattata",9}, {"ekans",10}})
 	end,
 
@@ -1495,7 +1497,6 @@ strategyFunctions = {
 		else
 			textbox.handle()
 		end
-
 	end,
 
 	potionBeforeGoldeen = function()
@@ -1526,6 +1527,24 @@ strategyFunctions = {
 			end
 		end
 		return strategyFunctions.potion({hp=healAmount})
+	end,
+
+	fightMisty = function()
+		if (battle.isActive()) then
+			canProgress = true
+			if (pokemon.isDeployed("nidoking") and combat.isConfused()) then
+				local sacrifice = pokemon.inParty("paras", "pidgey", "spearow")
+				if (sacrifice and pokemon.info(sacrifice, "hp") > 0) then
+					battle.swap(sacrifice)
+					return false
+				end
+			end
+			battle.automate()
+		elseif (canProgress) then
+			return true
+		else
+			textbox.handle()
+		end
 	end,
 
 -- 6: MISTY
@@ -1621,7 +1640,7 @@ strategyFunctions = {
 		end
 	end,
 
-	vermilionMart = function()
+	shopVermilionMart = function()
 		if (initialize()) then
 			setYolo("vermilion")
 		end
@@ -1638,6 +1657,8 @@ strategyFunctions = {
 			buy = buyArray
 		}
 	end,
+
+	-- rivalSandAttack
 
 	trashcans = function()
 		local progress = memory.value("progress", "trashcans")
@@ -1759,26 +1780,6 @@ strategyFunctions = {
 
 -- 7: SURGE
 
-	dodgeBicycleGirlRight = function()
-		return dodgeH{
-			npc = 0x0222,
-			sx = 4, sy = 5,
-			dodge = 4,
-			offset = -2
-		}
-	end,
-
-	dodgeBicycleGirlLeft = function()
-		return dodgeH{
-			npc = 0x0222,
-			sx = 4, sy = 4,
-			dodge = 5,
-			offset = -2,
-			dist = 0,
-			left = true
-		}
-	end,
-
 	procureBicycle = function()
 		if (inventory.contains("bicycle")) then
 			if (not textbox.isActive()) then
@@ -1786,7 +1787,7 @@ strategyFunctions = {
 			end
 			input.cancel()
 		elseif (textbox.handle()) then
-			player.interact("Up")
+			player.interact("Right")
 		end
 	end,
 
@@ -1847,32 +1848,24 @@ strategyFunctions = {
 		end
 	end,
 
+	shopTM07 = function()
+		return shop.transaction{
+			direction = "Up",
+			buy = {{name="horn_drill", index=3}}
+		}
+	end,
+
+	shopRepels = function()
+		return shop.transaction{
+			direction = "Up",
+			buy = {{name="super_repel", index=3, amount=9}}
+		}
+	end,
+
 	shopPokeDoll = function()
 		return shop.transaction{
 			direction = "Down",
 			buy = {{name="pokedoll", index=0}}
-		}
-	end,
-
-	shopBuffs = function()
-		local minSpecial = 45
-		if (yolo) then
-			minSpecial = minSpecial - 1
-		end
-		if (nidoAttack >= 54 and nidoSpecial >= minSpecial) then
-			riskGiovanni = true
-			print("Giovanni skip strats!")
-		end
-
-		local xspecAmt = 4
-		if (riskGiovanni) then
-			xspecAmt = xspecAmt + 1
-		elseif (nidoSpecial < 46) then
-			xspecAmt = xspecAmt - 1
-		end
-		return shop.transaction{
-			direction = "Up",
-			buy = {{name="x_accuracy", index=0, amount=10}, {name="x_speed", index=5, amount=4}, {name="x_special", index=6, amount=xspecAmt}}
 		}
 	end,
 
@@ -1907,18 +1900,40 @@ strategyFunctions = {
 		}
 	end,
 
-	shopTM07 = function()
+	shopBuffs = function()
+		if (initialize()) then
+			local minSpecial = 45
+			if (yolo) then
+				minSpecial = minSpecial - 1
+			end
+			if (nidoAttack >= 54 and nidoSpecial >= minSpecial) then
+				riskGiovanni = true
+				print("Giovanni skip strats!")
+			end
+		end
+
+		local xspecAmt = 4
+		if (riskGiovanni) then
+			xspecAmt = xspecAmt + 1
+		elseif (nidoSpecial < 46) then
+			xspecAmt = xspecAmt - 1
+		end
 		return shop.transaction{
 			direction = "Up",
-			buy = {{name="horn_drill", index=3}}
+			buy = {{name="x_accuracy", index=0, amount=10}, {name="x_speed", index=5, amount=4}, {name="x_special", index=6, amount=xspecAmt}}
 		}
 	end,
 
-	shopRepels = function()
-		return shop.transaction{
-			direction = "Up",
-			buy = {{name="super_repel", index=3, amount=9}}
-		}
+	deptElevator = function()
+		if (textbox.isActive()) then
+			canProgress = true
+			menu.select(0, false)
+		else
+			if (canProgress) then
+				return true
+			end
+			player.interact("Up")
+		end
 	end,
 
 	swapRepels = function()
@@ -2588,7 +2603,7 @@ strategyFunctions = {
 		end
 	end,
 
-	agatha = function()
+	agatha = function() --TODO test without x acc
 		if (battle.isActive()) then
 			canProgress = true
 			if (combat.isSleeping()) then
@@ -2597,6 +2612,7 @@ strategyFunctions = {
 			end
 			if (pokemon.isOpponent("gengar")) then
 				local currentHP = pokemon.info("nidoking", "hp")
+				-- if (not yolo and currentHP <= 56 and not isPrepared("x_speed")) then
 				if (not yolo and currentHP <= 56 and not isPrepared("x_accuracy", "x_speed")) then
 					local toPotion = inventory.contains("full_restore", "super_potion")
 					if (toPotion) then
@@ -2604,6 +2620,7 @@ strategyFunctions = {
 						return false
 					end
 				end
+				-- if (not prepare("x_speed")) then
 				if (not prepare("x_accuracy", "x_speed")) then
 					return false
 				end
@@ -2664,7 +2681,7 @@ strategyFunctions = {
 				print(tempDir.." strats")
 				tempDir = "x_speed" -- TODO find min stats, remove override
 			end
-			if (prepare("x_accuracy", "x_speed")) then
+			if (prepare("x_accuracy", tempDir)) then
 				local forced = "horn_drill"
 				if (pokemon.isOpponent("alakazam")) then
 					if (tempDir == "x_speed") then
