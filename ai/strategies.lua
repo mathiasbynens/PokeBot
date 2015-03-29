@@ -28,9 +28,29 @@ local deepRun, resetting
 local level4Nidoran = true -- 57 vs 96 (d39)
 local yolo, riskGiovanni, maxEtherSkip
 
--- Reset cutoff times
+-- TIME CONSTRAINTS
 
 local timeRequirements = {
+
+	nidoran = function()
+		local timeLimit = 6.25
+		if (pokemon.inParty("spearow")) then
+			timeLimit = timeLimit + 0.67
+		end
+		return timeLimit
+	end,
+
+	mt_moon = function()
+		local timeLimit = 27
+		if (nidoAttack > 15 and nidoSpeed > 14) then
+			timeLimit = timeLimit + 0.25
+		end
+		if (pokemon.inParty("paras")) then
+			timeLimit = timeLimit + 0.75
+		end
+		return timeLimit
+	end,
+
 	mankey = function()
 		local timeLimit = 33
 		if (pokemon.inParty("paras")) then
@@ -86,14 +106,7 @@ local timeRequirements = {
 	end,
 }
 
--- Reset
-
-local function initialize()
-	if (not initialized) then
-		initialized = true
-		return true
-	end
-end
+-- RISK/RESET
 
 local function hardReset(message, extra)
 	resetting = true
@@ -182,7 +195,14 @@ local function setYolo(name)
 	return yolo
 end
 
--- Local functions
+-- PRIVATE
+
+local function initialize()
+	if (not initialized) then
+		initialized = true
+		return true
+	end
+end
 
 local function hasHealthFor(opponent, extra)
 	if (not extra) then
@@ -505,7 +525,7 @@ strategyFunctions = {
 	end,
 
 	split = function(data)
-		bridge.split(control.encounters(), data and data.finished)
+		bridge.split(data and data.finished)
 		return true
 	end,
 
@@ -848,10 +868,8 @@ strategyFunctions = {
 				end
 				noDSum = true
 			end
-			local timeLimit = 6.25
-			if (pokemon.inParty("spearow")) then
-				timeLimit = timeLimit + 0.67
-			end
+
+			local timeLimit = getTimeRequirement("nidoran")
 			local resetMessage
 			if (hasNidoran) then
 				resetMessage = "get an experience kill before Brock"
@@ -1058,6 +1076,9 @@ strategyFunctions = {
 							if (def < 12) then
 								statDiff = statDiff + 1
 							end
+							if (level4Nidoran) then
+								statDiff = statDiff - 1
+							end
 							local resets = att < 15 or spd < 14 or scl < 12 or statDiff > 3
 							if (not resets and att == 15 and spd == 14) then
 								resets = true
@@ -1091,7 +1112,7 @@ strategyFunctions = {
 								superlative = " min stat"
 								exclaim = "."
 							end
-							nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus
+							nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at lv. "..(level4Nidoran and "4" or "3")
 							bridge.chat(nStatus)
 						else
 							tries = tries + 1
@@ -1322,13 +1343,7 @@ strategyFunctions = {
 			strategies.moonEncounters = nil
 		end
 
-		local timeLimit = 26
-		if (nidoAttack > 15 and nidoSpeed > 14) then
-			timeLimit = timeLimit + 0.25
-		end
-		if (pokemon.inParty("paras")) then
-			timeLimit = timeLimit + 1.0
-		end
+		local timeLimit = getTimeRequirement("mt_moon")
 		resetTime(timeLimit, "complete Mt. Moon", true)
 		return true
 	end,
@@ -1680,6 +1695,7 @@ strategyFunctions = {
 						return true
 					end
 					setYolo("trash")
+
 					local prefix
 					local suffix = "!"
 					if (tries < 2) then

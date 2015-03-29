@@ -1,4 +1,9 @@
-local memory = {}
+local Memory = {}
+
+-- memory.usememorydomain("ROM")
+-- print(memory.getcurrentmemorydomain())
+-- print(memory.getcurrentmemorydomainsize())
+-- memory.usememorydomain("System Bus")
 
 local memoryNames = {
 	setting = {
@@ -53,7 +58,6 @@ local memoryNames = {
 		exp3 = 0xD17B,
 	},
 	battle = {
-		confused = 0x106B,
 		turns = 0x1067,
 		text = 0x1125,
 		menu = 0x0C50,
@@ -104,11 +108,11 @@ local doubleNames = {
 }
 
 local function raw(value)
-	return mainmemory.readbyte(value)
+	return memory.readbyte(value)
 end
-memory.raw = raw
+Memory.raw = raw
 
-function memory.string(first, last)
+function Memory.string(first, last)
 	local a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyz?????????????????????????????????????????-???!.????????*?/.?0123456789"
 	local str = ""
 	while first <= last do
@@ -122,12 +126,12 @@ function memory.string(first, last)
 	return str
 end
 
-function memory.double(section, key)
+function Memory.double(section, key)
 	local first = doubleNames[section][key]
 	return raw(first) + raw(first + 1)
 end
 
-function memory.value(section, key)
+function Memory.value(section, key)
 	local memoryAddress = memoryNames[section]
 	if (key) then
 		memoryAddress = memoryAddress[key]
@@ -135,4 +139,4 @@ function memory.value(section, key)
 	return raw(memoryAddress)
 end
 
-return memory
+return Memory

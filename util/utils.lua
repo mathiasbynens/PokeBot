@@ -32,6 +32,7 @@ function utils.match(needle, haystack)
 			return true
 		end
 	end
+	return false
 end
 
 function utils.key(needle, haystack)
@@ -40,6 +41,7 @@ function utils.key(needle, haystack)
 			return key
 		end
 	end
+	return nil
 end
 
 function utils.igt()
