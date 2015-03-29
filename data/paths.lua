@@ -334,8 +334,7 @@ local paths = {
 	-- To Koga
 	{7, {19,28}, {s="a",a="Koga's Gym"}, {5,28}, {5,27}},
 	-- Koga
-	-- TODO save turn frames?
-	{157, {4,17}, {9,17}, {9,9}, {7,9}, {s="interact",dir="Up"}, {9,9}, {9,1}, {1,1}, {1,2}, {s="potion",hp="KogaHypno",yolo=18,chain=true}, {s="earthquakeElixer",min=2,close=true}, {1,3}, {2,3}, {2,5}, {1,5}, {c="potion",b=false}, {1,7}, {s="fightHypno"}, {1,9}, {2,9}, {s="earthquakeElixer",min=4}, {4,9}, {s="interact",dir="Down"}, {s="fightKoga"}, {s="split"}, {1,9}, {1,5}, {2,5}, {2,3}, {1,3}, {1,1}, {9,1}, {9,16}, {5,16}, {5,18}},
+	{157, {4,17}, {9,17}, {9,9}, {7,9}, {s="interact",dir="Up"}, {9,9}, {9,1}, {1,1}, {1,2}, {s="earthquakeElixer",min=2,chain=true}, {s="healBeforeHypno"}, {1,3}, {2,3}, {2,5}, {1,5}, {c="potion",b=false}, {1,7}, {s="fightHypno"}, {1,9}, {2,9}, {s="earthquakeElixer",min=4}, {4,9}, {s="interact",dir="Down"}, {s="fightKoga"}, {s="split"}, {1,9}, {1,5}, {2,5}, {2,3}, {1,3}, {1,1}, {9,1}, {9,16}, {5,16}, {5,18}},
 
 -- 12: KOGA
 

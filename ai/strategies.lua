@@ -356,17 +356,12 @@ end
 local function isPrepared(...)
 	if (tries == 0) then
 		tries = {}
-		for i,name in ipairs(arg) do
-			tries[i] = {name, inventory.count(name)}
-		end
 	end
-	local item, found
-	for i,itemState in ipairs(tries) do
-		local name = itemState[1]
-		local count = itemState[2]
-		if (count > 0 and count == inventory.count(name)) then
-			local opp = itemState[3]
-			if (not opp or opp == memory.value("battle", "opponent_id")) then
+	for i,name in ipairs(arg) do
+		local currentCount = inventory.count(name)
+		if (currentCount > 0) then
+			local previousCount = tries[name]
+			if (previousCount == nil or currentCount == previousCount) then
 				return false
 			end
 		end
@@ -377,29 +372,26 @@ end
 local function prepare(...)
 	if (tries == 0) then
 		tries = {}
-		for i,name in ipairs(arg) do
-			tries[i] = {name, inventory.count(name)}
-		end
 	end
-	local item, found
-	for i,itemState in ipairs(tries) do
-		local name = itemState[1]
-		local count = itemState[2]
-		if (count > 0 and count == inventory.count(name)) then
-			local opp = itemState[3]
-			found = true
-			if (not opp or opp == memory.value("battle", "opponent_id")) then
-				item = name
-				break
-			end
+	local item
+	for idx,name in ipairs(arg) do
+		local currentCount = inventory.count(name)
+		local needsItem = currentCount > 0
+		local previousCount = tries[name]
+		if (previousCount == nil) then
+			tries[name] = currentCount
+		elseif (needsItem) then
+			needsItem = currentCount == previousCount
+		end
+		if (needsItem) then
+			item = name
+			break
 		end
 	end
 	if (not item) then
-		if (not found) then
-			return true
-		end
-		battle.automate()
-	elseif (battle.isActive()) then
+		return true
+	end
+	if (battle.isActive()) then
 		inventory.use(item, nil, true)
 	else
 		input.cancel()
@@ -772,7 +764,7 @@ strategyFunctions = {
 	end,
 
 	allowDeath = function(data)
-		strategies.canDie = data.on
+		control.canDie(data.on)
 		return true
 	end,
 
@@ -1112,7 +1104,7 @@ strategyFunctions = {
 								superlative = " min stat"
 								exclaim = "."
 							end
-							nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at lv. "..(level4Nidoran and "4" or "3")
+							nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(level4Nidoran and "4" or "3").."."
 							bridge.chat(nStatus)
 						else
 							tries = tries + 1
@@ -1214,7 +1206,7 @@ strategyFunctions = {
 
 	catchFlierBackup = function()
 		if (initialize()) then
-			strategies.canDie = true
+			control.canDie(true)
 		end
 		if (not control.canCatch()) then
 			return true
@@ -1223,7 +1215,7 @@ strategyFunctions = {
 		if (battle.isActive()) then
 			if (memory.double("battle", "our_hp") == 0) then
 				if (pokemon.info("squirtle", "hp") == 0) then
-					strategies.canDie = false
+					control.canDie(false)
 				elseif (utils.onPokemonSelect(memory.value("battle", "menu"))) then
 					menu.select(pokemon.indexOf("squirtle"), true)
 				else
@@ -1264,7 +1256,7 @@ strategyFunctions = {
 
 	startMtMoon = function()
 		strategies.moonEncounters = 0
-		strategies.canDie = nil
+		control.canDie(false)
 		return true
 	end,
 
@@ -2163,16 +2155,48 @@ strategyFunctions = {
 
 	silphRival = function()
 		if (battle.isActive()) then
-			canProgress = true
-			if (prepare("x_accuracy", "x_speed")) then
-				local forced
-				if (pokemon.isOpponent("pidgeot")) then
+			if (initialize()) then
+				tempDir = combat.healthFor("RivalGyarados")
+				print("Gyarados "..tempDir)
+				canProgress = true
+			end
+			local gyaradosDamage = tempDir
+
+			local forced
+			local readyToAttack = false
+			local opName = battle.opponent()
+			if opName == "gyarados" then
+				readyToAttack = true
+				local hp, red_hp = pokemon.index(0, "hp"), redHP()
+				if (hp > gyaradosDamage * 0.98 and hp - gyaradosDamage * 0.975 < red_hp) then --TODO
+					if (prepare("x_special")) then
+						forced = "ice_beam"
+					else
+						readyToAttack = false
+					end
+				elseif (isPrepared("x_special")) then
+					local canPotion
+					if (inventory.contains("potion") and hp + 20 > gyaradosDamage and hp + 20 - gyaradosDamage < red_hp) then
+						canPotion = "potion"
+					elseif (inventory.contains("super_potion") and hp + 50 > gyaradosDamage and hp + 50 - gyaradosDamage < red_hp) then
+						canPotion = "super_potion"
+					end
+					if (canPotion) then
+						inventory.use(canPotion, nil, true)
+						readyToAttack = false
+					end
+				end
+			elseif (prepare("x_accuracy", "x_speed")) then
+				if (opName == "pidgeot") then
 					if (riskGiovanni or nidoSpecial < 45 or pokemon.info("nidoking", "hp") > 85) then
 						forced = "thunderbolt"
 					end
-				elseif (pokemon.isOpponent("alakazam", "growlithe")) then
+				elseif (opName == "alakazam" or opName == "growlithe") then
 					forced = "earthquake"
 				end
+				readyToAttack = true
+			end
+			if (readyToAttack) then
 				battle.automate(forced)
 			end
 		elseif (canProgress) then
@@ -2207,6 +2231,34 @@ strategyFunctions = {
 
 --	9: SILPH CO.
 
+	healBeforeHypno = function()
+		local curr_hp, red_hp = pokemon.index(0, "hp"), redHP()
+		local healthUnderRedBar = red_hp - curr_hp
+		local yoloHP = combat.healthFor("HypnoHeadbutt") * 0.9
+		local healTarget
+		local rareCandyCount = inventory.count("rare_candy")
+		local useRareCandy
+		if (healthUnderRedBar >= 0) then
+			healTarget = "HypnoHeadbutt"
+			if (healthUnderRedBar > 2) then
+				if (rareCandyCount > 2) then
+					useRareCandy = true
+				end
+			end
+		else
+			healTarget = "HypnoConfusion"
+			useRareCandy = rareCandyCount > 2
+		end
+		if useRareCandy then
+			if (menu.pause()) then
+				inventory.use("rare_candy", nil, false)
+			end
+			return false
+		end
+
+		return strategyFunctions.potion({hp=healTarget, yolo=yoloHP, close=true})
+	end,
+
 	fightHypno = function()
 		if (battle.isActive()) then
 			local forced
@@ -2228,7 +2280,7 @@ strategyFunctions = {
 		end
 	end,
 
-	fightKoga = function()
+	fightKoga = function() --TODO x-accuracy?
 		if (battle.isActive()) then
 			local forced
 			if (pokemon.isOpponent("weezing")) then
@@ -2237,7 +2289,7 @@ strategyFunctions = {
 					return false
 				end
 				forced = "thunderbolt"
-				strategies.canDie = true
+				control.canDie(true)
 			end
 			battle.fight(forced)
 			canProgress = true
@@ -2663,10 +2715,13 @@ strategyFunctions = {
 	end,
 
 	lance = function()
-		if (tries == 0) then
-			tries = {{"x_special", inventory.count("x_special")}, {"x_speed", inventory.count("x_speed"), 89}}
+		local xItem
+		if (pokemon.isOpponent("dragonair")) then
+			xItem = "x_speed"
+		else
+			xItem = "x_special"
 		end
-		return prepare()
+		return prepare(xItem)
 	end,
 
 	prepareForBlue = function()
@@ -2773,7 +2828,6 @@ function strategies.softReset()
 	initialized = false
 	maxEtherSkip = false
 	tempDir = nil
-	strategies.canDie = nil
 	strategies.moonEncounters = nil
 	tries = 0
 	deepRun = false

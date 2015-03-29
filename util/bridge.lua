@@ -119,10 +119,7 @@ function bridge.liveSplit()
 	timeStopped = false
 end
 
-function bridge.split(encounters, finished)
-	if (encounters) then
-		-- database.split(utils.igt(), encounters)
-	end
+function bridge.split(finished)
 	if (finished) then
 		timeStopped = true
 	end

@@ -193,7 +193,7 @@ while true do
 			-- 	bridge.hp(currentHP, pokemon.index(0, "max_hp"))
 			-- 	lastHP = currentHP
 			-- end
-			if (currentHP == 0 and not strategies.canDie and pokemon.index(0) > 0) then
+			if (currentHP == 0 and not control.canDie() and pokemon.index(0) > 0) then
 				strategies.death(currentMap)
 			elseif (walk.strategy) then
 				if (strategies.execute(walk.strategy)) then

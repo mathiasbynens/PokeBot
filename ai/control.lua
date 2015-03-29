@@ -16,7 +16,7 @@ local potionInBattle = true
 local fightEncounter, caveFights = 0, 0
 local encounters = 0
 
-local shouldFight, minExp
+local canDie, shouldFight, minExp
 local shouldCatch, attackIdx
 local extraEncounter, maxEncounters
 local isYolo, battleYolo
@@ -105,7 +105,14 @@ local controlFunctions = {
 
 }
 
--- Combat
+-- COMBAT
+
+function control.canDie(enabled)
+	if enabled == nil then
+		return canDie
+	end
+	canDie = enabled
+end
 
 local function isNewFight()
 	if (fightEncounter < encounters and memory.double("battle", "opponent_hp") == memory.double("battle", "opponent_max_hp")) then
@@ -218,6 +225,7 @@ function control.wildEncounter()
 end
 
 function control.reset()
+	canDie = false
 	oneHits = false
 	shouldCatch = nil
 	shouldFight = nil

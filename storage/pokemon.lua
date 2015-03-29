@@ -26,6 +26,7 @@ local pokeIDs = {
 	jinx = 72,
 	meowth = 77,
 	pikachu = 84,
+	dragonair = 89,
 	zubat = 107,
 	ekans = 108,
 	paras = 109,

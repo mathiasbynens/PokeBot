@@ -1,6 +1,33 @@
 local opponents = {
 
-	KogaHypno = {
+	RivalGyarados = {
+		type1 = "water",
+		type2 = "flying",
+		def = 71,
+		id = 22,
+		spec = 87,
+		hp = 126,
+		speed = 72,
+		level = 38,
+		att = 106,
+		moves = {
+			{
+				name = "Hydro-Pump",
+				accuracy = 80,
+				power = 120,
+				id = 56,
+				special = true,
+				max_pp = 5,
+				move_type = "water",
+			}
+		},
+		boost = {
+			stat = "spec",
+			mp = 1.5
+		}
+	},
+
+	HypnoHeadbutt = {
 		type1 = "psychic",
 		type2 = "psychic",
 		def = 58,
@@ -12,8 +39,31 @@ local opponents = {
 		att = 60,
 		moves = {
 			{
+				name = "Headbutt",
 				accuracy = 100,
+				power = 70,
+				id = 29,
+				special = false,
+				max_pp = 15,
+				move_type = "normal",
+			}
+		}
+	},
+
+	HypnoConfusion = {
+		type1 = "psychic",
+		type2 = "psychic",
+		def = 58,
+		id = 129,
+		spec = 88,
+		hp = 107,
+		speed = 56,
+		level = 34,
+		att = 60,
+		moves = {
+			{
 				name = "Confusion",
+				accuracy = 100,
 				power = 50,
 				id = 93,
 				special = true,
@@ -35,8 +85,8 @@ local opponents = {
 		att = 90,
 		moves = {
 			{
-				accuracy = 100,
 				name = "Self-Destruct",
+				accuracy = 100,
 				power = 260,
 				id = 120,
 				special = false,
@@ -58,9 +108,9 @@ local opponents = {
 		att = 89,
 		moves = {
 			{
+				name = "Stomp",
 				move_type = "normal",
 				accuracy = 100,
-				name = "Stomp",
 				power = 65,
 				id = 23,
 				special = false,
@@ -82,8 +132,8 @@ local opponents = {
 		att = 90,
 		moves = {
 			{
-				accuracy = 100,
 				name = "Aurora-Beam",
+				accuracy = 100,
 				power = 65,
 				id = 62,
 				special = true,
@@ -109,8 +159,8 @@ local opponents = {
 		att = 160,
 		moves = {
 			{
-				accuracy = 80,
 				name = "Hydro-Pump",
+				accuracy = 80,
 				power = 120,
 				id = 56,
 				special = true,
@@ -136,8 +186,8 @@ local opponents = {
 		att = 113,
 		moves = {
 			{
-				accuracy = 100,
 				name = "Wing-Attack",
+				accuracy = 100,
 				power = 35,
 				id = 17,
 				special = false,
@@ -159,8 +209,8 @@ local opponents = {
 		att = 113,
 		moves = {
 			{
-				accuracy = 90,
 				name = "Sky-Attack",
+				accuracy = 90,
 				power = 140,
 				id = 143,
 				special = false,
