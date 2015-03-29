@@ -22,7 +22,7 @@ local function sendButton(button, ab)
 		gui.text(0, 7, button.." "..remainingFrames)
 	end
 	if (ab) then
-		button = "AB"
+		buttonbutton = "A,B"
 	end
 	bridgeButton(button)
 	setForFrame = button
@@ -68,7 +68,7 @@ end
 function input.escape()
 	local inputTable = {Right=true, Down=true}
 	joypad.set(inputTable)
-	bridgeButton("Escape")
+	bridgeButton("D,R")
 end
 
 function input.clear()
@@ -94,7 +94,6 @@ end
 function input.advance()
 	if (not setForFrame) then
 		bridgeButton("e")
-		-- print("e")
 	end
 end
 

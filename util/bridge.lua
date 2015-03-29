@@ -8,7 +8,7 @@ end
 local utils = require("util.utils")
 
 local client = nil
-local timeStopped = false
+local timeStopped = true
 
 local function send(prefix, body)
 	if (client) then
