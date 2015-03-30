@@ -67,7 +67,7 @@ local paths = {
 	-- Leaving Pewter City
 	{2, {23,18}, {40,18}},
 	-- Route 3
-	{14, {0,10}, {s="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="leer",{"caterpie",8},{"weedle",7}}, {11,4}, {12,4}, {s="potion",hp=19}, {13,4}, {s="interact",dir="Right"}, {s="shortsKid"}, {13,5}, {s="potionBeforeCocoons"}, {18,5}, {s="interact",dir="Right"}, {s="swapHornAttack"}, {18,6}, {22,6}, {22,5}, {s="potion",hp=4}, {24,5}, {s="interact",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
+	{14, {0,10}, {s="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {s="potion",hp=19}, {13,4}, {s="interact",dir="Right"}, {s="shortsKid"}, {13,5}, {s="potionBeforeCocoons"}, {18,5}, {s="interact",dir="Right"}, {s="swapHornAttack"}, {18,6}, {22,6}, {22,5}, {s="potion",hp=4}, {24,5}, {s="interact",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
 	-- To the Center
 	{15, {9,16}, {c="pp",on=false}, {12,16}, {12,6}, {11,6}, {11,5}},
 	-- PP up
@@ -135,7 +135,7 @@ local paths = {
 	-- Underground exit
 	{74, {4,4}, {3,8}},
 	-- Oddish
-	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=9,yolo=5}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=9,yolo=5}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=9,yolo=5}, {10,31}, {9,31}, {9,32}, {s="potion",hp=20,yolo=18}, {9,36}},
+	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=10,yolo=7}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=10,yolo=7}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=10,yolo=7}, {10,31}, {9,31}, {9,32}, {s="potion",hp=20,yolo=18}, {9,36}},
 	-- Enter Vermilion
 	{5, {19,0}, {c="disableCatch"}, {19,6}, {21,6}, {21,14}, {23,14}, {23,13}},
 	-- Vermilion mart

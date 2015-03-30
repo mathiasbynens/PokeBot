@@ -1147,7 +1147,7 @@ strategyFunctions = {
 
 	shopPewterMart = function()
 		return shop.transaction{
-			buy = {{name="potion", index=1, amount=8}}
+			buy = {{name="potion", index=1, amount=9}}
 		}
 	end,
 
@@ -1197,8 +1197,46 @@ strategyFunctions = {
 		return buffTo("leer", defLimit)
 	end,
 
+	bugCatcher = function()
+		if (battle.isActive()) then
+			canProgress = true
+			local isWeedle = pokemon.isOpponent("weedle")
+			if (isWeedle and not tempDir) then
+				tempDir = true
+			end
+			secondCaterpie = tempDir
+			if (not isWeedle and secondCaterpie) then
+				if (level4Nidoran and nidoSpeed >= 14 and pokemon.index(0, "attack") >= 19) then
+					-- print("IA "..pokemon.index(0, "attack"))
+					battle.automate()
+					return
+				end
+			end
+			strategyFunctions.leer({{"caterpie",8}, {"weedle",7}})
+		elseif (canProgress) then
+			return true
+		else
+			battle.automate()
+		end
+	end,
+
 	shortsKid = function()
 		local fightingEkans = pokemon.isOpponent("ekans")
+		if (fightingEkans) then
+			local wrapping = memory.value("battle", "turns") > 0
+			if (wrapping) then
+				local curr_hp = memory.double("battle", "our_hp")
+				if (not tempDir) then
+					tempDir = curr_hp
+				end
+				if (tempDir - curr_hp < 4 and curr_hp < 14 and not opponentDamaged()) then
+					inventory.use("potion", nil, true)
+					return false
+				end
+			elseif (tempDir) then
+				tempDir = nil
+			end
+		end
 		control.battlePotion(fightingEkans or damaged(2))
 		return strategyFunctions.leer({{"rattata",9}, {"ekans",10}})
 	end,
@@ -2411,40 +2449,70 @@ strategyFunctions = {
 		return useItem({item="elixer", poke="nidoking", chain=data.chain, close=data.close})
 	end,
 
+	fightGiovanniMachoke = function()
+		if (initialize()) then
+			if (nidoAttack >= 55) then
+				local eqRequired = nidoSpecial >= 47 and 7 or 8
+				if (battle.pp("earthquake") >= eqRequired) then
+					bridge.chat("Using Earthquake strats on the Machokes")
+					return true
+				end
+			end
+		end
+		return prepare("x_special")
+	end,
+
 	checkGiovanni = function()
+		local ryhornDamage = math.floor(combat.healthFor("GiovanniRhyhorn") * 0.9)
 		if (initialize()) then
 			local earthquakePP = battle.pp("earthquake")
-			if (earthquakePP > 1) then
-				if (riskGiovanni and earthquakePP > 2 and battle.pp("horn_drill") > 4 and (yolo or pokemon.info("nidoking", "hp") > combat.healthFor("GiovanniRhyhorn") * 0.925)) then -- RISK
-					bridge.chat("Using risky strats on Giovanni to skip the extra Max Ether...")
-				else
-					riskGiovanni = false
+			if (earthquakePP >= 2) then
+				if (riskGiovanni) then
+					if (earthquakePP >= 5) then
+						bridge.chat("Saved enough Earthquake PP for safe strats on Giovanni!")
+					elseif (earthquakePP >= 3 and battle.pp("horn_drill") >= 5 and (yolo or pokemon.info("nidoking", "hp") >= ryhornDamage)) then -- RISK
+						bridge.chat("Using risky strats on Giovanni to skip the extra Max Ether...")
+					else
+						riskGiovanni = false
+					end
 				end
 				return true
 			end
-			local message = "Ran out of Earthquake PP :("
-			if (not yolo) then
-				message = message.." Time for safe strats."
+			local message = "Ran out of Earthquake PP :( "
+			if (yolo) then
+				message = message.."Risking on Giovanni."
+			else
+				message = message.."Time for standard strats."
 			end
 			bridge.chat(message)
 			riskGiovanni = false
 		end
-		return strategyFunctions.potion({hp=50, yolo=10})
-	end,
-
-	fightGiovanniMachoke = function(data)
-		return prepare("x_special")
+		return strategyFunctions.potion({hp=50, yolo=ryhornDamage})
 	end,
 
 	fightGiovanni = function()
 		if (battle.isActive()) then
-			canProgress = true
-			if (riskGiovanni and not prepare("x_special")) then
-				return false
+			if (initialize()) then
+				tempDir = battle.pp("earthquake")
+				canProgress = true
 			end
-			local forced
-			if (pokemon.isOpponent("rhydon")) then
-				forced = "ice_beam"
+			local forced, needsXSpecial
+			local startEqPP = tempDir
+			if (riskGiovanni) then
+				if (startEqPP < 5) then
+					needsXSpecial = true
+				end
+				if (needsXSpecial or battle.pp("earthquake") < 4) then
+					forced = "ice_beam"
+				end
+			else
+				needsXSpecial = startEqPP < 2
+				if (pokemon.isOpponent("rhydon")) then
+					forced = "ice_beam"
+				end
+			end
+			if (needsXSpecial and not prepare("x_special")) then
+				return false
 			end
 			battle.automate(forced)
 		elseif (canProgress) then
@@ -2732,35 +2800,76 @@ strategyFunctions = {
 
 	blue = function()
 		if (battle.isActive()) then
-			canProgress = true
-			if (memory.value("battle", "turns") > 0 and not isPrepared("x_accuracy", "x_speed")) then
-				local toPotion = inventory.contains("full_restore", "super_potion")
-				if (battle.potionsForHit(toPotion)) then
-					inventory.use(toPotion, nil, true)
-					return false
-				end
-			end
-			if (not tempDir) then
-				if (nidoSpecial > 45 and pokemon.index(0, "speed") > 52 and inventory.contains("x_special")) then
+			if (not canProgress) then
+				canProgress = true
+				if (nidoSpecial >= 45 and pokemon.index(0, "speed") >= 52 and inventory.contains("x_special")) then
 					tempDir = "x_special"
 				else
 					tempDir = "x_speed"
 				end
-				print(tempDir.." strats")
-				tempDir = "x_speed" -- TODO find min stats, remove override
+				if (not STREAMING_MODE) then
+					tempDir = "x_speed"
+				end
 			end
-			if (prepare("x_accuracy", tempDir)) then
-				local forced = "horn_drill"
-				if (pokemon.isOpponent("alakazam")) then
-					if (tempDir == "x_speed") then
-						forced = "earthquake"
-					end
-				elseif (pokemon.isOpponent("rhydon")) then
-					if (tempDir == "x_special") then
-						forced = "ice_beam"
+
+			local boostFirst = pokemon.index(0, "hp") < 55
+			local firstItem, secondItem
+			if (boostFirst) then
+				firstItem = tempDir
+				secondItem = "x_accuracy"
+			else
+				firstItem = "x_accuracy"
+				secondItem = tempDir
+			end
+
+			local forced = "horn_drill"
+
+			if (memory.value("battle", "turns") > 0) then
+				local skyDamage = combat.healthFor("BlueSky")
+				local healCutoff = skyDamage * 0.825
+				if (initialize()) then
+					if (not isPrepared("x_accuracy", tempDir)) then
+						local msg = "Uh oh... First-turn Sky Attack could end the run here, "
+						if (pokemon.index(0, "hp") > skyDamage) then
+							msg = msg.."no criticals pls D:"
+						elseif (canHealFor(healCutoff)) then
+							msg = msg.."attempting to heal for it"
+							if (not canHealFor(skyDamage)) then
+								msg = msg.." (damage range)"
+							end
+							msg = msg.."."
+						else
+							msg = msg.."and nothing left to heal with BibleThump"
+						end
+						bridge.chat(msg)
 					end
 				end
-				battle.automate(forced)
+
+				if (prepare(firstItem)) then
+					if (not isPrepared(secondItem)) then
+						local toPotion = canHealFor(healCutoff)
+						if (toPotion) then
+							inventory.use(toPotion, nil, true)
+							return false
+						end
+					end
+					if (prepare("x_accuracy", tempDir)) then
+						battle.automate(forced)
+					end
+				end
+			else
+				if (prepare(firstItem, secondItem)) then
+					if (pokemon.isOpponent("alakazam")) then
+						if (tempDir == "x_speed") then
+							forced = "earthquake"
+						end
+					elseif (pokemon.isOpponent("rhydon")) then
+						if (tempDir == "x_special") then
+							forced = "ice_beam"
+						end
+					end
+					battle.automate(forced)
+				end
 			end
 		elseif (canProgress) then
 			return true
