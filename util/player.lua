@@ -12,16 +12,16 @@ function player.isFacing(direction)
 end
 
 function player.face(direction)
-	if (player.isFacing(direction)) then
+	if player.isFacing(direction) then
 		return true
 	end
-	if (textbox.handle()) then
+	if textbox.handle() then
 		input.press(direction, 0)
 	end
 end
 
 function player.interact(direction)
-	if (player.face(direction)) then
+	if player.face(direction) then
 		input.press("A", 2)
 		return true
 	end

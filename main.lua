@@ -41,24 +41,24 @@ local criticaled = false
 
 local function startNewAdventure()
 	local startMenu, withBattleStyle
-	if (YELLOW) then
+	if YELLOW then
 		startMenu = memory.raw(0x0F95) == 0
 		withBattleStyle = "battle_style"
 	else
 		startMenu = memory.value("player", "name") ~= 0
 	end
-	if (startMenu and menu.getCol() ~= 0) then
-		if (settings.set("text_speed", "battle_animation", withBattleStyle)) then
+	if startMenu and menu.getCol() ~= 0 then
+		if settings.set("text_speed", "battle_animation", withBattleStyle) then
 			menu.select(0)
 		end
-	elseif (math.random(0, START_WAIT) == 0) then
+	elseif math.random(0, START_WAIT) == 0 then
 		input.press("Start")
 	end
 end
 
 local function choosePlayerNames()
 	local name
-	if (memory.value("player", "name2") == 80) then
+	if memory.value("player", "name2") == 80 then
 		name = "E"
 	else
 		name = "B"
@@ -68,7 +68,7 @@ end
 
 local function pollForResponse()
 	local response = bridge.process()
-	if (response) then
+	if response then
 		bridge.polling = false
 		textbox.setName(tonumber(response))
 	end
@@ -86,7 +86,7 @@ local function resetAll()
 	previousPartySize = 0
 	-- client.speedmode = 200
 
-	if (CUSTOM_SEED) then
+	if CUSTOM_SEED then
 		strategies.seed = CUSTOM_SEED
 		print("RUNNING WITH A FIXED SEED ("..strategies.seed.."), every run will play out identically!")
 	else
@@ -103,18 +103,18 @@ if STREAMING_MODE then
 	RESET_FOR_TIME = true
 end
 -- STREAMING_MODE = false --TODO disable
-if (CUSTOM_SEED) then
+if CUSTOM_SEED then
 	client.reboot_core()
 else
 	hasAlreadyStartedPlaying = utils.ingame()
 end
 
 strategies.init(hasAlreadyStartedPlaying)
-if (RESET_FOR_TIME and hasAlreadyStartedPlaying) then
+if RESET_FOR_TIME and hasAlreadyStartedPlaying then
 	RESET_FOR_TIME = false
 	print("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.")
 end
-if (STREAMING_MODE) then
+if STREAMING_MODE then
 	bridge.init()
 else
 	input.setDebug(true)
@@ -126,25 +126,25 @@ local previousMap
 
 while true do
 	local currentMap = memory.value("game", "map")
-	if (currentMap ~= previousMap) then
+	if currentMap ~= previousMap then
 		input.clear()
 		previousMap = currentMap
 	end
-	if (strategies.frames) then
-		if (memory.value("game", "battle") == 0) then
+	if strategies.frames then
+		if memory.value("game", "battle") == 0 then
 			strategies.frames = strategies.frames + 1
 		end
 		gui.text(0, 80, strategies.frames)
 	end
-	if (bridge.polling) then
+	if bridge.polling then
 		pollForResponse()
 	end
 
-	if (not input.update()) then
-		if (not utils.ingame()) then
-			if (currentMap == 0) then
-				if (running) then
-					if (not hasAlreadyStartedPlaying) then
+	if not input.update() then
+		if not utils.ingame() then
+			if currentMap == 0 then
+				if running then
+					if not hasAlreadyStartedPlaying then
 						client.reboot_core()
 						hasAlreadyStartedPlaying = true
 					else
@@ -154,7 +154,7 @@ while true do
 					startNewAdventure()
 				end
 			else
-				if (not running) then
+				if not running then
 					bridge.liveSplit()
 					running = true
 				end
@@ -162,11 +162,11 @@ while true do
 			end
 		else
 			local battleState = memory.value("game", "battle")
-			if (battleState > 0) then
-				if (battleState == 1) then
-					if (not inBattle) then
+			if battleState > 0 then
+				if battleState == 1 then
+					if not inBattle then
 						control.wildEncounter()
-						if (strategies.moonEncounters) then
+						if strategies.moonEncounters then
 							strategies.moonEncounters = strategies.moonEncounters + 1
 						end
 						inBattle = true
@@ -174,14 +174,14 @@ while true do
 				end
 				local isCritical
 				local battleMenu = memory.value("battle", "menu")
-				if (battleMenu == 94) then
+				if battleMenu == 94 then
 					isCritical = false
-				elseif (memory.double("battle", "our_hp") == 0) then
-					if (memory.value("battle", "critical") == 1) then
+				elseif memory.double("battle", "our_hp") == 0 then
+					if memory.value("battle", "critical") == 1 then
 						isCritical = true
 					end
 				end
-				if (isCritical ~= nil and isCritical ~= criticaled) then
+				if isCritical ~= nil and isCritical ~= criticaled then
 					criticaled = isCritical
 					strategies.criticaled = criticaled
 				end
@@ -189,33 +189,33 @@ while true do
 				inBattle = false
 			end
 			local currentHP = pokemon.index(0, "hp")
-			-- if (currentHP ~= lastHP) then
+			-- if currentHP ~= lastHP then
 			-- 	bridge.hp(currentHP, pokemon.index(0, "max_hp"))
 			-- 	lastHP = currentHP
 			-- end
-			if (currentHP == 0 and not control.canDie() and pokemon.index(0) > 0) then
+			if currentHP == 0 and not control.canDie() and pokemon.index(0) > 0 then
 				strategies.death(currentMap)
-			elseif (walk.strategy) then
-				if (strategies.execute(walk.strategy)) then
+			elseif walk.strategy then
+				if strategies.execute(walk.strategy) then
 					walk.traverse(currentMap)
 				end
-			elseif (battleState > 0) then
-				if (not control.shouldCatch(partySize)) then
+			elseif battleState > 0 then
+				if not control.shouldCatch(partySize) then
 					battle.automate()
 				end
-			elseif (textbox.handle()) then
+			elseif textbox.handle() then
 				walk.traverse(currentMap)
 			end
 		end
 	end
 
-	if (STREAMING_MODE) then
+	if STREAMING_MODE then
 		local newSecs = memory.raw(0xDA44)
-		if (newSecs ~= oldSecs and (newSecs > 0 or memory.raw(0xDA45) > 0)) then
+		if newSecs ~= oldSecs and (newSecs > 0 or memory.raw(0xDA45) > 0) then
 			bridge.time(utils.elapsedTime())
 			oldSecs = newSecs
 		end
-	elseif (PAINT_ON) then
+	elseif PAINT_ON then
 		paint.draw(currentMap)
 	end
 

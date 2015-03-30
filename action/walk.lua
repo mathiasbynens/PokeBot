@@ -33,11 +33,11 @@ end
 
 function dir(px, py, dx, dy)
 	local direction
-	if (py > dy) then
+	if py > dy then
 		direction = "Up"
-	elseif (py < dy) then
+	elseif py < dy then
 		direction = "Down"
-	elseif (px > dx) then
+	elseif px > dx then
 		direction = "Left"
 	else
 		direction = "Right"
@@ -48,7 +48,7 @@ walk.dir = dir
 
 function step(dx, dy)
 	local px, py = player.position()
-	if (px == dx and py == dy) then
+	if px == dx and py == dy then
 		return true
 	end
 	input.press(dir(px, py, dx, dy), 0)
@@ -69,14 +69,14 @@ end
 function walk.init()
 	local region = memory.value("game", "map")
 	local px, py = player.position()
-	if (region == 0 and px == 0 and py == 0) then
+	if region == 0 and px == 0 and py == 0 then
 		return false
 	end
 	for tries=1,2 do
 		for i,p in ipairs(paths) do
-			if (i > 2 and p[1] == region) then
+			if i > 2 and p[1] == region then
 				local origin = p[2]
-				if (tries == 2 or (origin[1] == px and origin[2] == py)) then
+				if tries == 2 or (origin[1] == px and origin[2] == py) then
 					setPath(i, region)
 					return tries == 1
 				end
@@ -87,7 +87,7 @@ end
 
 function walk.traverse(region)
 	local newIndex
-	if (not path or currentMap ~= region) then
+	if not path or currentMap ~= region then
 		walk.strategy = nil
 		setPath(pathIdx + 1, region)
 		newIndex = pathIdx
@@ -97,12 +97,12 @@ function walk.traverse(region)
 		return
 	end
 	local tile = path[stepIdx]
-	if (tile.c) then
+	if tile.c then
 		control.set(tile)
 		return completeStep(region)
 	end
-	if (tile.s) then
-		if (walk.strategy) then
+	if tile.s then
+		if walk.strategy then
 			walk.strategy = nil
 			return completeStep(region)
 		end
@@ -121,24 +121,24 @@ end
 -- Custom path
 
 function walk.invertCustom(silent)
-	if (not silent) then
+	if not silent then
 		customIdx = customIdx + customDir
 	end
 	customDir = customDir * -1
 end
 
 function walk.custom(cpath, increment)
-	if (not cpath) then
+	if not cpath then
 		customIdx = 1
 		customDir = 1
 		return
 	end
-	if (increment) then
+	if increment then
 		customIdx = customIdx + customDir
 	end
 	local tile = cpath[customIdx]
-	if (not tile) then
-		if (customIdx < 1) then
+	if not tile then
+		if customIdx < 1 then
 			customIdx = #cpath
 		else
 			customIdx = 1
@@ -146,13 +146,13 @@ function walk.custom(cpath, increment)
 		return customIdx
 	end
 	local t1, t2 = tile[1], tile[2]
-	if (t2 == nil) then
-		if (player.face(t1)) then
+	if t2 == nil then
+		if player.face(t1) then
 			input.press("A", 2)
 		end
 		return t1
 	end
-	if (step(t1, t2)) then
+	if step(t1, t2) then
 		customIdx = customIdx + customDir
 	end
 end

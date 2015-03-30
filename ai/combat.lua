@@ -52,22 +52,22 @@ end
 combat.isDisabled = isDisabled
 
 local function calcDamage(move, attacker, defender, rng)
-	if (move.fixed) then
+	if move.fixed then
 		return move.fixed, move.fixed
 	end
-	if (move.power == 0 or isDisabled(move.id)) then
+	if move.power == 0 or isDisabled(move.id) then
 		return 0, 0
 	end
-	if (move.power > 9000) then
+	if move.power > 9000 then
 		local oid = defender.id
-		if (oid ~= 14 and oid ~= 147 and oid ~= 171 and (oidd ~= 151 or memory.value("game", "map") == 120)) then -- ???
-			if (memory.value("battle", "x_accuracy") == 1 and defender.speed < attacker.speed) then
+		if oid ~= 14 and oid ~= 147 and oid ~= 171 and (oidd ~= 151 or memory.value("game", "map") == 120) then -- ???
+			if memory.value("battle", "x_accuracy") == 1 and defender.speed < attacker.speed then
 				return 9001, 9001
 			end
 		end
 		return 0, 0
 	end
-	if (move.name == "Thrash" and combat.disableThrash) then
+	if move.name == "Thrash" and combat.disableThrash then
 		return 0, 0
 	end
 
@@ -79,17 +79,17 @@ local function calcDamage(move, attacker, defender, rng)
 	end
 	local damage = floor(floor(floor(2 * attacker.level / 5 + 2) * math.max(1, attFactor) * move.power / math.max(1, defFactor)) / 50) + 2
 
-	if (move.move_type == attacker.type1 or move.move_type == attacker.type2) then
+	if move.move_type == attacker.type1 or move.move_type == attacker.type2 then
 		damage = floor(damage * 1.5) -- STAB
 	end
 
 	local dmp = damageMultiplier[move.move_type]
 	local typeEffect1, typeEffect2 = dmp[defender.type1], dmp[defender.type2]
-	if (defender.type1 == defender.type2) then
+	if defender.type1 == defender.type2 then
 		typeEffect2 = 1
 	end
 	damage = floor(damage * typeEffect1 * typeEffect2)
-	if (rng) then
+	if rng then
 		return damage, damage
 	end
 	return floor(damage * 217 / 255), damage
@@ -112,9 +112,9 @@ combat.getOpponentType = getOpponentType
 
 function getOurType(ty)
 	local t1 = types[memory.value("battle", "our_type1")]
-	if (ty ~= 0) then
+	if ty ~= 0 then
 		t1 = types[memory.value("battle", "our_type2")]
-		if (not t1) then
+		if not t1 then
 			return memory.value("battle", "opponent_type2")
 		end
 	end
@@ -128,16 +128,16 @@ combat.getOurType = getOurType
 local function getMoves(who)--Get the moveset of us [0] or them [1]
 	local moves = {}
 	local base
-	if (who == 1) then
+	if who == 1 then
 		base = 0xCFED
 	else
 		base = 0xD01C
 	end
 	for idx=0, 3 do
 		local val = memory.raw(base + idx)
-		if (val > 0) then
+		if val > 0 then
 			local moveTable = movelist.get(val)
-			if (who == 0) then
+			if who == 0 then
 				moveTable.pp = memory.raw(0xD02D + idx)
 			end
 			moves[idx + 1] = moveTable
@@ -149,11 +149,11 @@ combat.getMoves = getMoves
 
 local function modPlayerStats(user, enemy, move)
 	local effect = move.effects
-	if (effect) then
+	if effect then
 		local diff = effect.diff
 		local hitThem = diff < 0
 		local stat = effect.stat
-		if (hitThem) then
+		if hitThem then
 			enemy[stat] = math.max(2, enemy[stat] + diff)
 		else
 			user[stat] = user[stat] + diff
@@ -168,51 +168,51 @@ local function calcBestHit(attacker, defender, ours, rng)
 	local ourMaxHit
 	local ret = nil
 	for idx,move in ipairs(attacker.moves) do
-		if (not move.pp or move.pp > 0) then
+		if not move.pp or move.pp > 0 then
 			local minDmg, maxDmg = calcDamage(move, attacker, defender, rng)
-			if (maxDmg) then
+			if maxDmg then
 				local minTurns, maxTurns
-				if (maxDmg <= 0) then
+				if maxDmg <= 0 then
 					minTurns, maxTurns = 9999, 9999
 				else
 					minTurns = math.ceil(defender.hp / maxDmg)
 					maxTurns = math.ceil(defender.hp / minDmg)
 				end
-				if (ours) then
+				if ours then
 					local replaces
-					if (not ret or minTurns < bestMinTurns or maxTurns < bestTurns) then
+					if not ret or minTurns < bestMinTurns or maxTurns < bestTurns then
 						replaces = true
-					elseif (maxTurns == bestTurns and move.name == "Thrash") then
+					elseif maxTurns == bestTurns and move.name == "Thrash" then
 						replaces = defender.hp == memory.double("battle", "opponent_max_hp")
-					elseif (maxTurns == bestTurns and ret.name == "Thrash") then
+					elseif maxTurns == bestTurns and ret.name == "Thrash" then
 						replaces = defender.hp ~= memory.double("battle", "opponent_max_hp")
-					elseif (move.fast and not ret.fast) then
+					elseif move.fast and not ret.fast then
 						replaces = maxTurns <= bestTurns
-					elseif (ret.fast) then
+					elseif ret.fast then
 						replaces = maxTurns < bestTurns
-					elseif (enablePP) then
-						if (maxTurns < 2 or maxTurns == bestMaxTurns) then
-							if (ret.name == "Earthquake" and (move.name == "Ice-Beam" or move.name == "Thunderbolt")) then
+					elseif enablePP then
+						if maxTurns < 2 or maxTurns == bestMaxTurns then
+							if ret.name == "Earthquake" and (move.name == "Ice-Beam" or move.name == "Thunderbolt") then
 								replaces = true
-							elseif (move.pp > ret.pp) then
-								if (ret.name == "Horn-Drill") then
+							elseif move.pp > ret.pp then
+								if ret.name == "Horn-Drill" then
 									replaces = true
-								elseif (move.name ~= "Earthquake") then
+								elseif move.name ~= "Earthquake" then
 									replaces = true
 								end
 							end
 						end
-					elseif (minDmg > bestDmg) then
+					elseif minDmg > bestDmg then
 						replaces = true
 					end
-					if (replaces) then
+					if replaces then
 						ret = move
 						bestMinTurns = minTurns
 						bestTurns = maxTurns
 						bestDmg = minDmg
 						ourMaxHit = maxDmg
 					end
-				elseif (maxDmg > bestDmg) then -- Opponents automatically hit max
+				elseif maxDmg > bestDmg then -- Opponents automatically hit max
 					ret = move
 					bestTurns = minTurns
 					bestDmg = maxDmg
@@ -220,7 +220,7 @@ local function calcBestHit(attacker, defender, ours, rng)
 			end
 		end
 	end
-	if (ret) then
+	if ret then
 		ret.damage = bestDmg
 		ret.maxDamage = ourMaxHit
 		ret.minTurns = bestMinTurns
@@ -229,12 +229,12 @@ local function calcBestHit(attacker, defender, ours, rng)
 end
 
 local function getBestMove(ours, enemy, draw)
-	if (enemy.hp < 1) then
+	if enemy.hp < 1 then
 		return
 	end
 	local bm, bestUs = calcBestHit(ours, enemy, true)
 	local jj, bestEnemy = calcBestHit(enemy, ours, false)
-	if (not bm) then
+	if not bm then
 		return
 	end
 	if draw and bm.midx then
@@ -258,13 +258,13 @@ local function activePokemon(preset)
 	}
 
 	local enemy
-	if (preset) then
+	if preset then
 		enemy = opponents[preset]
 		local toBoost = enemy.boost
-		if (toBoost) then
+		if toBoost then
 			local currSpec = ours.spec
 			local booster = toBoost.mp
-			if ((currSpec < 140) == (booster > 1)) then
+			if (currSpec < 140) == (booster > 1) then
 				ours.spec = math.floor(currSpec * booster)
 			end
 		end
@@ -316,24 +316,24 @@ function combat.inKillRange(draw)
 	local ours, enemy = activePokemon()
 	local enemyAttack, __ = calcBestHit(enemy, ours, false)
 	local __, turnsToKill = calcBestHit(ours, enemy, true)
-	if (not turnsToKill or not enemyAttack) then
+	if not turnsToKill or not enemyAttack then
 		return false
 	end
-	if (draw) then
+	if draw then
 		gui.text(0, 21, ours.speed.." "..enemy.speed)
 		gui.text(0, 28, turnsToDie.." "..ours.hp.." | "..turnsToKill.." "..enemy.hp)
 	end
 	local hpReq = enemyAttack.damage
 	local isConfused = isConfused()
-	if (isConfused) then
+	if isConfused then
 		hpReq = hpReq + math.floor(ours.hp * 0.2)
 	end
-	if (ours.hp < hpReq) then
+	if ours.hp < hpReq then
 		local outspeed = enemyAttack.outspeed
-		if (outspeed and outspeed ~= true) then
+		if outspeed and outspeed ~= true then
 			outspeed = memory.value("battle", "turns") > 0
 		end
-		if (outspeed or isConfused or turnsToKill > 1 or ours.speed <= enemy.speed or isSleeping()) then
+		if outspeed or isConfused or turnsToKill > 1 or ours.speed <= enemy.speed or isSleeping() then
 			return ours, hpReq
 		end
 	end
@@ -341,12 +341,12 @@ end
 
 local function getBattlePokemon()
 	local ours, enemy = activePokemon()
-	if (enemy.hp == 0) then
+	if enemy.hp == 0 then
 		return
 	end
 	for idx=1,4 do
 		local move = ours.moves[idx]
-		if (move) then
+		if move then
 			move.midx = idx
 		end
 	end
@@ -355,16 +355,16 @@ end
 
 function combat.nonKill()
 	local ours, enemy = getBattlePokemon()
-	if (not enemy) then
+	if not enemy then
 		return
 	end
 	local bestDmg = -1
 	local ret = nil
 	for idx,move in ipairs(ours.moves) do
-		if (not move.pp or move.pp > 0) then
+		if not move.pp or move.pp > 0 then
 			local __, maxDmg = calcDamage(move, ours, enemy, true)
 			local threshold = maxDmg * 0.95
-			if (threshold and threshold < enemy.hp and threshold > bestDmg) then
+			if threshold and threshold < enemy.hp and threshold > bestDmg then
 				ret = move
 				bestDmg = threshold
 			end
@@ -375,14 +375,14 @@ end
 
 function combat.bestMove()
 	local ours, enemy = getBattlePokemon()
-	if (enemy) then
+	if enemy then
 		return getBestMove(ours, enemy)
 	end
 end
 
 function combat.enemyAttack()
 	local ours, enemy = activePokemon()
-	if (enemy.hp == 0) then
+	if enemy.hp == 0 then
 		return
 	end
 	return calcBestHit(enemy, ours, false)

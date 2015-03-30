@@ -20,13 +20,13 @@ end
 
 function textbox.name(letter, randomize)
 	local inputting = memory.value("menu", "text_input") == 240
-	if (inputting) then
-		if (memory.value("menu", "text_length") > 0) then
+	if inputting then
+		if memory.value("menu", "text_length") > 0 then
 			input.press("Start")
 			return true
 		end
 		local lidx
-		if (letter) then
+		if letter then
 			lidx = getIndexForLetter(letter)
 		else
 			lidx = nidoIdx
@@ -34,19 +34,19 @@ function textbox.name(letter, randomize)
 
 		local crow = memory.value("menu", "input_row")
 		local drow = math.ceil(lidx / 9)
-		if (menu.balance(crow, drow, true, 6, true)) then
+		if menu.balance(crow, drow, true, 6, true) then
 			local ccol = math.floor(memory.value("menu", "column") / 2)
 			local dcol = math.fmod(lidx - 1, 9)
-			if (menu.sidle(ccol, dcol, 9, true)) then
+			if menu.sidle(ccol, dcol, 9, true) then
 				input.press("A")
 			end
 		end
 	else
 		-- TODO cancel when menu isn't up
-		-- if (memory.value("menu", "current") == 7) then
-		if (memory.raw(0x10B7) == 3) then
+		-- if memory.value("menu", "current") == 7 then
+		if memory.raw(0x10B7) == 3 then
 			input.press("A", 2)
-		elseif (randomize) then
+		elseif randomize then
 			input.press("A", math.random(1, 5))
 		else
 			input.cancel()
@@ -68,7 +68,7 @@ function textbox.isActive()
 end
 
 function textbox.handle()
-	if (not textbox.isActive()) then
+	if not textbox.isActive() then
 		return true
 	end
 	input.cancel()

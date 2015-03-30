@@ -90,7 +90,7 @@ end
 
 local function index(index, offset)
 	local double
-	if (not offset) then
+	if not offset then
 		offset = 0
 	else
 		local dataTable = data[offset]
@@ -99,7 +99,7 @@ local function index(index, offset)
 	end
 	local address = getAddress(index) + offset
 	local value = memory.raw(address)
-	if (double) then
+	if double then
 		value = value + memory.raw(address + 1)
 	end
 	return value
@@ -111,7 +111,7 @@ local function indexOf(...)
 		local pid = pokeIDs[name]
 		for i=0,5 do
 			local atIdx = index(i)
-			if (atIdx == pid) then
+			if atIdx == pid then
 				return i
 			end
 		end
@@ -125,7 +125,7 @@ pokemon.indexOf = indexOf
 function pokemon.battleMove(name)
 	local mid = moveList[name]
 	for i=1,4 do
-		if (mid == memory.raw(0xD01B + i)) then
+		if mid == memory.raw(0xD01B + i) then
 			return i
 		end
 	end
@@ -133,7 +133,7 @@ end
 
 function pokemon.moveIndex(move, pokemon)
 	local pokemonIdx
-	if (pokemon) then
+	if pokemon then
 		pokemonIdx = indexOf(pokemon)
 	else
 		pokemonIdx = 0
@@ -141,7 +141,7 @@ function pokemon.moveIndex(move, pokemon)
 	local address = getAddress(pokemonIdx) + 7
 	local mid = moveList[move]
 	for i=1,4 do
-		if (mid == memory.raw(address + i)) then
+		if mid == memory.raw(address + i) then
 			return i
 		end
 	end
@@ -157,7 +157,7 @@ end
 
 function pokemon.getName(id)
 	for name,pid in pairs(pokeIDs) do
-		if (pid == id) then
+		if pid == id then
 			return name
 		end
 	end
@@ -166,7 +166,7 @@ end
 function pokemon.getSacrifice(...)
 	for i,name in ipairs(arg) do
 		local pokemonIndex = indexOf(name)
-		if (pokemonIndex ~= -1 and index(pokemonIndex, "hp") > 0) then
+		if pokemonIndex ~= -1 and index(pokemonIndex, "hp") > 0 then
 			return name
 		end
 	end
@@ -174,7 +174,7 @@ end
 
 function pokemon.inParty(...)
 	for i,name in ipairs(arg) do
-		if (indexOf(name) ~= -1) then
+		if indexOf(name) ~= -1 then
 			return name
 		end
 	end
@@ -185,7 +185,7 @@ function pokemon.forMove(move)
 	for i=0,5 do
 		local address = getAddress(i)
 		for j=8,11 do
-			if (memory.raw(address + j) == moveID) then
+			if memory.raw(address + j) == moveID then
 				return i
 			end
 		end
@@ -199,9 +199,9 @@ end
 
 function pokemon.updateParty()
 	local partySize = memory.value("player", "party_size")
-	if (partySize ~= previousPartySize) then
+	if partySize ~= previousPartySize then
 		local poke = pokemon.inParty("oddish", "paras", "spearow", "pidgey", "nidoran", "squirtle")
-		if (poke) then
+		if poke then
 			bridge.caught(poke)
 			previousPartySize = partySize
 		end
@@ -213,7 +213,7 @@ end
 function pokemon.isOpponent(...)
 	local oid = memory.value("battle", "opponent_id")
 	for i,name in ipairs(arg) do
-		if (oid == pokeIDs[name]) then
+		if oid == pokeIDs[name] then
 			return name
 		end
 	end
@@ -222,7 +222,7 @@ end
 function pokemon.isDeployed(...)
 	local deployedID = memory.value("battle", "our_id")
 	for i,name in ipairs(arg) do
-		if (deployedID == pokeIDs[name]) then
+		if deployedID == pokeIDs[name] then
 			return name
 		end
 	end
@@ -244,27 +244,27 @@ end
 function pokemon.use(move)
 	local main = memory.value("menu", "main")
 	local pokeName = pokemon.forMove(move)
-	if (main == 141) then
+	if main == 141 then
 		input.press("A")
-	elseif (main == 128) then
+	elseif main == 128 then
 		local column = menu.getCol()
-		if (column == 11) then
+		if column == 11 then
 			menu.select(1, true)
-		elseif (column == 10 or column == 12) then
+		elseif column == 10 or column == 12 then
 			local midx = 0
 			local menuSize = memory.value("menu", "size")
-			if (menuSize == 4) then
-				if (move == "dig") then
+			if menuSize == 4 then
+				if move == "dig" then
 					midx = 1
-				elseif (move == "surf") then
-					if (pokemon.inParty("paras")) then
+				elseif move == "surf" then
+					if pokemon.inParty("paras") then
 						midx = 1
 					end
 				end
-			elseif (menuSize == 5) then
-				if (move == "dig") then
+			elseif menuSize == 5 then
+				if move == "dig" then
 					midx = 2
-				elseif (move == "surf") then
+				elseif move == "surf" then
 					midx = 1
 				end
 			end
@@ -272,9 +272,9 @@ function pokemon.use(move)
 		else
 			input.press("B")
 		end
-	elseif (main == 103) then
+	elseif main == 103 then
 		menu.select(pokeName, true)
-	elseif (main == 228) then
+	elseif main == 228 then
 		input.press("B")
 	else
 		return false

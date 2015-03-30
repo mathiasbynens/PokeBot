@@ -6,14 +6,14 @@ local menu = require "util.menu"
 local YELLOW = GAME_NAME == "yellow"
 
 local settings_menu
-if (YELLOW) then
+if YELLOW then
 	settings_menu = 93
 else
 	settings_menu = 94
 end
 
 local desired = {}
-if (YELLOW) then
+if YELLOW then
 	desired.text_speed = 1
 	desired.battle_animation = 128
 	desired.battle_style = 64
@@ -24,7 +24,7 @@ else
 end
 
 local function isEnabled(name)
-	if (YELLOW) then
+	if YELLOW then
 		local matching = {
 			text_speed = 0xF,
 			battle_animation = 128,
@@ -39,8 +39,8 @@ end
 
 function settings.set(...)
 	for i,name in ipairs(arg) do
-		if (not isEnabled(name)) then
-			if (menu.open(settings_menu, 1)) then
+		if not isEnabled(name) then
+			if menu.open(settings_menu, 1) then
 				menu.setOption(name, desired[name])
 			end
 			return false

@@ -133,7 +133,7 @@ end
 
 function Memory.value(section, key)
 	local memoryAddress = memoryNames[section]
-	if (key) then
+	if key then
 		memoryAddress = memoryAddress[key]
 	end
 	return raw(memoryAddress)

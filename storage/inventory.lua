@@ -60,7 +60,7 @@ function inventory.indexOf(name)
 	local searchID = items[name]
 	for i=0,19 do
 		local iidx = ITEM_BASE + i * 2
-		if (memory.raw(iidx) == searchID) then
+		if memory.raw(iidx) == searchID then
 			return i
 		end
 	end
@@ -69,7 +69,7 @@ end
 
 function inventory.count(name)
 	local index = inventory.indexOf(name)
-	if (index ~= -1) then
+	if index ~= -1 then
 		return memory.raw(ITEM_BASE + index * 2 + 1)
 	end
 	return 0
@@ -77,7 +77,7 @@ end
 
 function inventory.contains(...)
 	for i,name in ipairs(arg) do
-		if (inventory.count(name) > 0) then
+		if inventory.count(name) > 0 then
 			return name
 		end
 	end
@@ -88,32 +88,32 @@ end
 function inventory.teach(item, poke, replaceIdx, altPoke)
 	local main = memory.value("menu", "main")
 	local column = menu.getCol()
-	if (main == 144) then
-		if (column == 5) then
+	if main == 144 then
+		if column == 5 then
 			menu.select(replaceIdx, true)
 		else
 			input.press("A")
 		end
-	elseif (main == 128) then
-		if (column == 5) then
+	elseif main == 128 then
+		if column == 5 then
 			menu.select(inventory.indexOf(item), "accelerate", true)
-		elseif (column == 11) then
+		elseif column == 11 then
 			menu.select(2, true)
-		elseif (column == 14) then
+		elseif column == 14 then
 			menu.select(0, true)
 		end
-	elseif (main == 103) then
+	elseif main == 103 then
 		input.press("B")
-	elseif (main == 64 or main == 96 or main == 192) then
-		if (column == 5) then
+	elseif main == 64 or main == 96 or main == 192 then
+		if column == 5 then
 			menu.select(replaceIdx, true)
-		elseif (column == 14) then
+		elseif column == 14 then
 			input.press("A")
-		elseif (column == 15) then
+		elseif column == 15 then
 			menu.select(0, true)
 		else
 			local idx = 0
-			if (poke) then
+			if poke then
 				idx = pokemon.indexOf(poke, altPoke)
 			end
 			menu.select(idx, true)
@@ -129,12 +129,12 @@ function inventory.isFull()
 end
 
 function inventory.use(item, poke, midfight)
-	if (midfight) then
+	if midfight then
 		local battleMenu = memory.value("battle", "menu")
-		if (battleMenu == 94) then
+		if battleMenu == 94 then
 			local rowSelected = memory.value("menu", "row")
-			if (menu.getCol() == 9) then
-				if (rowSelected == 0) then
+			if menu.getCol() == 9 then
+				if rowSelected == 0 then
 					input.press("Down")
 				else
 					input.press("A")
@@ -142,11 +142,11 @@ function inventory.use(item, poke, midfight)
 			else
 				input.press("Left")
 			end
-		elseif (battleMenu == 233) then
+		elseif battleMenu == 233 then
 			menu.select(inventory.indexOf(item), "accelerate", true)
-		elseif (utils.onPokemonSelect(battleMenu)) then
-			if (poke) then
-				if (type(poke) == "string") then
+		elseif utils.onPokemonSelect(battleMenu) then
+			if poke then
+				if type(poke) == "string" then
 					poke = pokemon.indexOf(poke)
 				end
 				menu.select(poke, true)
@@ -161,35 +161,35 @@ function inventory.use(item, poke, midfight)
 
 	local main = memory.value("menu", "main")
 	local column = menu.getCol()
-	if (main == 144) then
-		if (memory.value("battle", "menu") == 95) then
+	if main == 144 then
+		if memory.value("battle", "menu") == 95 then
 			input.press("B")
 		else
 			local idx = 0
-			if (poke) then
+			if poke then
 				idx = pokemon.indexOf(poke)
 			end
 			menu.select(idx, true)
 		end
-	elseif (main == 128 or main == 60) then
-		if (column == 5) then
+	elseif main == 128 or main == 60 then
+		if column == 5 then
 			menu.select(inventory.indexOf(item), "accelerate", true)
-		elseif (column == 11) then
+		elseif column == 11 then
 			menu.select(2, true)
-		elseif (column == 14) then
+		elseif column == 14 then
 			menu.select(0, true)
 		else
 			local index = 0
-			if (poke) then
+			if poke then
 				index = pokemon.indexOf(poke)
 			end
 			menu.select(index, true)
 		end
-	elseif (main == 228) then
-		if (column == 14 and memory.value("battle", "menu") == 95) then
+	elseif main == 228 then
+		if column == 14 and memory.value("battle", "menu") == 95 then
 			input.press("B")
 		end
-	elseif (main == 103) then
+	elseif main == 103 then
 		input.press("B")
 	else
 		return false

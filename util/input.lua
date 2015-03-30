@@ -9,7 +9,7 @@ local debug
 local bCancel = true
 
 local function bridgeButton(btn)
-	if (btn ~= lastSend) then
+	if btn ~= lastSend then
 		lastSend = btn
 		bridge.input(btn)
 	end
@@ -18,10 +18,10 @@ end
 local function sendButton(button, ab)
 	local inputTable = {[button] = true}
 	joypad.set(inputTable)
-	if (debug) then
+	if debug then
 		gui.text(0, 7, button.." "..remainingFrames)
 	end
-	if (ab) then
+	if ab then
 		buttonbutton = "A,B"
 	end
 	bridgeButton(button)
@@ -29,15 +29,15 @@ local function sendButton(button, ab)
 end
 
 function input.press(button, frames)
-	if (setForFrame) then
+	if setForFrame then
 		print("ERR: Reassigning "..setForFrame.." to "..button)
 		return
 	end
-	if (frames == nil or frames > 0) then
-		if (button == currentButton) then
+	if frames == nil or frames > 0 then
+		if button == currentButton then
 			return
 		end
-		if (not frames) then
+		if not frames then
 			frames = 1
 		end
 		currentButton = button
@@ -50,11 +50,11 @@ function input.press(button, frames)
 end
 
 function input.cancel(accept)
-	if (accept and memory.value("menu", "shop_current") == 20) then
+	if accept and memory.value("menu", "shop_current") == 20 then
 		input.press(accept)
 	else
 		local button
-		if (bCancel) then
+		if bCancel then
 			button = "B"
 		else
 			button = "A"
@@ -77,10 +77,10 @@ function input.clear()
 end
 
 function input.update()
-	if (currentButton) then
+	if currentButton then
 		remainingFrames = remainingFrames - 1
-		if (remainingFrames >= 0) then
-			if (remainingFrames > 0) then
+		if remainingFrames >= 0 then
+			if remainingFrames > 0 then
 				sendButton(currentButton)
 				return true
 			end
@@ -92,7 +92,7 @@ function input.update()
 end
 
 function input.advance()
-	if (not setForFrame) then
+	if not setForFrame then
 		bridgeButton("e")
 	end
 end
@@ -102,15 +102,15 @@ function input.setDebug(enabled)
 end
 
 function input.test(fn, completes)
-	while (true) do
-		if (not input.update()) then
-			if (fn() and completes) then
+	while true do
+		if not input.update() then
+			if fn() and completes then
 				break
 			end
 		end
 		emu.frameadvance()
 	end
-	if (completes) then
+	if completes then
 		print(completes.." complete!")
 	end
 end

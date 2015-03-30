@@ -15,21 +15,21 @@ function paint.draw(currentMap)
 	gui.text(0, 14, currentMap..": "..px.." "..py)
 	gui.text(0, 0, elapsedTime())
 
-	if (memory.value("battle", "our_id") > 0) then
+	if memory.value("battle", "our_id") > 0 then
 		local hp = pokemon.index(0, "hp")
 		local hpStatus
-		if (hp == 0) then
+		if hp == 0 then
 			hpStatus = "DEAD"
-		elseif (hp <= math.ceil(pokemon.index(0, "max_hp") * 0.2)) then
+		elseif hp <= math.ceil(pokemon.index(0, "max_hp") * 0.2) then
 			hpStatus = "RED"
 		end
-		if (hpStatus) then
+		if hpStatus then
 			gui.text(120, 7, hpStatus)
 		end
 	end
 
 	local nidx = pokemon.indexOf("nidoran", "nidorino", "nidoking")
-	if (nidx ~= -1) then
+	if nidx ~= -1 then
 		local att = pokemon.index(nidx, "attack")
 		local def = pokemon.index(nidx, "defense")
 		local spd = pokemon.index(nidx, "speed")
@@ -37,7 +37,7 @@ function paint.draw(currentMap)
 		gui.text(100, 0, att.." "..def.." "..spd.." "..scl)
 	end
 	local enc = " encounter"
-	if (encounters ~= 1) then
+	if encounters ~= 1 then
 		enc = enc.."s"
 	end
 	gui.text(0, 116, memory.value("battle", "critical"))
