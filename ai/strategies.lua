@@ -12,21 +12,20 @@ local bridge = require "util.bridge"
 local input = require "util.input"
 local memory = require "util.memory"
 local menu = require "util.menu"
-local paint = require "util.paint"
 local player = require "util.player"
 local utils = require "util.utils"
 
 local inventory = require "storage.inventory"
 local pokemon = require "storage.pokemon"
 
+local areaName = "Unknown"
+local splitNumber, splitTime = 0, 0
 local tries = 0
 local tempDir, canProgress, initialized
-local areaName
+local level4Nidoran = true -- 57 vs 96 (d39)
 local nidoAttack, nidoSpeed, nidoSpecial = 0, 0, 0
 local squirtleAtt, squirtleDef, squirtleSpd, squirtleScl
-local deepRun, resetting
-local level4Nidoran = true -- 57 vs 96 (d39)
-local yolo, riskGiovanni, maxEtherSkip
+local yolo, deepRun, resetting, riskGiovanni, maxEtherSkip
 
 -- TIME CONSTRAINTS
 
@@ -122,7 +121,7 @@ local function hardReset(message, extra)
 end
 
 local function reset(reason, extra)
-	local time = paint.elapsedTime()
+	local time = utils.elapsedTime()
 	local resetString = "Reset"
 	if (time) then
 		resetString = resetString.." after "..time
@@ -165,7 +164,7 @@ local function resetTime(timeLimit, reason, once)
 			return reset(reason)
 		end
 		if (once) then
-			print(reason.." "..paint.elapsedTime())
+			print(reason.." "..utils.elapsedTime())
 		end
 	end
 end
@@ -204,6 +203,23 @@ local function initialize()
 	end
 end
 
+local function canHealFor(damage)
+	local healChecks = {
+		{"full_restore", 9001},
+		{"super_potion", 50},
+		{"potion", 20},
+	}
+	local curr_hp = pokemon.index(0, "hp")
+	local max_hp = pokemon.index(0, "max_hp")
+	for idx,potion in ipairs(healChecks) do
+		local name = potion[1]
+		local result_hp = math.min(curr_hp + potion[2], max_hp)
+		if (result_hp >= damage and inventory.contains(name)) then
+			return name
+		end
+	end
+end
+
 local function hasHealthFor(opponent, extra)
 	if (not extra) then
 		extra = 0
@@ -233,7 +249,7 @@ local function buffTo(buff, defLevel)
 	if (battle.isActive()) then
 		canProgress = true
 		local forced
-		if (memory.double("battle", "opponent_defense") > defLevel) then
+		if (defLevel and memory.double("battle", "opponent_defense") > defLevel) then
 			forced = buff
 		end
 		battle.automate(forced, true)
@@ -487,17 +503,13 @@ strategyFunctions = {
 	end,
 
 	tweetMisty = function()
-		local elt = paint.elapsedTime()
+		local elt = utils.elapsedTime()
 		if (setYolo("misty")) then
 			print("Misty: "..elt)
 		else
-			local timeReq = 40
-			if (pokemon.inParty("paras")) then
-				timeReq = timeReq + 0.75
-			end
-			timeReq = timeReq - 1.75
-			local pbn = "!"
-			if (not overMinute(timeReq)) then
+			local pbn = ""
+			local pbTime = getTimeRequirement("misty") - 1.75
+			if (not overMinute(pbTime)) then
 				pbn = " (PB pace)"
 			end
 			bridge.tweet("Got a run going, just beat Misty "..elt.." in"..pbn.." http://www.twitch.tv/thepokebot")
@@ -506,18 +518,25 @@ strategyFunctions = {
 	end,
 
 	tweetVictoryRoad = function()
-		local elt = paint.elapsedTime()
+		local elt = utils.elapsedTime()
 		local pbn = ""
 		if (not overMinute(98)) then -- TODO verify
 			pbn = " (PB pace)"
 		end
-		local elt = paint.elapsedTime()
+		local elt = utils.elapsedTime()
 		bridge.tweet("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four! http://www.twitch.tv/thepokebot")
 		return true
 	end,
 
 	split = function(data)
 		bridge.split(data and data.finished)
+		splitNumber = splitNumber + 1
+
+		local timeDiff
+		splitTime, timeDiff = utils.timeSince(splitTime)
+		if (timeDiff) then
+			print(splitNumber..". "..areaName..": "..utils.elapsedTime().." ("..timeDiff..")")
+		end
 		return true
 	end,
 
@@ -581,10 +600,13 @@ strategyFunctions = {
 		if (curr_hp == 0) then
 			return false
 		end
-		local toHP = data.hp
+		local toHP
 		if (yolo and data.yolo ~= nil) then
 			toHP = data.yolo
-		elseif (type(toHP) == "string") then
+		else
+			toHP = data.hp
+		end
+		if (type(toHP) == "string") then
 			toHP = combat.healthFor(toHP)
 		end
 		local toHeal = toHP - curr_hp
@@ -1094,6 +1116,8 @@ strategyFunctions = {
 									superlative = " great"
 								elseif (statDiff == 2) then
 									superlative = " good"
+								else
+									superlative = " okay"
 								end
 							elseif (statDiff == 1) then
 								superlative = " good"
@@ -1162,8 +1186,11 @@ strategyFunctions = {
 		local opp = battle.opponent()
 		local defLimit = 9001
 		for i,poke in ipairs(data) do
-			if (opp == poke[1] and (not poke[3] or nidoAttack > poke[3])) then
-				defLimit = poke[2]
+			if (opp == poke[1]) then
+				local minimumAttack = poke[3]
+				if (not minimumAttack or nidoAttack > minimumAttack) then
+					defLimit = poke[2]
+				end
 				break
 			end
 		end
@@ -1177,10 +1204,10 @@ strategyFunctions = {
 	end,
 
 	potionBeforeCocoons = function()
-		if (yolo or nidoSpeed > 14) then
+		if (nidoSpeed >= 15) then
 			return true
 		end
-		return strategyFunctions.potion({hp=6})
+		return strategyFunctions.potion({hp=6, yolo=3})
 	end,
 
 	swapHornAttack = function()
@@ -1365,49 +1392,18 @@ strategyFunctions = {
 
 	rivalSandAttack = function(data)
 		if (battle.isActive()) then
-			local forced
-			if (not pokemon.isDeployed("nidoking")) then
-				local battleMenu = memory.value("battle", "menu")
-				if (utils.onPokemonSelect(battleMenu)) then
-					menu.select(pokemon.indexOf("nidoking"), true)
-				elseif (battleMenu == 95 and menu.getCol() == 1) then
-					input.press("A")
-				else
-					local __, turns = combat.bestMove()
-					if (turns == 1 and battle.pp("sand_attack") > 0) then
-						forced = "sand_attack"
-					end
-					battle.fight(forced)
-				end
+			if (battle.redeployNidoking()) then
 				return false
 			end
+
 			local opponent = battle.opponent()
 			if (opponent == "pidgeotto") then
 				canProgress = true
 				combat.disableThrash = true
 				if (memory.value("battle", "accuracy") < 7) then
 					local __, turns = combat.bestMove()
-					local putIn, takeOut
-					if (turns == 1) then
-						local sacrifice
-						local temp = pokemon.inParty("pidgey", "spearow")
-						if (temp and pokemon.info(temp, "hp") > 0) then
-							sacrifice = temp
-						end
-						if (not sacrifice) then
-							if (yolo) then
-								temp = pokemon.inParty("oddish")
-							else
-								temp = pokemon.inParty("oddish", "paras", "squirtle")
-							end
-							if (temp and pokemon.info(temp, "hp") > 0) then
-								sacrifice = temp
-							end
-						end
-						if (sacrifice) then
-							battle.swap(sacrifice)
-							return false
-						end
+					if (turns == 1 and battle.sacrifice("pidgey", "spearow", "paras", "oddish", "squirtle")) then
+						return false
 					end
 				end
 			elseif (opponent == "raticate") then
@@ -1421,7 +1417,7 @@ strategyFunctions = {
 			else
 				combat.disableThrash = false
 			end
-			battle.automate(forced)
+			battle.automate()
 			canProgress = true
 		elseif (canProgress) then
 			combat.disableThrash = false
@@ -1463,7 +1459,7 @@ strategyFunctions = {
 			return true
 		end
 		if (initialize()) then
-			if (pokemon.info("nidoking", "level") < 21 or inventory.count("potion") < 3) then -- RISK
+			if (pokemon.info("nidoking", "level") < 23 or inventory.count("potion") < 3) then -- RISK
 				return true
 			end
 			bridge.chat("Using Poison Sting to attempt to redbar off Mankey")
@@ -1492,9 +1488,7 @@ strategyFunctions = {
 		if (battle.isActive()) then
 			canProgress = true
 			if (pokemon.isOpponent("geodude") and pokemon.isDeployed("nidoking")) then
-				local sacrifice = pokemon.inParty("squirtle")
-				if (sacrifice and pokemon.info(sacrifice, "hp") > 0) then
-					battle.swap(sacrifice)
+				if (battle.sacrifice("squirtle")) then
 					return false
 				end
 			end
@@ -1533,16 +1527,27 @@ strategyFunctions = {
 				healAmount = 65
 			end
 		end
+		if (initialize()) then
+			if (healAmount < 60) then
+				bridge.chat("Limiting heals to attempt to get closer to red-bar off Misty", inventory.count("potion"))
+			end
+		end
 		return strategyFunctions.potion({hp=healAmount})
 	end,
 
 	fightMisty = function()
 		if (battle.isActive()) then
 			canProgress = true
-			if (pokemon.isDeployed("nidoking") and combat.isConfused()) then
-				local sacrifice = pokemon.inParty("paras", "pidgey", "spearow")
-				if (sacrifice and pokemon.info(sacrifice, "hp") > 0) then
-					battle.swap(sacrifice)
+			if (battle.redeployNidoking()) then
+				if (tempDir == false) then
+					tempDir = true
+				end
+				return false
+			end
+			local swappedOut = tempDir
+			if (not swappedOut and combat.isConfused()) then
+				tempDir = false
+				if (battle.sacrifice("pidgey", "spearow", "paras")) then
 					return false
 				end
 			end
@@ -1705,7 +1710,7 @@ strategyFunctions = {
 						prefix = "Reset me now"
 						suffix = " BibleThump"
 					end
-					bridge.chat(prefix..", "..tries.." try Trashcans"..suffix, paint.elapsedTime())
+					bridge.chat(prefix..", "..tries.." try Trashcans"..suffix, utils.elapsedTime())
 					return true
 				end
 				local completePath = {
@@ -1835,6 +1840,7 @@ strategyFunctions = {
 					local curr_hp, red_hp = pokemon.index(0, "hp"), redHP()
 					local clubDmg = enemyMove.damage
 					local afterHit = curr_hp - clubDmg
+					red_hp = red_hp - 2
 					if (afterHit > -2 and afterHit < red_hp) then
 						forced = "thunderbolt"
 					else
@@ -1924,7 +1930,7 @@ strategyFunctions = {
 		if (riskGiovanni) then
 			xspecAmt = xspecAmt + 1
 		elseif (nidoSpecial < 46) then
-			xspecAmt = xspecAmt - 1
+			-- xspecAmt = xspecAmt - 1
 		end
 		return shop.transaction{
 			direction = "Up",
@@ -2108,6 +2114,7 @@ strategyFunctions = {
 			if (yolo or inventory.contains("full_restore")) then
 				return true
 			end
+			bridge.chat("We need to grab the backup Full Restore here.")
 		end
 		local px, py = player.position()
 		if (px < 21) then
@@ -2452,7 +2459,7 @@ strategyFunctions = {
 	viridianRival = function()
 		if (battle.isActive()) then
 			if (not canProgress) then
-				if (nidoSpecial < 45 or pokemon.index(0, "speed") < 134) then
+				if (riskGiovanni or nidoSpecial < 45 or pokemon.index(0, "speed") < 134) then
 					tempDir = "x_special"
 				else
 					print("Skip X Special strats!")
@@ -2502,7 +2509,7 @@ strategyFunctions = {
 				if (not tempDir) then
 					return true
 				end
-				tries = inventory.count(tempDir)
+				tries = inventory.count(tempDir) --TODO remove?
 			end
 			if (memory.value("menu", "main") == 144 and menu.getCol() == 5) then
 				if (memory.value("battle", "menu") ~= 95) then
@@ -2614,21 +2621,11 @@ strategyFunctions = {
 	lorelei = function()
 		if (battle.isActive()) then
 			canProgress = true
-			if (not pokemon.isDeployed("nidoking")) then
-				local battleMenu = memory.value("battle", "menu")
-				if (utils.onPokemonSelect(battleMenu)) then
-					menu.select(0, true)
-				elseif (battleMenu == 95 and menu.getCol() == 1) then
-					input.press("A")
-				else
-					battle.automate()
-				end
+			if (battle.redeployNidoking()) then
 				return false
 			end
 			if (pokemon.isOpponent("dewgong")) then
-				local sacrifice = pokemon.inParty("pidgey", "spearow", "squirtle", "paras", "oddish")
-				if (sacrifice and pokemon.info(sacrifice, "hp") > 0) then
-					battle.swap(sacrifice)
+				if (battle.sacrifice("pidgey", "spearow", "squirtle", "paras", "oddish")) then
 					return false
 				end
 			end
@@ -2728,7 +2725,7 @@ strategyFunctions = {
 		if (initialize()) then
 			setYolo("blue")
 		end
-		local skyDmg = combat.healthFor("BlueSky")
+		local skyDmg = combat.healthFor("BlueSky") * 0.9
 		local wingDmg = combat.healthFor("BluePidgeot")
 		return strategyFunctions.potion({hp=skyDmg-50, yolo=wingDmg, full=true})
 	end,
@@ -2788,7 +2785,7 @@ strategyFunctions = {
 			tries = tries + 1
 		elseif (memory.value("menu", "shop_current") == 252) then
 			strategyFunctions.split({finished=true})
-			canProgress = paint.elapsedTime()
+			canProgress = utils.elapsedTime()
 		else
 			input.cancel()
 		end
@@ -2810,12 +2807,13 @@ function strategies.execute(data)
 end
 
 function strategies.init(midGame)
-	if (not STREAMING_MODE) then --TODO remove
+	if (not STREAMING_MODE) then
 		-- setYolo(0)
 		nidoAttack = 55
 		nidoSpeed = 50
 		nidoSpecial = 45
 		riskGiovanni = true
+		splitTime = utils.timeSince(0)
 		print(nidoAttack.." x "..nidoSpeed.." "..nidoSpecial)
 	end
 	if (midGame) then
@@ -2830,6 +2828,7 @@ function strategies.softReset()
 	tempDir = nil
 	strategies.moonEncounters = nil
 	tries = 0
+	splitNumber, splitTime = 0, 0
 	deepRun = false
 	resetting = nil
 	yolo = false

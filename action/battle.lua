@@ -185,7 +185,6 @@ function battle.fight(move, isNumber, skipBuffs)
 		if (move) then
 			attack(move.midx)
 		elseif (memory.value("menu", "text_length") == 127) then
-			print("Faito B!")
 			input.press("B")
 		else
 			input.cancel()
@@ -244,6 +243,34 @@ function battle.automate(moveName, skipBuffs)
 			end
 		end
 	end
+end
+
+function battle.sacrifice(...)
+	local sacrifice = pokemon.getSacrifice(...)
+	if (sacrifice) then
+		battle.swap(sacrifice)
+		return true
+	end
+	return false
+end
+
+function battle.redeployNidoking()
+	if (pokemon.isDeployed("nidoking")) then
+		return false
+	end
+	local battleMenu = memory.value("battle", "menu")
+	if (utils.onPokemonSelect(battleMenu)) then
+		menu.select(0, true)
+	elseif (battleMenu == 95 and menu.getCol() == 1) then
+		input.press("A")
+	else
+		local __, turns = combat.bestMove()
+		if (turns == 1) then
+			forced = "sand_attack"
+		end
+		battle.automate(forced)
+	end
+	return true
 end
 
 return battle

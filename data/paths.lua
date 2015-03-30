@@ -139,8 +139,7 @@ local paths = {
 	-- Enter Vermilion
 	{5, {19,0}, {c="disableCatch"}, {19,6}, {21,6}, {21,14}, {23,14}, {23,13}},
 	-- Vermilion mart
-	-- TODO Bubblebeam split?
-	{91, {3,7}, {3,5}, {2,5}, {s="shopVermilionMart"}, {3,5}, {s="teach",move="bubblebeam",replace="tackle"}, {3,8}},
+	{91, {3,7}, {3,5}, {2,5}, {s="shopVermilionMart"}, {3,5}, {3,8}},
 	-- To S.S. Anne
 	{5, {23,14}, {30,14}, {30,26}, {18,26}, {18,31}},
 	-- Mew
@@ -148,7 +147,7 @@ local paths = {
 	-- First deck
 	{95, {27,0}, {27,1}, {26,1}, {26,7}, {2,7}, {2,6}},
 	-- Rival 3
-	{96, {2,4}, {2,11}, {3,11}, {3,12}, {s="potion",hp=20,yolo=16}, {37,12}, {37,8}, {s="rivalSandAttack"}, {37,5}, {36,5}, {36,4}},
+	{96, {2,4}, {2,11}, {3,11}, {3,12}, {37,12}, {37,9}, {s="teach",move="bubblebeam",replace="tackle",chain=true}, {s="potion",hp=20,yolo=16,close=true}, {37,8}, {s="rivalSandAttack"}, {37,5}, {36,5}, {36,4}},
 	-- Old man Cut
 	{101, {0,7}, {0,4}, {4,4}, {4,3}, {s="interact",dir="Up"}, {4,5}, {0,5}, {0,7}},
 	-- Second deck out
@@ -435,16 +434,17 @@ local paths = {
 
 -- 17: LORELEI
 
+	-- Lorelei
 	{245, {4,5}, {s="a",a="Lorelei"}, {c="potion",b=false}, {4,2}, {s="interact",dir="Right"}, {s="lorelei"}, {s="split"}, {4,0}},
-
+	-- Bruno
 	{246, {4,5}, {s="a",a="Bruno"}, {s="item",item="elixer",poke="nidoking"}, {4,2}, {s="interact",dir="Right"}, {s="bruno"}, {s="split"}, {4,0}},
-
+	-- Agatha
 	{247, {4,5}, {s="a",a="Agatha"}, {s="potion",hp=113,full=true}, {4,2}, {s="interact",dir="Right"}, {s="agatha"}, {s="split"}, {4,1}, {s="prepareForLance"}, {s="ether"}, {4,0}},
-
+	-- Lance
 	{113, {6,11}, {s="a",a="Lance"}, {6,2}, {s="lance"}, {s="waitToFight"}, {s="split"}, {5,2}, {5,1}, {s="prepareForBlue"}, {5,-1}},
-
+	-- Blue
 	{120, {4,3}, {s="a",a="Blue"}, {s="blue"}, {3,0}},
-
+	-- Champion
 	{118, {4,2}, {s="champion"}}
 }
 

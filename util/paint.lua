@@ -2,24 +2,13 @@ local paint = {}
 
 local memory = require "util.memory"
 local player = require "util.player"
+local utils = require "util.utils"
 
 local inventory = require "storage.inventory"
 local pokemon = require "storage.pokemon"
 
 local encounters = 0
-
-function elapsedTime()
-	local secs = memory.raw(0xDA44)
-	if (secs < 10) then
-		secs = "0"..secs
-	end
-	local mins = memory.raw(0xDA43)
-	if (mins < 10) then
-		mins = "0"..mins
-	end
-	return memory.raw(0xDA41)..":"..mins..":"..secs
-end
-paint.elapsedTime = elapsedTime
+local elapsedTime = utils.elapsedTime
 
 function paint.draw(currentMap)
 	local px, py = player.position()

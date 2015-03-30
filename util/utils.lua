@@ -55,4 +55,37 @@ function utils.onPokemonSelect(battleMenu)
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
 end
 
+-- TIME
+
+local function clockSegment(unit)
+	if (unit < 10) then
+		unit = "0"..unit
+	end
+	return unit
+end
+
+function utils.timeSince(prevTime)
+	local currTime = utils.igt()
+	local diff = currTime - prevTime
+	local timeString
+	if (diff > 0) then
+		local mins = math.floor(diff / 60)
+		local secs = mins % 60
+		timeString = clockSegment(mins)..":"..clockSegment(secs)
+	end
+	return currTime, timeString
+end
+
+function utils.elapsedTime()
+	local secs = memory.raw(0xDA44)
+	if (secs < 10) then
+		secs = "0"..secs
+	end
+	local mins = memory.raw(0xDA43)
+	if (mins < 10) then
+		mins = "0"..mins
+	end
+	return memory.raw(0xDA41)..":"..mins..":"..secs
+end
+
 return utils

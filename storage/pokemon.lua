@@ -163,6 +163,15 @@ function pokemon.getName(id)
 	end
 end
 
+function pokemon.getSacrifice(...)
+	for i,name in ipairs(arg) do
+		local pokemonIndex = indexOf(name)
+		if (pokemonIndex ~= -1 and index(pokemonIndex, "hp") > 0) then
+			return name
+		end
+	end
+end
+
 function pokemon.inParty(...)
 	for i,name in ipairs(arg) do
 		if (indexOf(name) ~= -1) then
@@ -211,8 +220,9 @@ function pokemon.isOpponent(...)
 end
 
 function pokemon.isDeployed(...)
+	local deployedID = memory.value("battle", "our_id")
 	for i,name in ipairs(arg) do
-		if (memory.value("battle", "our_id") == pokeIDs[name]) then
+		if (deployedID == pokeIDs[name]) then
 			return name
 		end
 	end

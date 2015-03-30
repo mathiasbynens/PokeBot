@@ -212,7 +212,7 @@ while true do
 	if (STREAMING_MODE) then
 		local newSecs = memory.raw(0xDA44)
 		if (newSecs ~= oldSecs and (newSecs > 0 or memory.raw(0xDA45) > 0)) then
-			bridge.time(paint.elapsedTime())
+			bridge.time(utils.elapsedTime())
 			oldSecs = newSecs
 		end
 	elseif (PAINT_ON) then
