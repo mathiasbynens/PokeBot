@@ -88,4 +88,11 @@ function utils.elapsedTime()
 	return memory.raw(0xDA41)..":"..mins..":"..secs
 end
 
+function utils.frames()
+	local totalFrames = memory.raw(0xDA41) * 60
+	totalFrames = (totalFrames + memory.raw(0xDA43)) * 60
+	totalFrames = (totalFrames + memory.raw(0xDA44)) * 60
+	return totalFrames + memory.raw(0xDA45)
+end
+
 return utils

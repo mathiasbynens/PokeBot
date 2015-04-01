@@ -5,13 +5,14 @@ local memory = require "util.memory"
 local menu = require "util.menu"
 local utils = require "util.utils"
 
-local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]ポモ-?!♂♀/.,"
+local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]ab-?!mf/.,"
+-- local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]ポモ-?!♂♀/.,"
 
 local nidoName = "A"
 local nidoIdx = 1
 
 local function getLetterAt(index)
-	return alphabet[index]
+	return alphabet:sub(index, index)
 end
 
 local function getIndexForLetter(letter)
@@ -55,12 +56,27 @@ function textbox.name(letter, randomize)
 end
 
 function textbox.getName()
+	if nidoName == "a" then
+		return "ポ"
+	end
+	if nidoName == "b" then
+		return "モ"
+	end
+	if nidoName == "m" then
+		return "♂"
+	end
+	if nidoName == "f" then
+		return "♀"
+	end
 	return nidoName
 end
 
 function textbox.setName(index)
-	nidoIdx = index + 1
-	nidoName = getLetterAt(index)
+	if index >= 0 and index < #alphabet then
+		nidoIdx = index + 1
+		nidoName = getLetterAt(index)
+		print("Naming: "..nidoIdx.." "..alphabet)
+	end
 end
 
 function textbox.isActive()

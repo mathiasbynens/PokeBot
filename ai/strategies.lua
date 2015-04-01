@@ -31,6 +31,10 @@ local yolo, deepRun, resetting, riskGiovanni, maxEtherSkip
 
 local timeRequirements = {
 
+	bulbasaur = function()
+		return 2.25
+	end,
+
 	nidoran = function()
 		local timeLimit = 6.25
 		if pokemon.inParty("spearow") then
@@ -530,12 +534,14 @@ strategyFunctions = {
 
 	split = function(data)
 		bridge.split(data and data.finished)
-		splitNumber = splitNumber + 1
+		if not INTERNAL then
+			splitNumber = splitNumber + 1
 
-		local timeDiff
-		splitTime, timeDiff = utils.timeSince(splitTime)
-		if timeDiff then
-			print(splitNumber..". "..areaName..": "..utils.elapsedTime().." ("..timeDiff..")")
+			local timeDiff
+			splitTime, timeDiff = utils.timeSince(splitTime)
+			if timeDiff then
+				print(splitNumber..". "..areaName..": "..utils.elapsedTime().." ("..timeDiff..")")
+			end
 		end
 		return true
 	end,
@@ -817,7 +823,7 @@ strategyFunctions = {
 				tries = tries + 1
 			end
 		end
-		if battle.isActive() and memory.double("battle", "opponent_hp") > 0 and resetTime(2.15, "kill Bulbasaur") then
+		if battle.isActive() and memory.double("battle", "opponent_hp") > 0 and resetTime(getTimeRequirement("bulbasaur"), "kill Bulbasaur") then
 			return true
 		end
 		return buffTo("tail_whip", 6)
@@ -906,6 +912,24 @@ strategyFunctions = {
 		return dodgeUp(0x0273, 18, 6, 17, 9)
 	end,
 
+	grabTreePotion = function()
+		if initialize() then
+			if pokemon.info("squirtle", "hp") > 25 then
+				return true
+			end
+		end
+		if inventory.contains("potion") then
+			return true
+		end
+
+		local px, py = player.position()
+		if px > 15 then
+			walk.step(15, 4)
+		else
+			player.interact("Left")
+		end
+	end,
+
 	grabAntidote = function()
 		local px, py = player.position()
 		if py < 11 then
@@ -926,17 +950,19 @@ strategyFunctions = {
 	end,
 
 	grabForestPotion = function()
-		if inventory.contains("potion") then
-			local healthNeeded = (pokemon.info("spearow", "level") == 3) and 6 or 10
-			if pokemon.info("squirtle", "hp") <= healthNeeded then
-				if menu.pause() then
-					inventory.use("potion", "squirtle")
+		if battle.handleWild() then
+			if inventory.contains("potion") then
+				local healthNeeded = (pokemon.info("spearow", "level") == 3) and 8 or 15
+				if pokemon.info("squirtle", "hp") <= healthNeeded then
+					if menu.pause() then
+						inventory.use("potion", "squirtle")
+					end
+				else
+					return true
 				end
-			else
-				return true
+			elseif menu.close() then
+				player.interact("Up")
 			end
-		elseif menu.close() then
-			player.interact("Up")
 		end
 	end,
 
@@ -993,7 +1019,8 @@ strategyFunctions = {
 				if not inventory.contains("antidote") then
 					return reset("Poisoned, but we skipped the antidote")
 				end
-				if inventory.contains("potion") and pokemon.info("squirtle", "hp") > 8 then
+				local curr_hp = pokemon.info("squirtle", "hp")
+				if inventory.contains("potion") and curr_hp > 8 and curr_hp < 18 then
 					return true
 				end
 			end
@@ -1090,7 +1117,7 @@ strategyFunctions = {
 							if def < 12 then
 								statDiff = statDiff + 1
 							end
-							if level4Nidoran then
+							if not level4Nidoran then
 								statDiff = statDiff - 1
 							end
 							local resets = att < 15 or spd < 14 or scl < 12 or statDiff > 3
@@ -1539,9 +1566,6 @@ strategyFunctions = {
 	end,
 
 	potionBeforeGoldeen = function()
-		if not STREAMING_MODE and nidoSpeed == 51 then
-			return false --TEST
-		end
 		if initialize() then
 			if setYolo("goldeen") or pokemon.index(0, "hp") > 7 then
 				return true
@@ -2885,9 +2909,8 @@ strategyFunctions = {
 			end
 			if tries == 0 then
 				bridge.tweet("Beat Pokemon Red in "..canProgress.."!")
-				-- strategyFunctions.reportFrames()
 				if strategies.seed then
-					print(memory.value("game", "frames").." frames, with seed "..strategies.seed)
+					print(utils.frames().." frames, with seed "..strategies.seed)
 					print("Please save this seed number to share, if you would like proof of your run!")
 				end
 			end

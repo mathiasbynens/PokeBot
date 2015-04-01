@@ -9,7 +9,7 @@ local PAINT_ON    = true -- Display contextual information while the bot runs
 -- START CODE (hard hats on)
 
 local START_WAIT = 99
-local VERSION = "1.1"
+local VERSION = "1.2"
 
 YELLOW = GAME_NAME == "yellow"
 INTERNAL = false
