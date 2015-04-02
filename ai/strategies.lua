@@ -2357,7 +2357,7 @@ strategyFunctions = {
 				forced = "thunderbolt"
 				control.canDie(true)
 			end
-			battle.fight(forced)
+			battle.automate(forced)
 			canProgress = true
 		elseif canProgress then
 			deepRun = true
