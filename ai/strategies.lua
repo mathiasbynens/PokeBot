@@ -913,7 +913,7 @@ strategyFunctions = {
 
 	grabTreePotion = function()
 		if initialize() then
-			if pokemon.info("squirtle", "hp") > 25 then
+			if pokemon.info("squirtle", "hp") > 15 or pokemon.info("spearow", "level") == 3 then
 				return true
 			end
 		end
@@ -1252,7 +1252,8 @@ strategyFunctions = {
 				if not tempDir then
 					tempDir = curr_hp
 				end
-				if tempDir - curr_hp < 4 and curr_hp < 14 and not opponentDamaged() then
+				local wrapDamage = tempDir - curr_hp
+				if wrapDamage > 0 and wrapDamage < 7 and curr_hp < 14 and not opponentDamaged() then
 					inventory.use("potion", nil, true)
 					return false
 				end
@@ -1579,7 +1580,7 @@ strategyFunctions = {
 				healAmount = 65
 			end
 		else
-			if nidoAttack > 54 and nidoSpeed > 51 then -- RISK
+			if nidoAttack > 53 and nidoSpeed > 51 then -- RISK
 				healAmount = 45
 			elseif nidoAttack > 53 and nidoSpeed > 50 then
 				healAmount = 65
@@ -1903,7 +1904,7 @@ strategyFunctions = {
 						forced = "thunderbolt"
 					else
 						afterHit = afterHit - clubDmg
-						if afterHit > -4 and afterHit < red_hp then
+						if afterHit > 1 and afterHit < red_hp then
 							forced = "thunderbolt"
 						end
 					end
@@ -2314,7 +2315,7 @@ strategyFunctions = {
 			healTarget = "HypnoConfusion"
 			useRareCandy = rareCandyCount > 2
 		end
-		if useRareCandy then
+		if useRareCandy and curr_hp < combat.healthFor("KogaWeezing") * 0.85 then
 			if menu.pause() then
 				inventory.use("rare_candy", nil, false)
 			end
