@@ -1,9 +1,8 @@
 local Memory = {}
 
--- memory.usememorydomain("ROM")
+-- memory.usememorydomain("WRAM")
 -- print(memory.getcurrentmemorydomain())
 -- print(memory.getcurrentmemorydomainsize())
--- memory.usememorydomain("System Bus")
 
 local memoryNames = {
 	setting = {
@@ -107,8 +106,8 @@ local doubleNames = {
 	},
 }
 
-local function raw(value)
-	return memory.readbyte(value)
+local function raw(address)
+	return memory.readbyte(address)
 end
 Memory.raw = raw
 

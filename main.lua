@@ -1,7 +1,6 @@
 -- SETTINGS
 
-GAME_NAME      = "red" -- Only currently supported option
-RESET_FOR_TIME = true	-- Set to false if you just want to see the bot finish a run
+RESET_FOR_TIME = true -- Set to false if you just want to see the bot finish a run
 
 local CUSTOM_SEED = nil -- Set to a known seed to replay it, or leave nil for random runs
 local PAINT_ON    = true -- Display contextual information while the bot runs
@@ -11,6 +10,7 @@ local PAINT_ON    = true -- Display contextual information while the bot runs
 local START_WAIT = 99
 local VERSION = "1.2"
 
+GAME_NAME = "red"
 YELLOW = GAME_NAME == "yellow"
 INTERNAL = false
 

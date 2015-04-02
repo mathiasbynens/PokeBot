@@ -75,7 +75,6 @@ function textbox.setName(index)
 	if index >= 0 and index < #alphabet then
 		nidoIdx = index + 1
 		nidoName = getLetterAt(index)
-		print("Naming: "..nidoIdx.." "..alphabet)
 	end
 end
 

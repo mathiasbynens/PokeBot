@@ -27,6 +27,7 @@ end
 control.battlePotion = battlePotion
 
 local controlFunctions = {
+
 	potion = function(data)
 		if data.b ~= nil then
 			battlePotion(data.b)

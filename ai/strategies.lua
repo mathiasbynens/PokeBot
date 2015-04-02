@@ -113,13 +113,14 @@ local timeRequirements = {
 
 local function hardReset(message, extra)
 	resetting = true
-	if extra then
-		message = message.." | "..extra
-	end
 	if strategies.seed then
-		message = message.." | "..strategies.seed
+		if extra then
+			extra = extra.." | "..strategies.seed
+		else
+			extra = strategies.seed
+		end
 	end
-	bridge.chat(message)
+	bridge.chat(message, extra)
 	client.reboot_core()
 	return true
 end
@@ -881,9 +882,7 @@ strategyFunctions = {
 					tempDir = true
 				end
 				if pokemon.getExp() > 205 then
-					local nidoranLevel = pokemon.info("nidoran", "level")
-					level4Nidoran = nidoranLevel == 4
-					print("Level "..nidoranLevel.." Nidoran")
+					level4Nidoran = pokemon.info("nidoran", "level") == 4
 					return true
 				end
 				noDSum = true
@@ -1118,12 +1117,9 @@ strategyFunctions = {
 								statDiff = statDiff + 1
 							end
 							if not level4Nidoran then
-								statDiff = statDiff - 1
+								statDiff = statDiff + 1
 							end
-							local resets = att < 15 or spd < 14 or scl < 12 or statDiff > 3
-							if not resets and att == 15 and spd == 14 then
-								resets = true
-							end
+							local resets = att < 15 or spd < 14 or scl < 12 or statDiff > 3 or (att == 15 and spd == 14)
 							local nStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 							if resets then
 								return reset("Bad Nidoran - "..nStatus)
