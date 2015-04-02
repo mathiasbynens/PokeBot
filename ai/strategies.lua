@@ -1800,7 +1800,7 @@ strategyFunctions = {
 				}
 				player.interact(inverse[tempDir])
 			else
-				local trashPath = {{2,11},{"Left"},{2,11}, {2,12},{4,12},{4,11},{"Right"},{4,11}, {4,9},{"Left"},{4,9}, {4,7},{"Right"},{4,7}, {4,6},{2,6},{2,7},{"Left"},{2,7}, {2,6},{4,6},{4,8},{7,8},{"Down"},{7,8}, {9,8},{"Up"},{9,8}, {8,8},{8,11},{"Right"},{8,11}}
+				local trashPath = {{2,11},{"Left"},{2,11}, {2,12},{4,12},{4,11},{"Right"},{4,11}, {4,9},{"Left"},{4,9}, {4,7},{"Right"},{4,7}, {4,6},{2,6},{2,7},{"Left"},{2,7}, {2,6},{4,6},{4,8},{9,8},{"Up"},{9,8}, {8,8},{8,9},{"Left"},{8,9}, {8,10},{9,10},{"Down"},{9,10},{8,10}}
 				if tempDir and type(tempDir) == "number" then
 					local px, py = player.position()
 					local dx, dy = px, py
