@@ -99,10 +99,10 @@ end
 
 print("Welcome to PokeBot "..GAME_NAME.." version "..VERSION)
 STREAMING_MODE = not walk.init()
-if STREAMING_MODE then
+if INTERNAL and STREAMING_MODE then
 	RESET_FOR_TIME = true
 end
--- STREAMING_MODE = false --TODO disable
+
 if CUSTOM_SEED then
 	client.reboot_core()
 else

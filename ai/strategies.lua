@@ -107,6 +107,7 @@ local timeRequirements = {
 	blue = function()
 		return 108.2
 	end,
+
 }
 
 -- RISK/RESET
@@ -179,6 +180,9 @@ local function getTimeRequirement(name)
 end
 
 local function setYolo(name)
+	if not RESET_FOR_TIME then
+		return false
+	end
 	local minimumTime = getTimeRequirement(name)
 	local shouldYolo = overMinute(minimumTime)
 	if yolo ~= shouldYolo then
