@@ -180,11 +180,15 @@ end
 
 function menu.pause()
 	if memory.value("game", "textbox") == 1 then
-		local main = memory.value("menu", "main")
-		if main > 2 and main ~= 64 then
-			return true
+		if memory.value("battle", "menu") == 95 then
+			input.cancel()
+		else
+			local main = memory.value("menu", "main")
+			if main > 2 and main ~= 64 then
+				return true
+			end
+			input.press("B")
 		end
-		input.press("B")
 	else
 		input.press("Start", 2)
 	end
