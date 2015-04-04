@@ -1461,17 +1461,24 @@ strategyFunctions = {
 			if battle.redeployNidoking() then
 				return false
 			end
-
 			local opponent = battle.opponent()
-			if opponent == "pidgeotto" then
-				canProgress = true
-				combat.disableThrash = true
-				if memory.value("battle", "accuracy") < 7 then
+			if memory.value("battle", "accuracy") < 7 then
+				local sacrifice
+				if opponent == "pidgeotto" then
 					local __, turns = combat.bestMove()
-					if turns == 1 and battle.sacrifice("pidgey", "spearow", "paras", "oddish", "squirtle") then
-						return false
+					if turns == 1 then
+						sacrifice = pokemon.getSacrifice("pidgey", "spearow", "paras", "oddish", "squirtle")
 					end
+				elseif opponent == "raticate" then
+					sacrifice = pokemon.getSacrifice("pidgey", "spearow", "oddish")
 				end
+				if battle.sacrifice(sacrifice) then
+					return false
+				end
+			end
+
+			if opponent == "pidgeotto" then
+				combat.disableThrash = true
 			elseif opponent == "raticate" then
 				combat.disableThrash = opponentDamaged() or (not yolo and pokemon.index(0, "hp") < 32) -- RISK
 			elseif opponent == "ivysaur" then
@@ -2227,15 +2234,14 @@ strategyFunctions = {
 		if battle.isActive() then
 			if initialize() then
 				tempDir = combat.healthFor("RivalGyarados")
-				print("Gyarados "..tempDir)
 				canProgress = true
 			end
 			local gyaradosDamage = tempDir
 
 			local forced
 			local readyToAttack = false
-			local opName = battle.opponent()
-			if opName == "gyarados" then
+			local opponentName = battle.opponent()
+			if opponentName == "gyarados" then
 				readyToAttack = true
 				local hp, red_hp = pokemon.index(0, "hp"), redHP()
 				if hp > gyaradosDamage * 0.98 and hp - gyaradosDamage * 0.975 < red_hp then --TODO
@@ -2258,10 +2264,10 @@ strategyFunctions = {
 				end
 			elseif prepare("x_accuracy", "x_speed") then
 				if opName == "pidgeot" then
-					if riskGiovanni or nidoSpecial < 45 or pokemon.info("nidoking", "hp") > 85 then
+					if nidoSpecial < 45 or hasHealthFor("KogaWeezing", 10) then --TODO remove for red bar
 						forced = "thunderbolt"
 					end
-				elseif opName == "alakazam" or opName == "growlithe" then
+				elseif opponentName == "alakazam" or opponentName == "growlithe" then
 					forced = "earthquake"
 				end
 				readyToAttack = true
