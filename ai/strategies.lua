@@ -2724,13 +2724,19 @@ strategyFunctions = {
 			if battle.redeployNidoking() then
 				return false
 			end
-			if pokemon.isOpponent("dewgong") then
+			local forced
+			local opponentName = battle.opponent()
+			if opponentName == "dewgong" then
 				if battle.sacrifice("pidgey", "spearow", "squirtle", "paras", "oddish") then
 					return false
 				end
+			elseif opponentName == "jinx" then
+				if battle.pp("horn_drill") < 2 then
+					forced = "earthquake"
+				end
 			end
 			if prepare("x_accuracy") then
-				battle.automate()
+				battle.automate(forced)
 			end
 		elseif canProgress then
 			return true
@@ -2812,13 +2818,22 @@ strategyFunctions = {
 	end,
 
 	lance = function()
-		local xItem
-		if pokemon.isOpponent("dragonair") then
-			xItem = "x_speed"
+		if battle.isActive() then
+			canProgress = true
+			local xItem
+			if pokemon.isOpponent("dragonair") then
+				xItem = "x_speed"
+			else
+				xItem = "x_special"
+			end
+			if prepare(xItem) then
+				battle.automate()
+			end
+		elseif canProgress then
+			return true
 		else
-			xItem = "x_special"
+			textbox.handle()
 		end
-		return prepare(xItem)
 	end,
 
 	prepareForBlue = function()
