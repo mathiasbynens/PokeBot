@@ -2305,21 +2305,22 @@ strategyFunctions = {
 		local curr_hp, red_hp = pokemon.index(0, "hp"), redHP()
 		local healthUnderRedBar = red_hp - curr_hp
 		local yoloHP = combat.healthFor("HypnoHeadbutt") * 0.9
+		local useRareCandy = inventory.count("rare_candy") > 2
+
 		local healTarget
-		local rareCandyCount = inventory.count("rare_candy")
-		local useRareCandy
 		if healthUnderRedBar >= 0 then
 			healTarget = "HypnoHeadbutt"
-			if healthUnderRedBar > 2 then
-				if rareCandyCount > 2 then
-					useRareCandy = true
-				end
+			if useRareCandy then
+				useRareCandy = healthUnderRedBar > 2
 			end
 		else
 			healTarget = "HypnoConfusion"
-			useRareCandy = rareCandyCount > 2
+			if useRareCandy then
+				useRareCandy = false --TODO
+				-- useRareCandy = curr_hp < combat.healthFor("KogaWeezing") * 0.85
+			end
 		end
-		if useRareCandy and curr_hp < combat.healthFor("KogaWeezing") * 0.85 then
+		if useRareCandy then
 			if menu.pause() then
 				inventory.use("rare_candy", nil, false)
 			end
@@ -2358,7 +2359,11 @@ strategyFunctions = {
 					inventory.use("pokeflute", nil, true)
 					return false
 				end
-				forced = "thunderbolt"
+				if combat.isDisabled(85) then
+					forced = "ice_beam"
+				else
+					forced = "thunderbolt"
+				end
 				control.canDie(true)
 			end
 			battle.automate(forced)
@@ -2477,8 +2482,8 @@ strategyFunctions = {
 	fightGiovanniMachoke = function()
 		if initialize() then
 			if nidoAttack >= 55 then
-				local eqRequired = nidoSpecial >= 47 and 7 or 8
-				if battle.pp("earthquake") >= eqRequired then
+				local eqPpRequired = nidoSpecial >= 47 and 7 or 8
+				if battle.pp("earthquake") >= eqPpRequired then
 					bridge.chat("Using Earthquake strats on the Machokes")
 					return true
 				end
@@ -2488,13 +2493,13 @@ strategyFunctions = {
 	end,
 
 	checkGiovanni = function()
-		local ryhornDamage = math.floor(combat.healthFor("GiovanniRhyhorn") * 0.9)
+		local ryhornDamage = math.floor(combat.healthFor("GiovanniRhyhorn") * 0.95) --RISK
 		if initialize() then
 			local earthquakePP = battle.pp("earthquake")
 			if earthquakePP >= 2 then
 				if riskGiovanni then
 					if earthquakePP >= 5 then
-						bridge.chat("Saved enough Earthquake PP for safe strats on Giovanni!")
+						bridge.chat("Saved enough Earthquake PP for safe strats on Giovanni")
 					elseif earthquakePP >= 3 and battle.pp("horn_drill") >= 5 and (yolo or pokemon.info("nidoking", "hp") >= ryhornDamage) then -- RISK
 						bridge.chat("Using risky strats on Giovanni to skip the extra Max Ether...")
 					else
