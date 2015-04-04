@@ -136,7 +136,7 @@ local paths = {
 	-- Underground exit
 	{74, {4,4}, {3,8}},
 	-- Oddish
-	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=10,yolo=7}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=10,yolo=7}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=10,yolo=7}, {10,31}, {9,31}, {9,32}, {s="potion",hp=20,yolo=18}, {9,36}},
+	{17, {17,14}, {s="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=10,yolo=7}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=10,yolo=7}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=10,yolo=7}, {10,31}, {9,31}, {9,36}},
 	-- Enter Vermilion
 	{5, {19,0}, {c="disableCatch"}, {19,6}, {21,6}, {21,14}, {23,14}, {23,13}},
 	-- Vermilion mart
@@ -148,7 +148,7 @@ local paths = {
 	-- First deck
 	{95, {27,0}, {27,1}, {26,1}, {26,7}, {2,7}, {2,6}},
 	-- Rival 3
-	{96, {2,4}, {2,11}, {3,11}, {3,12}, {37,12}, {37,9}, {s="teach",move="bubblebeam",replace="tackle",chain=true}, {s="potion",hp=20,yolo=16,close=true}, {37,8}, {s="rivalSandAttack"}, {37,5}, {36,5}, {36,4}},
+	{96, {2,4}, {2,11}, {3,11}, {3,12}, {37,12}, {37,9}, {s="teach",move="bubblebeam",replace="tackle",chain=true}, {s="potion",hp=23,yolo=16,close=true}, {37,8}, {s="rivalSandAttack"}, {37,5}, {36,5}, {36,4}},
 	-- Old man Cut
 	{101, {0,7}, {0,4}, {4,4}, {4,3}, {s="interact",dir="Up"}, {4,5}, {0,5}, {0,7}},
 	-- Second deck out
@@ -325,7 +325,7 @@ local paths = {
 	-- Rival 5
 	{212, {5,3}, {s="a",a="Silph Rival"}, {4,3}, {4,2}, {3,2}, {c="potion",b=false}, {s="silphRival"}, {3,7}, {c="potion",b=true,yolo=true}, {5,7}},
 	-- Giovanni
-	{235, {3,2}, {s="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,16}, {s="interact",dir="Right"}, {2,15}, {5,15}, {s="potion",hp=16,yolo=12}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightXAccuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPause"}, {s="skill",move="dig",map=235}},
+	{235, {3,2}, {s="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,16}, {s="interact",dir="Right"}, {2,15}, {5,15}, {s="potionBeforeGiovanni"}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightXAccuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPause"}, {s="skill",move="dig",map=235}},
 
 -- 11: SILPH CO.
 
@@ -334,7 +334,7 @@ local paths = {
 	-- To Koga
 	{7, {19,28}, {s="a",a="Koga's Gym"}, {5,28}, {5,27}},
 	-- Koga
-	{157, {4,17}, {9,17}, {9,9}, {7,9}, {s="interact",dir="Up"}, {9,9}, {9,1}, {1,1}, {1,2}, {s="earthquakeElixer",min=2,chain=true}, {s="healBeforeHypno"}, {1,3}, {2,3}, {2,5}, {1,5}, {c="potion",b=false}, {1,7}, {s="fightHypno"}, {1,9}, {2,9}, {s="earthquakeElixer",min=4}, {4,9}, {s="interact",dir="Down"}, {s="fightKoga"}, {s="split"}, {1,9}, {1,5}, {2,5}, {2,3}, {1,3}, {1,1}, {9,1}, {9,16}, {5,16}, {5,18}},
+	{157, {4,17}, {9,17}, {9,9}, {7,9}, {s="interact",dir="Up"}, {9,9}, {9,1}, {1,1}, {1,2}, {s="earthquakeElixer",min=2,chain=true}, {s="potionBeforeHypno"}, {1,3}, {2,3}, {2,5}, {1,5}, {c="potion",b=false}, {1,7}, {s="fightHypno"}, {1,9}, {2,9}, {s="earthquakeElixer",min=4}, {4,9}, {s="interact",dir="Down"}, {s="fightKoga"}, {s="split"}, {1,9}, {1,5}, {2,5}, {2,3}, {1,3}, {1,1}, {9,1}, {9,16}, {5,16}, {5,18}},
 
 -- 12: KOGA
 
@@ -387,7 +387,6 @@ local paths = {
 	-- Saffron again
 	{10, {0,18}, {3,18}, {3,6}, {31,6}, {31,4}, {34,4}, {34,3}},
 	-- Sabrina
-	--TODO verify strats
 	{178, {8,17}, {s="a",a="Sabrina's Gym"}, {8,16}, {11,16}, {11,15}, {16,17}, {16,15}, {15,15}, {18,3}, {18,5}, {15,5}, {1,5}, {11,11}, {11,8}, {10,8}, {s="waitToFight",dir="Left"}, {s="split"}, {11,8}, {11,11}, {s="earthquakeElixer",min=4,chain=true}, {s="skill",move="dig",map=178}},
 
 -- 15: SABRINA
@@ -397,7 +396,6 @@ local paths = {
 	-- Viridian again
 	{1, {23,26}, {s="bicycle"}, {19,26}, {19,4}, {27,4}, {27,3}, {34,3}, {34,8}, {32,8}, {32,7}},
 	-- Giovanni Gym
-	--TODO reeval earthquake machoke
 	{45, {16,17}, {c="potion",b=false}, {s="a",a="Giovanni's Gym"}, {16,16}, {14,16}, {14,9}, {13,9}, {13,7}, {15,7}, {15,4}, {12,4}, {12,5}, {10,5}, {s="a",a="Machoke"}, {10,4}, {s="fightGiovanniMachoke"}, {10,5}, {s="a",a="Giovanni's Gym"}, {13,5}, {13,4}, {15,4}, {15,7}, {13,7}, {13,11}, {14,11}, {14,16}, {16,16}, {16,18}},
 	-- Reset Gym
 	{1, {32,8}, {32,7}},
@@ -421,7 +419,7 @@ local paths = {
 	-- F3
 	{198, {23,7}, {23,6}, {22,6}, {22,4}, {s="skill",move="strength"}, {22,2}, {23,2}, {23,1}, {7,1}, {7,0}, {6,0}, {6,1}, {7,1}, {7,2}, {3,2}, {3,1}, {2,1}, {2,4}, {1,4}, {1,5}, {2,5}, {2,4}, {4,4}, {4,2}, {7,2}, {7,1}, {20,1}, {20,6}, {17,6}, {17,4}, {9,4}, {9,10}, {5,10}, {5,8}, {1,8}, {1,15}, {11,15}, {11,16}, {20,16}, {20,15}, {23,15}},
 	-- F2
-	{194, {22,16}, {s="healBeforeLorelei"}, {s="item",item="super_repel",chain=true}, {s="skill",move="strength"}, {s="bicycle"}, {22,17}, {24,17}, {24,16}, {11,16}, {s="push",dir="Left",x=0x02D5,y=0x02D4}, {21,16}, {21,14}, {25,14}},
+	{194, {22,16}, {s="potionBeforeLorelei"}, {s="item",item="super_repel",chain=true}, {s="skill",move="strength"}, {s="bicycle"}, {22,17}, {24,17}, {24,16}, {11,16}, {s="push",dir="Left",x=0x02D5,y=0x02D4}, {21,16}, {21,14}, {25,14}},
 	-- F3
 	{198, {27,15}, {27,8}, {26,8}},
 	-- F2 Exit
@@ -442,7 +440,7 @@ local paths = {
 	-- Agatha
 	{247, {4,5}, {s="a",a="Agatha"}, {s="potion",hp=113,full=true}, {4,2}, {s="interact",dir="Right"}, {s="agatha"}, {s="split"}, {4,1}, {s="prepareForLance"}, {s="ether"}, {4,0}},
 	-- Lance
-	{113, {6,11}, {s="a",a="Lance"}, {6,2}, {s="lance"}, {s="waitToFight"}, {s="split"}, {5,2}, {5,1}, {s="prepareForBlue"}, {5,-1}},
+	{113, {6,11}, {s="a",a="Lance"}, {6,2}, {s="lance"}, {s="split"}, {5,2}, {5,1}, {s="prepareForBlue"}, {5,-1}},
 	-- Blue
 	{120, {4,3}, {s="a",a="Blue"}, {s="blue"}, {3,0}},
 	-- Champion

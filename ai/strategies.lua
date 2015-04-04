@@ -213,13 +213,16 @@ local function initialize()
 end
 
 local function canHealFor(damage)
+	local curr_hp = pokemon.index(0, "hp")
+	local max_hp = pokemon.index(0, "max_hp")
+	if max_hp - curr_hp < 5 then
+		return nil
+	end
 	local healChecks = {
 		{"full_restore", 9001},
 		{"super_potion", 50},
 		{"potion", 20},
 	}
-	local curr_hp = pokemon.index(0, "hp")
-	local max_hp = pokemon.index(0, "max_hp")
 	for idx,potion in ipairs(healChecks) do
 		local name = potion[1]
 		local result_hp = math.min(curr_hp + potion[2], max_hp)
@@ -2283,6 +2286,21 @@ strategyFunctions = {
 		end
 	end,
 
+	potionBeforeGiovanni = function()
+		-- TODO verify newly leveled
+		-- local curr_hp = pokemon.index(0, "hp")
+		-- if curr_hp < 16 and pokemon.index(0, "level") == 37 then
+		-- 	local rareCandyCount = inventory.count("rare_candy")
+		-- 	if rareCandyCount > 2 then
+		-- 		if menu.pause() then
+		-- 			inventory.use("rare_candy", nil, false)
+		-- 		end
+		-- 		return false
+		-- 	end
+		-- end
+		return strategyFunctions.potion({hp=16, yolo=12, close=true})
+	end,
+
 	fightSilphGiovanni = function()
 		if battle.isActive() then
 			canProgress = true
@@ -2309,7 +2327,7 @@ strategyFunctions = {
 
 --	9: SILPH CO.
 
-	healBeforeHypno = function()
+	potionBeforeHypno = function()
 		local curr_hp, red_hp = pokemon.index(0, "hp"), redHP()
 		local healthUnderRedBar = red_hp - curr_hp
 		local yoloHP = combat.healthFor("HypnoHeadbutt") * 0.9
@@ -2667,7 +2685,7 @@ strategyFunctions = {
 		input.press(data.dir, 0)
 	end,
 
-	healBeforeLorelei = function()
+	potionBeforeLorelei = function()
 		if initialize() then
 			local canPotion
 			if inventory.contains("potion") and hasHealthFor("LoreleiDewgong", 20) then
