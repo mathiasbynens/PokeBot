@@ -2683,8 +2683,15 @@ strategyFunctions = {
 			else
 				local pc = memory.value("menu", "size")
 				if memory.value("battle", "menu") ~= 95 and (pc == 2 or pc == 4) then
-					if menu.getCol() == 10 then
+					local menuColumn = menu.getCol()
+					if menuColumn == 10 then
 						input.press("A")
+					elseif menuColumn == 5 then
+						local depositIndex = 1
+						if pokemon.indexOf("pidgey", "spearow") == 1 then
+							depositIndex = 2
+						end
+						menu.select(depositIndex)
 					else
 						menu.select(1)
 					end
