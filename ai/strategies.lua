@@ -428,9 +428,9 @@ end
 local function nidoranDSum(disabled)
 	local sx, sy = player.position()
 	if not disabled and tries == nil then
-		local opName = battle.opponent()
+		local opponentName = battle.opponent()
 		local opLevel = memory.value("battle", "opponent_level")
-		if opName == "rattata" then
+		if opponentName == "rattata" then
 			if opLevel == 2 then
 				tries = {0, 4, 12}
 			elseif opLevel == 3 then
@@ -438,13 +438,13 @@ local function nidoranDSum(disabled)
 			else
 				-- tries = {0, 0, 10} -- TODO can't escape
 			end
-		elseif opName == "spearow" then
+		elseif opponentName == "spearow" then
 			if opLevel == 5 then
 				-- can't escape
 			end
-		elseif opName == "nidoran" then
+		elseif opponentName == "nidoran" then
 			tries = {0, 6, 12}
-		elseif opName == "nidoranf" then
+		elseif opponentName == "nidoranf" then
 			if opLevel == 3 then
 				tries = {4, 6, 12}
 			else
@@ -533,7 +533,7 @@ strategyFunctions = {
 			pbn = " (PB pace)"
 		end
 		local elt = utils.elapsedTime()
-		bridge.tweet("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four! http://www.twitch.tv/thepokebot")
+		bridge.tweet("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four http://www.twitch.tv/thepokebot")
 		return true
 	end,
 
@@ -1117,18 +1117,19 @@ strategyFunctions = {
 						nidoSpecial = scl
 						if tries > 300 then
 							local statDiff = (16 - att) + (15 - spd) + (13 - scl)
-							if def < 12 then
-								statDiff = statDiff + 1
-							end
 							if not level4Nidoran then
 								statDiff = statDiff + 1
 							end
-							local resets = att < 15 or spd < 14 or scl < 12 or statDiff > 3 or (att == 15 and spd == 14)
+							local resets = att < 15 or spd < 14 or scl < 12 or (att == 15 and spd == 14)
 							local nStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 							if resets then
 								return reset("Bad Nidoran - "..nStatus)
 							end
 							tries = 9001
+
+							if def < 12 then
+								statDiff = statDiff + 1
+							end
 							local superlative
 							local exclaim = "!"
 							if statDiff == 0 then
@@ -1148,7 +1149,7 @@ strategyFunctions = {
 								end
 							elseif statDiff == 1 then
 								superlative = " good"
-							elseif statDiff == 2 then
+							elseif statDiff <= 3 then
 								superlative = "n okay"
 								exclaim = "."
 							else
@@ -2286,15 +2287,16 @@ strategyFunctions = {
 		if battle.isActive() then
 			canProgress = true
 			local forced
-			if pokemon.isOpponent("nidorino") then
+			local opponentName = battle.opponent()
+			if opponentName == "nidorino" then
 				if battle.pp("horn_drill") > 2 then
 					forced = "horn_drill"
 				else
 					forced = "earthquake"
 				end
-			elseif pokemon.isOpponent("rhyhorn") then
+			elseif opponentName == "rhyhorn" then
 				forced = "ice_beam"
-			elseif pokemon.isOpponent("kangaskhan") then
+			elseif opponentName == "kangaskhan" or opponentName == "nidoqueen" then
 				forced = "horn_drill"
 			end
 			battle.automate(forced)
