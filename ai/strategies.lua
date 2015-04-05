@@ -55,7 +55,7 @@ local timeRequirements = {
 	end,
 
 	mankey = function()
-		local timeLimit = 33
+		local timeLimit = 32.5
 		if pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
@@ -63,7 +63,7 @@ local timeRequirements = {
 	end,
 
 	goldeen = function()
-		local timeLimit = 38
+		local timeLimit = 37.5
 		if pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
@@ -71,7 +71,7 @@ local timeRequirements = {
 	end,
 
 	misty = function()
-		local timeLimit = 40
+		local timeLimit = 39.5
 		if pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
@@ -79,7 +79,7 @@ local timeRequirements = {
 	end,
 
 	vermilion = function()
-		return 44.25
+		return 44
 	end,
 
 	trash = function()
@@ -100,15 +100,23 @@ local timeRequirements = {
 		return 70.5
 	end,
 
+	victory_road = function()
+		return 98.75 -- PB
+	end,
+
 	e4center = function()
 		return 102
 	end,
 
 	blue = function()
-		return 108.2
+		return 108.5
 	end,
 
 }
+
+local function getTimeRequirement(name)
+	return timeRequirements[name]()
+end
 
 -- RISK/RESET
 
@@ -178,10 +186,6 @@ local function resetTime(timeLimit, reason, once)
 			print(reason.." "..utils.elapsedTime())
 		end
 	end
-end
-
-local function getTimeRequirement(name)
-	return timeRequirements[name]()
 end
 
 local function setYolo(name)
@@ -513,16 +517,16 @@ strategyFunctions = {
 	end,
 
 	tweetMisty = function()
-		local elt = utils.elapsedTime()
-		if setYolo("misty") then
-			print("Misty: "..elt)
-		else
-			local pbn = ""
-			local pbTime = getTimeRequirement("misty") - 1.75
-			if not overMinute(pbTime) then
-				pbn = " (PB pace)"
+		if not setYolo("misty") then
+			local timeLimit = getTimeRequirement("misty")
+			if not overMinute(timeLimit - 0.5) then
+				local pbn = ""
+				if not overMinute(timeLimit - 1) then
+					pbn = " (PB pace)"
+				end
+				local elt = utils.elapsedTime()
+				bridge.tweet("Got a run going, just beat Misty "..elt.." in"..pbn.." http://www.twitch.tv/thepokebot")
 			end
-			bridge.tweet("Got a run going, just beat Misty "..elt.." in"..pbn.." http://www.twitch.tv/thepokebot")
 		end
 		return true
 	end,
@@ -530,7 +534,7 @@ strategyFunctions = {
 	tweetVictoryRoad = function()
 		local elt = utils.elapsedTime()
 		local pbn = ""
-		if not overMinute(98) then -- TODO verify
+		if not overMinute(getTimeRequirement("victory_road")) then
 			pbn = " (PB pace)"
 		end
 		local elt = utils.elapsedTime()
@@ -1797,7 +1801,7 @@ strategyFunctions = {
 				local px, py = player.position()
 				if px == 4 and py == 6 then
 					tries = tries + 1
-					local timeLimit = getTimeRequirement("trash") + 1
+					local timeLimit = getTimeRequirement("trash") + 1.5
 					if resetTime(timeLimit, "complete Trashcans ("..tries.." tries)") then
 						return true
 					end
@@ -3026,7 +3030,7 @@ end
 
 function strategies.init(midGame)
 	if not STREAMING_MODE then
-		-- setYolo(0)
+		-- setYolo("bulbasaur")
 		nidoAttack = 55
 		nidoSpeed = 50
 		nidoSpecial = 45
