@@ -32,7 +32,7 @@ local yolo, deepRun, resetting, riskGiovanni, maxEtherSkip
 local timeRequirements = {
 
 	bulbasaur = function()
-		return 2.25
+		return 2.2
 	end,
 
 	nidoran = function()
@@ -1567,7 +1567,7 @@ strategyFunctions = {
 			if pokemon.info("nidoking", "level") < 23 or inventory.count("potion") < 3 then -- RISK
 				return true
 			end
-			bridge.chat("Using Poison Sting to attempt to redbar off Mankey")
+			bridge.chat("Using Poison Sting to attempt to red-bar off Mankey")
 		end
 		if battle.isActive() then
 			canProgress = true
@@ -1577,7 +1577,7 @@ strategyFunctions = {
 					return true
 				end
 				local scratchDmg = enemyMove.damage
-				if curr_hp - red_hp > scratchDmg then
+				if curr_hp - scratchDmg >= red_hp then
 					return true
 				end
 			end
@@ -1630,8 +1630,16 @@ strategyFunctions = {
 			end
 		end
 		if initialize() then
-			if healAmount < 60 then
-				bridge.chat("Limiting heals to attempt to get closer to red-bar off Misty", inventory.count("potion"))
+			local message
+			local potionCount = inventory.count("potion")
+			local needsToHeal = healAmount - pokemon.index(0, "hp")
+			if potionCount * 20 < needsToHeal then
+				message = "Ran too low on potions to heal enough before Misty"
+			elseif healAmount < 60 then
+				message = "Limiting heals to attempt to get closer to red-bar off Misty"
+			end
+			if message then
+				bridge.chat(message, potionCount)
 			end
 		end
 		return strategyFunctions.potion({hp=healAmount})
@@ -2765,7 +2773,7 @@ strategyFunctions = {
 
 	centerSkip = function()
 		setYolo("e4center")
-		local message = "Skipping the Center and attempting to redbar "
+		local message = "Skipping the Center and attempting to red-bar "
 		if hasHealthFor("LoreleiDewgong") then
 			message = message.."off Lorelei..."
 		else
