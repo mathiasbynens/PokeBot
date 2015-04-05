@@ -112,7 +112,7 @@ local timeRequirements = {
 
 -- RISK/RESET
 
-local function hardReset(message, extra)
+local function hardReset(message, extra, wait)
 	resetting = true
 	if strategies.seed then
 		if extra then
@@ -122,11 +122,16 @@ local function hardReset(message, extra)
 		end
 	end
 	bridge.chat(message, extra)
+	if wait and INTERNAL and not STREAMING_MODE then
+		while true do
+
+		end
+	end
 	client.reboot_core()
 	return true
 end
 
-local function reset(reason, extra)
+local function reset(reason, extra, wait)
 	local time = utils.elapsedTime()
 	local resetString = "Reset"
 	if time then
@@ -142,7 +147,7 @@ local function reset(reason, extra)
 		separator = ":"
 	end
 	resetString = resetString..separator.." "..reason
-	return hardReset(resetString, extra)
+	return hardReset(resetString, extra, wait)
 end
 strategies.reset = reset
 
@@ -676,6 +681,11 @@ strategyFunctions = {
 			end
 			input.press("B")
 		else
+			if initialize() then
+				if not inventory.contains(itemName) then
+					return reset("Unable to teach move "..itemName.." to "..data.poke, nil, true)
+				end
+			end
 			local replacement
 			if data.replace then
 				replacement = pokemon.moveIndex(data.replace, data.poke) - 1
