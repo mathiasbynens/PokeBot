@@ -215,19 +215,12 @@ end
 local function canHealFor(damage)
 	local curr_hp = pokemon.index(0, "hp")
 	local max_hp = pokemon.index(0, "max_hp")
-	if max_hp - curr_hp < 5 then
-		return nil
-	end
-	local healChecks = {
-		{"full_restore", 9001},
-		{"super_potion", 50},
-		{"potion", 20},
-	}
-	for idx,potion in ipairs(healChecks) do
-		local name = potion[1]
-		local result_hp = math.min(curr_hp + potion[2], max_hp)
-		if result_hp >= damage and inventory.contains(name) then
-			return name
+	if max_hp - curr_hp > 3 then
+		local healChecks = {"full_restore", "super_potion", "potion"}
+		for idx,potion in ipairs(healChecks) do
+			if inventory.contains(potion) and utils.canPotionWith(potion, damage, curr_hp, max_hp) then
+				return potion
+			end
 		end
 	end
 end

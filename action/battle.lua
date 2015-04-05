@@ -13,28 +13,15 @@ local utils = require "util.utils"
 local inventory = require "storage.inventory"
 local pokemon = require "storage.pokemon"
 
-local function potionsForHit(potion, currHP, maxHP)
+local function potionsForHit(potion, curr_hp, max_hp)
 	if not potion then
 		return
 	end
 	local ours, killAmount = combat.inKillRange()
 	if ours then
-		local potionHP
-		if potion == "full_restore" then
-			potionHP = 999
-		elseif potion == "super_potion" then
-			potionHP = 50
-		else
-			potionHP = 20
-		end
-		if not currHP then
-			currHP = pokemon.index(0, "hp")
-			maxHP = pokemon.index(0, "max_hp")
-		end
-		return math.min(currHP + potionHP, maxHP) >= killAmount - 2
+		return utils.canPotionWith(potion, killAmount, curr_hp, max_hp)
 	end
 end
-battle.potionsForHit = potionsForHit
 
 local function recover()
 	if control.canRecover() then

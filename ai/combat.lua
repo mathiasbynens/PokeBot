@@ -163,7 +163,7 @@ local function modPlayerStats(user, enemy, move)
 end
 
 local function calcBestHit(attacker, defender, ours, rng)
-	local bestTurns, bestMinTurns = 9999, 9999
+	local bestTurns, bestMinTurns = 9001, 9001
 	local bestDmg = -1
 	local ourMaxHit
 	local ret = nil
@@ -173,7 +173,7 @@ local function calcBestHit(attacker, defender, ours, rng)
 			if maxDmg then
 				local minTurns, maxTurns
 				if maxDmg <= 0 then
-					minTurns, maxTurns = 9999, 9999
+					minTurns, maxTurns = 9001, 9001
 				else
 					minTurns = math.ceil(defender.hp / maxDmg)
 					maxTurns = math.ceil(defender.hp / minDmg)

@@ -2,12 +2,10 @@ local utils = {}
 
 local memory = require "util.memory"
 
+-- GENERAL
+
 function utils.dist(x1, y1, x2, y2)
 	return math.sqrt(math.pow(x2 - x1, 2) + math.pow(y2 - y1, 2))
-end
-
-function utils.ingame()
-	return memory.raw(0x020E) > 0
 end
 
 function utils.each(table, func)
@@ -44,11 +42,22 @@ function utils.key(needle, haystack)
 	return nil
 end
 
-function utils.igt()
-	local secs = memory.raw(0xDA44)
-	local mins = memory.raw(0xDA43)
-	local hours = memory.raw(0xDA41)
-	return secs + mins * 60 + hours * 3600
+-- GAME
+
+function utils.canPotionWith(potion, forDamage, curr_hp, max_hp)
+	local potion_hp
+	if potion == "full_restore" then
+		potion_hp = 9001
+	elseif potion == "super_potion" then
+		potion_hp = 50
+	else
+		potion_hp = 20
+	end
+	return math.min(curr_hp + potion_hp, max_hp) >= forDamage - 1
+end
+
+function utils.ingame()
+	return memory.raw(0x020E) > 0
 end
 
 function utils.onPokemonSelect(battleMenu)
@@ -56,6 +65,13 @@ function utils.onPokemonSelect(battleMenu)
 end
 
 -- TIME
+
+function utils.igt()
+	local secs = memory.raw(0xDA44)
+	local mins = memory.raw(0xDA43)
+	local hours = memory.raw(0xDA41)
+	return secs + mins * 60 + hours * 3600
+end
 
 local function clockSegment(unit)
 	if unit < 10 then
