@@ -1527,6 +1527,15 @@ strategyFunctions = {
 		end
 	end,
 
+	potionForMankey = function()
+		if initialize() then
+			if pokemon.info("nidoking", "level") > 20 then
+				return true
+			end
+		end
+		return strategyFunctions.potion({hp=18, yolo=8})
+	end,
+
 	redbarMankey = function()
 		if not setYolo("mankey") then
 			return true
