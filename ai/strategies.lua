@@ -2087,21 +2087,19 @@ strategyFunctions = {
 	digFight = function()
 		if battle.isActive() then
 			canProgress = true
-			local backupIndex = pokemon.indexOf("paras", "squirtle")
-			if pokemon.isDeployed("nidoking") then
-				if pokemon.info("nidoking", "hp") == 0 then
-					if utils.onPokemonSelect(memory.value("battle", "menu")) then
-						menu.select(backupIndex, true)
-					else
-						input.press("A")
-					end
-				else
-					battle.automate()
+			local currentlyDead = memory.double("battle", "our_hp") == 0
+			if currentlyDead then
+				local backupPokemon = pokemon.getSacrifice("paras", "squirtle")
+				if not backupPokemon then
+					return resetDeath()
 				end
-			elseif pokemon.info("nidoking", "hp") == 0 and pokemon.index(backupIndex, "hp") == 0 and pokemon.isDeployed("paras", "squirtle") then
-				return resetDeath()
+				if utils.onPokemonSelect(memory.value("battle", "menu")) then
+					menu.select(pokemon.indexOf(backupPokemon), true)
+				else
+					input.press("A")
+				end
 			else
-				battle.fight("dig")
+				battle.automate()
 			end
 		elseif canProgress then
 			return true
