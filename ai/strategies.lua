@@ -2848,16 +2848,14 @@ strategyFunctions = {
 			end
 			if pokemon.isOpponent("gengar") then
 				local currentHP = pokemon.info("nidoking", "hp")
-				-- if not yolo and currentHP <= 56 and not isPrepared("x_speed") then
-				if not yolo and currentHP <= 56 and not isPrepared("x_accuracy", "x_speed") then
+				if not yolo and currentHP <= 56 and not isPrepared("x_speed") then
 					local toPotion = inventory.contains("full_restore", "super_potion")
 					if toPotion then
 						inventory.use(toPotion, nil, true)
 						return false
 					end
 				end
-				-- if not prepare("x_speed") then
-				if not prepare("x_accuracy", "x_speed") then
+				if not prepare("x_speed") then
 					return false
 				end
 			end
@@ -2905,7 +2903,7 @@ strategyFunctions = {
 		if initialize() then
 			setYolo("blue")
 		end
-		local skyDmg = combat.healthFor("BlueSky") * 0.9
+		local skyDmg = combat.healthFor("BlueSky") * 0.925
 		local wingDmg = combat.healthFor("BluePidgeot")
 		return strategyFunctions.potion({hp=skyDmg-50, yolo=wingDmg, full=true})
 	end,
