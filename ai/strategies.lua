@@ -1766,7 +1766,7 @@ strategyFunctions = {
 			sellArray = {{name="antidote"}, {name="tm34"}, {name="nugget"}}
 			buyArray = {{name="super_potion",index=1,amount=3}, {name="repel",index=5,amount=3}}
 		end
-		return shop.transaction{
+		return shop.transaction {
 			sell = sellArray,
 			buy = buyArray
 		}
@@ -2990,7 +2990,7 @@ strategyFunctions = {
 			if tries == 0 then
 				bridge.tweet("Beat Pokemon Red in "..canProgress.."!")
 				if strategies.seed then
-					print(utils.frames().." frames, with seed "..strategies.seed)
+					print("v"..VERSION..": "..utils.frames().." frames, with seed "..strategies.seed)
 					print("Please save this seed number to share, if you would like proof of your run!")
 				end
 			end

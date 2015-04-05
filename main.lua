@@ -7,12 +7,11 @@ local PAINT_ON    = true -- Display contextual information while the bot runs
 
 -- START CODE (hard hats on)
 
-local START_WAIT = 99
-local VERSION = "1.2"
-
 GAME_NAME = "red"
 YELLOW = GAME_NAME == "yellow"
 INTERNAL = false
+
+local START_WAIT = 99
 
 local battle = require "action.battle"
 local textbox = require "action.textbox"
