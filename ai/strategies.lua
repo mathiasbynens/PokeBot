@@ -960,7 +960,14 @@ strategyFunctions = {
 
 	grabForestPotion = function()
 		if battle.handleWild() then
-			if inventory.contains("potion") then
+			local potionCount = inventory.count("potion")
+			if initialize() then
+				tempDir = potionCount
+			end
+			if potionCount > 0 then
+				if tempDir and potionCount > tempDir then
+					tempDir = nil
+				end
 				local healthNeeded = (pokemon.info("spearow", "level") == 3) and 8 or 15
 				if pokemon.info("squirtle", "hp") <= healthNeeded then
 					if menu.pause() then
@@ -969,6 +976,8 @@ strategyFunctions = {
 				else
 					return true
 				end
+			elseif not tempDir then
+				return true
 			elseif menu.close() then
 				player.interact("Up")
 			end
@@ -1018,7 +1027,14 @@ strategyFunctions = {
 	equipForBrock = function(data)
 		if initialize() then
 			if pokemon.info("squirtle", "level") < 8 then
-				return reset("Not level 8 before Brock", pokemon.getExp())
+				local message, wait
+				if pokemon.info("spearow", "level") == 3 then
+					message = "Lost too much exp accidentally killing Weedle with Spearow"
+				else
+					message = "Did not reach level 8 before Brock"
+					wait = true
+				end
+				return reset(message, pokemon.getExp(), wait)
 			end
 			if data.anti then
 				local poisoned = pokemon.info("squirtle", "status") > 0
@@ -1026,7 +1042,7 @@ strategyFunctions = {
 					return true
 				end
 				if not inventory.contains("antidote") then
-					return reset("Poisoned, but we skipped the antidote")
+					return reset("Poisoned, but we risked skipping the antidote")
 				end
 				local curr_hp = pokemon.info("squirtle", "hp")
 				if inventory.contains("potion") and curr_hp > 8 and curr_hp < 18 then
