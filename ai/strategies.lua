@@ -683,10 +683,12 @@ strategyFunctions = Strategies.functions
 function Strategies.execute(data)
 	if strategyFunctions[data.s](data) then
 		status = {tries=0}
+		Strategies.status = status
+		Strategies.completeGameStrategy()
+		-- print(data.s)
 		if resetting then
 			return nil
 		end
-		-- print(data.s)
 		return true
 	end
 	return false
@@ -703,7 +705,8 @@ function Strategies.init(midGame)
 end
 
 function Strategies.softReset()
-	status = {}
+	status = {tries=0}
+	Strategies.status = status
 	splitNumber, splitTime = 0, 0
 	resetting = nil
 	Strategies.resetGame()

@@ -20,6 +20,8 @@ local pokemon = require "storage.pokemon"
 
 local status = Strategies.status
 
+-- TIME CONSTRAINTS
+
 Strategies.timeRequirements = {}
 
 -- STRATEGIES
@@ -32,6 +34,10 @@ function Strategies.initGame(midGame)
 	if not STREAMING_MODE then
 		-- Strategies.setYolo("")
 	end
+end
+
+function Strategies.completeGameStrategy()
+	status = Strategies.status
 end
 
 function Strategies.resetGame()

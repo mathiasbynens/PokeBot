@@ -25,6 +25,8 @@ local riskGiovanni, maxEtherSkip
 
 local status = Strategies.status
 
+-- TIME CONSTRAINTS
+
 Strategies.timeRequirements = {
 
 	bulbasaur = function()
@@ -1489,17 +1491,6 @@ strategyFunctions.lavenderRival = function()
 	end
 end
 
-strategyFunctions.pokeDoll = function()
-	if Battle.isActive() then
-		status.canProgress = true
-		Inventory.use("pokedoll", nil, true)
-	elseif status.canProgress then
-		return true
-	else
-		Input.cancel()
-	end
-end
-
 strategyFunctions.digFight = function()
 	if Battle.isActive() then
 		status.canProgress = true
@@ -1521,6 +1512,17 @@ strategyFunctions.digFight = function()
 		return true
 	else
 		Textbox.handle()
+	end
+end
+
+strategyFunctions.pokeDoll = function()
+	if Battle.isActive() then
+		status.canProgress = true
+		Inventory.use("pokedoll", nil, true)
+	elseif status.canProgress then
+		return true
+	else
+		Input.cancel()
 	end
 end
 
@@ -2376,6 +2378,10 @@ function Strategies.initGame(midGame)
 		riskGiovanni = true
 		print(nidoAttack.." x "..nidoSpeed.." "..nidoSpecial)
 	end
+end
+
+function Strategies.completeGameStrategy()
+	status = Strategies.status
 end
 
 function Strategies.resetGame()
