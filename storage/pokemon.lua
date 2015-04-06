@@ -85,7 +85,7 @@ local data = {
 }
 
 local function getAddress(index)
-	return 0xD16B + index * 0x2C
+	return 0x116B + index * 0x2C
 end
 
 local function index(index, offset)
@@ -125,7 +125,7 @@ pokemon.indexOf = indexOf
 function pokemon.battleMove(name)
 	local mid = moveList[name]
 	for i=1,4 do
-		if mid == memory.raw(0xD01B + i) then
+		if mid == memory.raw(0x101B + i) then
 			return i
 		end
 	end
@@ -233,7 +233,7 @@ function pokemon.isEvolving()
 end
 
 function pokemon.getExp()
-	return memory.raw(0xD17A) * 256 + memory.raw(0xD17B)
+	return memory.raw(0x117A) * 256 + memory.raw(0x117B)
 end
 
 function pokemon.inRedBar()

@@ -3,17 +3,17 @@ local settings = {}
 local memory = require "util.memory"
 local menu = require "util.menu"
 
-local YELLOW = GAME_NAME == "yellow"
+local yellow = YELLOW
 
 local settings_menu
-if YELLOW then
+if yellow then
 	settings_menu = 93
 else
 	settings_menu = 94
 end
 
 local desired = {}
-if YELLOW then
+if yellow then
 	desired.text_speed = 1
 	desired.battle_animation = 128
 	desired.battle_style = 64
@@ -24,13 +24,13 @@ else
 end
 
 local function isEnabled(name)
-	if YELLOW then
+	if yellow then
 		local matching = {
 			text_speed = 0xF,
 			battle_animation = 128,
 			battle_style = 64
 		}
-		local settingMask = memory.value("setting", "yellow_bitmask")
+		local settingMask = memory.value("setting", "yellow_bitmask", true)
 		return bit.band(settingMask, matching[name]) == desired[name]
 	else
 		return memory.value("setting", name) == desired[name]

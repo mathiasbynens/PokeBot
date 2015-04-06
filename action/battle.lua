@@ -206,7 +206,7 @@ function movePP(name)
 	if not midx then
 		return 0
 	end
-	return memory.raw(0xD02C + midx)
+	return memory.raw(0x102C + midx)
 end
 battle.pp = movePP
 

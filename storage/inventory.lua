@@ -52,7 +52,7 @@ local items = {
 	rock_slide = 248,
 }
 
-local ITEM_BASE = 0xD31E
+local ITEM_BASE = 0x131E
 
 -- Data
 
@@ -125,7 +125,7 @@ function inventory.teach(item, poke, replaceIdx, altPoke)
 end
 
 function inventory.isFull()
-	return memory.raw(0xD345) > 0
+	return memory.raw(0x1345) > 0
 end
 
 function inventory.use(item, poke, midfight)

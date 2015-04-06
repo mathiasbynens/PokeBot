@@ -129,16 +129,16 @@ local function getMoves(who)--Get the moveset of us [0] or them [1]
 	local moves = {}
 	local base
 	if who == 1 then
-		base = 0xCFED
+		base = 0x0FED
 	else
-		base = 0xD01C
+		base = 0x101C
 	end
 	for idx=0, 3 do
 		local val = memory.raw(base + idx)
 		if val > 0 then
 			local moveTable = movelist.get(val)
 			if who == 0 then
-				moveTable.pp = memory.raw(0xD02D + idx)
+				moveTable.pp = memory.raw(0x102D + idx)
 			end
 			moves[idx + 1] = moveTable
 		end
@@ -287,7 +287,7 @@ end
 combat.activePokemon = activePokemon
 
 local function isSleeping()
-	return memory.raw(0xD16F) > 1
+	return memory.raw(0x116F) > 1
 end
 combat.isSleeping = isSleeping
 

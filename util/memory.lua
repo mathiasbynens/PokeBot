@@ -30,19 +30,19 @@ local memoryNames = {
 		main = 0x1FF5,
 	},
 	player = {
-		name = 0xD158,
-		name2 = 0xD159,
+		name = 0x1158,
+		name2 = 0x1159,
 		moving = 0x1528,
-		x = 0xD362,
-		y = 0xD361,
+		x = 0x1362,
+		y = 0x1361,
 		facing = 0x152A,
 		repel = 0x10DB,
-		party_size = 0xD163,
+		party_size = 0x1163,
 	},
 	game = {
-		map = 0xD35E,
-		frames = 0xDA45,
-		battle = 0xD057,
+		map = 0x135E,
+		frames = 0x1A45,
+		battle = 0x1057,
 		textbox = 0x0FC4,
 	},
 	shop = {
@@ -52,9 +52,9 @@ local memoryNames = {
 		trashcans = 0x1773,
 	},
 	pokemon = {
-		exp1 = 0xD179,
-		exp2 = 0xD17A,
-		exp3 = 0xD17B,
+		exp1 = 0x1179,
+		exp2 = 0x117A,
+		exp3 = 0x117B,
 	},
 	battle = {
 		turns = 0x1067,
@@ -69,44 +69,49 @@ local memoryNames = {
 		critical = 0x105E,
 
 		opponent_bide = 0x106F,
-		opponent_id = 0xCFE5,
-		opponent_level = 0xCFF3,
-		opponent_type1 = 0xCFEA,
-		opponent_type2 = 0xCFEB,
+		opponent_id = 0x0FE5,
+		opponent_level = 0x0FF3,
+		opponent_type1 = 0x0FEA,
+		opponent_type2 = 0x0FEB,
 
-		our_id = 0xD014,
-		our_status = 0xD018,
-		our_level = 0xD022,
-		our_type1 = 0xD019,
-		our_type2 = 0xD01A,
+		our_id = 0x1014,
+		our_status = 0x1018,
+		our_level = 0x1022,
+		our_type1 = 0x1019,
+		our_type2 = 0x101A,
 	},
 }
 
 local doubleNames = {
 	pokemon = {
-		attack = 0xD17E,
-		defense = 0xD181,
-		speed = 0xD183,
-		special = 0xD185,
+		attack = 0x117E,
+		defense = 0x1181,
+		speed = 0x1183,
+		special = 0x1185,
 	},
 	battle = {
-		opponent_hp = 0xCFE6,
-		opponent_max_hp = 0xCFF4,
-		opponent_attack = 0xCFF6,
-		opponent_defense = 0xCFF8,
-		opponent_speed = 0xCFFA,
-		opponent_special = 0xCFFC,
+		opponent_hp = 0x0FE6,
+		opponent_max_hp = 0x0FF4,
+		opponent_attack = 0x0FF6,
+		opponent_defense = 0x0FF8,
+		opponent_speed = 0x0FFA,
+		opponent_special = 0x0FFC,
 
-		our_hp = 0xD015,
-		our_max_hp = 0xD023,
-		our_attack = 0xD025,
-		our_defense = 0xD027,
-		our_speed = 0xD029,
-		our_special = 0xD02B,
+		our_hp = 0x1015,
+		our_max_hp = 0x1023,
+		our_attack = 0x1025,
+		our_defense = 0x1027,
+		our_speed = 0x1029,
+		our_special = 0x102B,
 	},
 }
 
-local function raw(address)
+local yellow = YELLOW
+
+local function raw(address, forYellow)
+	if yellow and not forYellow and address > 0x0F12 and address < 0x1F00 then
+		address = address - 1
+	end
 	return memory.readbyte(address)
 end
 Memory.raw = raw
@@ -130,12 +135,12 @@ function Memory.double(section, key)
 	return raw(first) + raw(first + 1)
 end
 
-function Memory.value(section, key)
+function Memory.value(section, key, forYellow)
 	local memoryAddress = memoryNames[section]
 	if key then
 		memoryAddress = memoryAddress[key]
 	end
-	return raw(memoryAddress)
+	return raw(memoryAddress, forYellow)
 end
 
 return Memory

@@ -3,7 +3,7 @@ local menu = {}
 local input = require "util.input"
 local memory = require "util.memory"
 
-local YELLOW = GAME_NAME == "yellow"
+local yellow = GAME_NAME == "yellow"
 
 local sliding = false
 
@@ -139,13 +139,13 @@ end
 -- Options
 
 function menu.setOption(name, desired)
-	if YELLOW then
+	if yellow then
 		local rowFor = {
 			text_speed = 0,
 			battle_animation = 1,
 			battle_style = 2
 		}
-		local currentRow = memory.raw(0x0D3D)
+		local currentRow = memory.raw(0x0D3D, true)
 		if menu.balance(currentRow, rowFor[name], true, false, true) then
 			input.press("Left")
 		end
