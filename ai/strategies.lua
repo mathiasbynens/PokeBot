@@ -118,8 +118,8 @@ end
 -- HELPERS
 
 function Strategies.initialize()
-	if not initialized then
-		initialized = true
+	if not status.initialized then
+		status.initialized = true
 		return true
 	end
 end
@@ -164,13 +164,13 @@ end
 
 function Strategies.buffTo(buff, defLevel)
 	if Battle.isActive() then
-		canProgress = true
+		status.canProgress = true
 		local forced
 		if defLevel and Memory.double("battle", "opponent_defense") > defLevel then
 			forced = buff
 		end
 		Battle.automate(forced, true)
-	elseif canProgress then
+	elseif status.canProgress then
 		return true
 	else
 		Battle.automate()
@@ -237,7 +237,7 @@ function Strategies.completedMenuFor(data)
 end
 
 function Strategies.closeMenuFor(data)
-	if (not tempDir and not data.close) or data.chain or Menu.close() then
+	if (not status.tempDir and not data.close) or data.chain or Menu.close() then
 		return true
 	end
 end
@@ -259,7 +259,7 @@ function Strategies.useItem(data)
 		end
 	else
 		if Inventory.use(data.item, data.poke) then
-			tempDir = true
+			status.tempDir = true
 		else
 			Menu.pause()
 		end
@@ -450,7 +450,7 @@ Strategies.functions = {
 			if toPotion then
 				if Menu.pause() then
 					Inventory.use(toPotion)
-					tempDir = true
+					status.tempDir = true
 				end
 				return false
 			end
@@ -494,7 +494,7 @@ Strategies.functions = {
 				replacement = 0
 			end
 			if Inventory.teach(itemName, data.poke, replacement, data.alt) then
-				tempDir = true
+				status.tempDir = true
 			else
 				Menu.pause()
 			end
@@ -567,12 +567,12 @@ Strategies.functions = {
 
 	waitToTalk = function()
 		if Battle.isActive() then
-			canProgress = false
+			status.canProgress = false
 			Battle.automate()
 		elseif Textbox.isActive() then
-			canProgress = true
+			status.canProgress = true
 			Input.cancel()
-		elseif canProgress then
+		elseif status.canProgress then
 			return true
 		end
 	end,
@@ -580,14 +580,14 @@ Strategies.functions = {
 	waitToPause = function()
 		local main = Memory.value("menu", "main")
 		if main == 128 then
-			if canProgress then
+			if status.canProgress then
 				return true
 			end
 		elseif Battle.isActive() then
-			canProgress = false
+			status.canProgress = false
 			Battle.automate()
 		elseif main == 123 then
-			canProgress = true
+			status.canProgress = true
 			Input.press("B")
 		elseif Textbox.handle() then
 			Input.press("Start", 2)
@@ -596,9 +596,9 @@ Strategies.functions = {
 
 	waitToFight = function(data)
 		if Battle.isActive() then
-			canProgress = true
+			status.canProgress = true
 			Battle.automate()
-		elseif canProgress then
+		elseif status.canProgress then
 			return true
 		elseif Textbox.handle() then
 			if data.dir then
