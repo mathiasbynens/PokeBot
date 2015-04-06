@@ -2747,7 +2747,8 @@ strategyFunctions = {
 						input.press("A")
 					elseif menuColumn == 5 then
 						local depositIndex = 1
-						if pokemon.indexOf("pidgey", "spearow") == 1 then
+						local depositAllExtras = toSize == 1
+						if not depositAllExtras and pokemon.indexOf("pidgey", "spearow") == 1 then
 							depositIndex = 2
 						end
 						menu.select(depositIndex)
