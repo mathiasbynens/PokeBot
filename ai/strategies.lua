@@ -18,7 +18,6 @@ local utils = require "util.utils"
 local inventory = require "storage.inventory"
 local pokemon = require "storage.pokemon"
 
-local areaName = "Unknown"
 local splitNumber, splitTime = 0, 0
 local tries = 0
 local tempDir, canProgress, initialized
@@ -145,9 +144,7 @@ local function reset(reason, extra, wait)
 	if time then
 		resetString = resetString.." after "..time
 	end
-	if areaName then
-		resetString = " "..resetString.." at "..areaName
-	end
+	resetString = " "..resetString.." at "..control.areaName
 	local separator
 	if deepRun and not yolo then
 		separator = " BibleThump"
@@ -203,11 +200,7 @@ local function setYolo(name)
 		else
 			prefix = "dis"
 		end
-		if areaName then
-			print("YOLO "..prefix.."abled at "..areaName)
-		else
-			print("YOLO "..prefix.."abled")
-		end
+		print("YOLO "..prefix.."abled at "..control.areaName)
 	end
 	return yolo
 end
@@ -496,11 +489,6 @@ end
 local strategyFunctions
 strategyFunctions = {
 
-	a = function(data)
-		areaName = data.a
-		return true
-	end,
-
 	startFrames = function()
 		strategies.frames = 0
 		return true
@@ -550,7 +538,7 @@ strategyFunctions = {
 			local timeDiff
 			splitTime, timeDiff = utils.timeSince(splitTime)
 			if timeDiff then
-				print(splitNumber..". "..areaName..": "..utils.elapsedTime().." ("..timeDiff..")")
+				print(splitNumber..". "..control.areaName..": "..utils.elapsedTime().." ("..timeDiff..")")
 			end
 		end
 		return true
@@ -2536,9 +2524,7 @@ strategyFunctions = {
 			return false
 		end
 		if initialize() then
-			if areaName then
-				print("EQ Elixer: "..areaName)
-			end
+			print("EQ Elixer: "..control.areaName)
 		end
 		return useItem({item="elixer", poke="nidoking", chain=data.chain, close=data.close})
 	end,

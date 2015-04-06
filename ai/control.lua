@@ -21,16 +21,18 @@ local shouldCatch, attackIdx
 local extraEncounter, maxEncounters
 local isYolo, battleYolo
 
-local function battlePotion(enable)
-	potionInBattle = enable
-end
-control.battlePotion = battlePotion
+control.areaName = "Unknown"
 
 local controlFunctions = {
 
+	a = function(data)
+		control.areaName = data.a
+		return true
+	end,
+
 	potion = function(data)
 		if data.b ~= nil then
-			battlePotion(data.b)
+			control.battlePotion(data.b)
 		end
 		battleYolo = data.yolo
 	end,
@@ -107,6 +109,10 @@ local controlFunctions = {
 }
 
 -- COMBAT
+
+function control.battlePotion(enable)
+	potionInBattle = enable
+end
 
 function control.canDie(enabled)
 	if enabled == nil then

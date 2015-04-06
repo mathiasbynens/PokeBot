@@ -6,9 +6,9 @@ local paths = {
 	-- Into the Wild
 	{0, {5,6}, {10,6}, {10,0}},
 	-- Choose your character!
-	{40, {5,3}, {s="a",a="Pallet Rival"}, {5,4}, {7,4}, {s="confirm",dir="Up",type="A"}, {5,3}, {s="confirm",dir="Up",type="B"}, {5,6}, {s="waitToFight"}, {5,12}},
+	{40, {5,3}, {c="a",a="Pallet Rival"}, {5,4}, {7,4}, {s="confirm",dir="Up",type="A"}, {5,3}, {s="confirm",dir="Up",type="B"}, {5,6}, {s="waitToFight"}, {5,12}},
 	-- Let's try this escape again
-	{0, {12,12}, {s="a",a="Pallet Town"}, {c="encounters",limit=4}, {9,12}, {9,2}, {10,2}, {10,-1}},
+	{0, {12,12}, {c="a",a="Pallet Town"}, {c="encounters",limit=4}, {9,12}, {9,2}, {10,2}, {10,-1}},
 	-- First encounters
 	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {11,2}, {11,-1}},
 	-- To the Mart
