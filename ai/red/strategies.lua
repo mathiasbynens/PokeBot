@@ -287,11 +287,15 @@ strategyFunctions.catchNidoran = function()
 		Pokemon.updateParty()
 		local hasNidoran = Pokemon.inParty("nidoran")
 		if hasNidoran then
+			local gotExperience = Pokemon.getExp() > 205
 			if not status.canProgress then
 				Bridge.caught("nidoran")
 				status.canProgress = true
+				if not gotExperience then
+					Bridge.chat("Waiting in the grass for a suitable ecounter to get experience", Pokemon.getExp())
+				end
 			end
-			if Pokemon.getExp() > 205 then
+			if gotExperience then
 				level4Nidoran = Pokemon.info("nidoran", "level") == 4
 				return true
 			end
