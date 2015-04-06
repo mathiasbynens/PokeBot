@@ -1,4 +1,10 @@
-## 1 April 2014
+## 5 April 2015
+* Tighten reset time constraints
+* Improve potioning HPs throughout the run
+* Deposit except the flier before the E4
+* Improve E4 strategies and risks (Agatha, Blue)
+
+## 1 April 2015
 * Added strategy to grab the Old Man potion based on HP
 * Minor improvements to some Route 3 fights
 * Always skip teaching Water Gun/fighting Hiker in Mt. Moon
