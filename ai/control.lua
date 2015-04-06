@@ -1,6 +1,7 @@
 local control = {}
 
 local combat = require "ai.combat"
+local strategies
 
 local bridge = require "util.bridge"
 local memory = require "util.memory"
@@ -19,9 +20,11 @@ local encounters = 0
 local canDie, shouldFight, minExp
 local shouldCatch, attackIdx
 local extraEncounter, maxEncounters
-local isYolo, battleYolo
+local battleYolo
 
 control.areaName = "Unknown"
+control.moonEncounters = nil
+control.yolo = false
 
 local controlFunctions = {
 
@@ -157,7 +160,7 @@ function control.canCatch(partySize)
 	local pokeballs = inventory.count("pokeball")
 	local minimumCount = 4 - partySize
 	if pokeballs < minimumCount then
-		require("ai.strategies").reset("Not enough PokeBalls", pokeballs)
+		strategies.reset("Not enough PokeBalls", pokeballs)
 		return false
 	end
 	return true
@@ -167,7 +170,7 @@ function control.shouldCatch(partySize)
 	if maxEncounters and encounters > maxEncounters then
 		local extraCount = extraEncounter and pokemon.inParty(extraEncounter)
 		if not extraCount or encounters > maxEncounters + 1 then
-			require("ai.strategies").reset("Too many encounters", encounters)
+			strategies.reset("Too many encounters", encounters)
 			return false
 		end
 	end
@@ -206,7 +209,7 @@ end
 -- Items
 
 function control.canRecover()
-	return potionInBattle and (not battleYolo or not isYolo)
+	return potionInBattle and (not battleYolo or not control.yolo)
 end
 
 function control.set(data)
@@ -214,7 +217,7 @@ function control.set(data)
 end
 
 function control.setYolo(enabled)
-	isYolo = enabled
+	control.yolo = enabled
 end
 
 function control.setPotion(enabled)
@@ -229,6 +232,9 @@ function control.wildEncounter()
 	encounters = encounters + 1
 	paint.wildEncounters(encounters)
 	bridge.encounter()
+	if control.moonEncounters then
+		control.moonEncounters = control.moonEncounters + 1
+	end
 end
 
 function control.reset()
@@ -242,8 +248,12 @@ function control.reset()
 	fightEncounter = 0
 	caveFights = 0
 	battleYolo = false
-	isYolo = false
+	control.yolo = false
 	maxEncounters = nil
+end
+
+function control.init()
+	strategies = require("ai."..GAME_NAME..".strategies")
 end
 
 return control

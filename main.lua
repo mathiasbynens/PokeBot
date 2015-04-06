@@ -20,7 +20,7 @@ local walk = require "action.walk"
 
 local combat = require "ai.combat"
 local control = require "ai.control"
-local strategies = require "ai.strategies"
+local strategies = require("ai."..GAME_NAME..".strategies")
 
 local bridge = require "util.bridge"
 local input = require "util.input"
@@ -95,7 +95,9 @@ local function resetAll()
 	math.randomseed(strategies.seed)
 end
 
--- Execute
+-- EXECUTE
+
+control.init()
 
 print("Welcome to PokeBot "..GAME_NAME.." version "..VERSION)
 STREAMING_MODE = not walk.init()
@@ -166,9 +168,6 @@ while true do
 				if battleState == 1 then
 					if not inBattle then
 						control.wildEncounter()
-						if strategies.moonEncounters then
-							strategies.moonEncounters = strategies.moonEncounters + 1
-						end
 						inBattle = true
 					end
 				end
