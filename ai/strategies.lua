@@ -32,11 +32,11 @@ local yolo, deepRun, resetting, riskGiovanni, maxEtherSkip
 local timeRequirements = {
 
 	bulbasaur = function()
-		return 2.2
+		return 2.25
 	end,
 
 	nidoran = function()
-		local timeLimit = 6.25
+		local timeLimit = 6.33
 		if pokemon.inParty("spearow") then
 			timeLimit = timeLimit + 0.67
 		end
@@ -907,7 +907,7 @@ strategyFunctions = {
 			if hasNidoran then
 				resetMessage = "get an experience kill before Brock"
 			else
-				resetMessage = "find a Nidoran"
+				resetMessage = "find a suitable Nidoran"
 			end
 			if resetTime(timeLimit, resetMessage) then
 				return true
