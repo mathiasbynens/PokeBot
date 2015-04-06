@@ -1,10 +1,9 @@
-local pokemon = {}
+local Pokemon = {}
 
-local bridge = require "util.bridge"
-local input = require "util.input"
-local memory = require "util.memory"
-local menu = require "util.menu"
-local utils = require "util.utils"
+local Bridge = require "util.bridge"
+local Input = require "util.input"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
 
 local pokeIDs = {
 	rhydon = 1,
@@ -98,13 +97,13 @@ local function index(index, offset)
 		double = dataTable[2]
 	end
 	local address = getAddress(index) + offset
-	local value = memory.raw(address)
+	local value = Memory.raw(address)
 	if double then
-		value = value + memory.raw(address + 1)
+		value = value + Memory.raw(address + 1)
 	end
 	return value
 end
-pokemon.index = index
+Pokemon.index = index
 
 local function indexOf(...)
 	for ni,name in ipairs(arg) do
@@ -118,20 +117,20 @@ local function indexOf(...)
 	end
 	return -1
 end
-pokemon.indexOf = indexOf
+Pokemon.indexOf = indexOf
 
 -- Table functions
 
-function pokemon.battleMove(name)
+function Pokemon.battleMove(name)
 	local mid = moveList[name]
 	for i=1,4 do
-		if mid == memory.raw(0x101B + i) then
+		if mid == Memory.raw(0x101B + i) then
 			return i
 		end
 	end
 end
 
-function pokemon.moveIndex(move, pokemon)
+function Pokemon.moveIndex(move, pokemon)
 	local pokemonIdx
 	if pokemon then
 		pokemonIdx = indexOf(pokemon)
@@ -141,21 +140,21 @@ function pokemon.moveIndex(move, pokemon)
 	local address = getAddress(pokemonIdx) + 7
 	local mid = moveList[move]
 	for i=1,4 do
-		if mid == memory.raw(address + i) then
+		if mid == Memory.raw(address + i) then
 			return i
 		end
 	end
 end
 
-function pokemon.info(name, offset)
+function Pokemon.info(name, offset)
 	return index(indexOf(name), offset)
 end
 
-function pokemon.getID(name)
+function Pokemon.getID(name)
 	return pokeIDs[name]
 end
 
-function pokemon.getName(id)
+function Pokemon.getName(id)
 	for name,pid in pairs(pokeIDs) do
 		if pid == id then
 			return name
@@ -163,7 +162,7 @@ function pokemon.getName(id)
 	end
 end
 
-function pokemon.getSacrifice(...)
+function Pokemon.getSacrifice(...)
 	for i,name in ipairs(arg) do
 		local pokemonIndex = indexOf(name)
 		if pokemonIndex ~= -1 and index(pokemonIndex, "hp") > 0 then
@@ -172,7 +171,7 @@ function pokemon.getSacrifice(...)
 	end
 end
 
-function pokemon.inParty(...)
+function Pokemon.inParty(...)
 	for i,name in ipairs(arg) do
 		if indexOf(name) ~= -1 then
 			return name
@@ -180,12 +179,12 @@ function pokemon.inParty(...)
 	end
 end
 
-function pokemon.forMove(move)
+function Pokemon.forMove(move)
 	local moveID = moveList[move]
 	for i=0,5 do
 		local address = getAddress(i)
 		for j=8,11 do
-			if memory.raw(address + j) == moveID then
+			if Memory.raw(address + j) == moveID then
 				return i
 			end
 		end
@@ -193,16 +192,16 @@ function pokemon.forMove(move)
 	return -1
 end
 
-function pokemon.hasMove(move)
-	return pokemon.forMove(move) ~= -1
+function Pokemon.hasMove(move)
+	return Pokemon.forMove(move) ~= -1
 end
 
-function pokemon.updateParty()
-	local partySize = memory.value("player", "party_size")
+function Pokemon.updateParty()
+	local partySize = Memory.value("player", "party_size")
 	if partySize ~= previousPartySize then
-		local poke = pokemon.inParty("oddish", "paras", "spearow", "pidgey", "nidoran", "squirtle")
+		local poke = Pokemon.inParty("oddish", "paras", "spearow", "pidgey", "nidoran", "squirtle")
 		if poke then
-			bridge.caught(poke)
+			Bridge.caught(poke)
 			previousPartySize = partySize
 		end
 	end
@@ -210,8 +209,8 @@ end
 
 -- General
 
-function pokemon.isOpponent(...)
-	local oid = memory.value("battle", "opponent_id")
+function Pokemon.isOpponent(...)
+	local oid = Memory.value("battle", "opponent_id")
 	for i,name in ipairs(arg) do
 		if oid == pokeIDs[name] then
 			return name
@@ -219,8 +218,8 @@ function pokemon.isOpponent(...)
 	end
 end
 
-function pokemon.isDeployed(...)
-	local deployedID = memory.value("battle", "our_id")
+function Pokemon.isDeployed(...)
+	local deployedID = Memory.value("battle", "our_id")
 	for i,name in ipairs(arg) do
 		if deployedID == pokeIDs[name] then
 			return name
@@ -228,36 +227,36 @@ function pokemon.isDeployed(...)
 	end
 end
 
-function pokemon.isEvolving()
-	return memory.value("menu", "pokemon") == 144
+function Pokemon.isEvolving()
+	return Memory.value("menu", "pokemon") == 144
 end
 
-function pokemon.getExp()
-	return memory.raw(0x117A) * 256 + memory.raw(0x117B)
+function Pokemon.getExp()
+	return Memory.raw(0x117A) * 256 + Memory.raw(0x117B)
 end
 
-function pokemon.inRedBar()
+function Pokemon.inRedBar()
 	local curr_hp, max_hp = index(0, "hp"), index(0, "max_hp")
 	return curr_hp / max_hp <= 0.2
 end
 
-function pokemon.use(move)
-	local main = memory.value("menu", "main")
-	local pokeName = pokemon.forMove(move)
+function Pokemon.use(move)
+	local main = Memory.value("menu", "main")
+	local pokeName = Pokemon.forMove(move)
 	if main == 141 then
-		input.press("A")
+		Input.press("A")
 	elseif main == 128 then
-		local column = menu.getCol()
+		local column = Menu.getCol()
 		if column == 11 then
-			menu.select(1, true)
+			Menu.select(1, true)
 		elseif column == 10 or column == 12 then
 			local midx = 0
-			local menuSize = memory.value("menu", "size")
+			local menuSize = Memory.value("menu", "size")
 			if menuSize == 4 then
 				if move == "dig" then
 					midx = 1
 				elseif move == "surf" then
-					if pokemon.inParty("paras") then
+					if Pokemon.inParty("paras") then
 						midx = 1
 					end
 				end
@@ -268,18 +267,18 @@ function pokemon.use(move)
 					midx = 1
 				end
 			end
-			menu.select(midx, true)
+			Menu.select(midx, true)
 		else
-			input.press("B")
+			Input.press("B")
 		end
 	elseif main == 103 then
-		menu.select(pokeName, true)
+		Menu.select(pokeName, true)
 	elseif main == 228 then
-		input.press("B")
+		Input.press("B")
 	else
 		return false
 	end
 	return true
 end
 
-return pokemon
+return Pokemon

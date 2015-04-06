@@ -1,4 +1,4 @@
--- SETTINGS
+-- OPTIONS
 
 RESET_FOR_TIME = true -- Set to false if you just want to see the bot finish a run
 
@@ -14,23 +14,23 @@ INTERNAL = false
 
 local START_WAIT = 99
 
-local battle = require "action.battle"
-local textbox = require "action.textbox"
-local walk = require "action.walk"
+local Battle = require "action.battle"
+local Textbox = require "action.textbox"
+local Walk = require "action.walk"
 
-local combat = require "ai.combat"
-local control = require "ai.control"
-local strategies = require("ai."..GAME_NAME..".strategies")
+local Combat = require "ai.combat"
+local Control = require "ai.control"
+local Strategies = require("ai."..GAME_NAME..".strategies")
 
-local bridge = require "util.bridge"
-local input = require "util.input"
-local memory = require "util.memory"
-local menu = require "util.menu"
-local paint = require "util.paint"
-local utils = require "util.utils"
-local settings = require "util.settings"
+local Bridge = require "util.bridge"
+local Input = require "util.input"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
+local Paint = require "util.paint"
+local Utils = require "util.utils"
+local Settings = require "util.settings"
 
-local pokemon = require "storage.pokemon"
+local Pokemon = require "storage.pokemon"
 
 local hasAlreadyStartedPlaying = false
 local inBattle, oldSecs
@@ -42,65 +42,65 @@ local criticaled = false
 local function startNewAdventure()
 	local startMenu, withBattleStyle
 	if YELLOW then
-		startMenu = memory.raw(0x0F95) == 0
+		startMenu = Memory.raw(0x0F95) == 0
 		withBattleStyle = "battle_style"
 	else
-		startMenu = memory.value("player", "name") ~= 0
+		startMenu = Memory.value("player", "name") ~= 0
 	end
-	if startMenu and menu.getCol() ~= 0 then
-		if settings.set("text_speed", "battle_animation", withBattleStyle) then
-			menu.select(0)
+	if startMenu and Menu.getCol() ~= 0 then
+		if Settings.set("text_speed", "battle_animation", withBattleStyle) then
+			Menu.select(0)
 		end
 	elseif math.random(0, START_WAIT) == 0 then
-		input.press("Start")
+		Input.press("Start")
 	end
 end
 
 local function choosePlayerNames()
 	local name
-	if memory.value("player", "name2") == 80 then
+	if Memory.value("player", "name2") == 80 then
 		name = "E"
 	else
 		name = "B"
 	end
-	textbox.name(name, true)
+	Textbox.name(name, true)
 end
 
 local function pollForResponse()
-	local response = bridge.process()
+	local response = Bridge.process()
 	if response then
-		bridge.polling = false
-		textbox.setName(tonumber(response))
+		Bridge.polling = false
+		Textbox.setName(tonumber(response))
 	end
 end
 
 local function resetAll()
-	strategies.softReset()
-	combat.reset()
-	control.reset()
-	walk.reset()
-	paint.reset()
-	bridge.reset()
+	Strategies.softReset()
+	Combat.reset()
+	Control.reset()
+	Walk.reset()
+	Paint.reset()
+	Bridge.reset()
 	oldSecs = 0
 	running = false
 	previousPartySize = 0
 	-- client.speedmode = 200
 
 	if CUSTOM_SEED then
-		strategies.seed = CUSTOM_SEED
-		print("RUNNING WITH A FIXED SEED ("..strategies.seed.."), every run will play out identically!")
+		Strategies.seed = CUSTOM_SEED
+		print("RUNNING WITH A FIXED SEED ("..Strategies.seed.."), every run will play out identically!")
 	else
-		strategies.seed = os.time()
+		Strategies.seed = os.time()
 	end
-	math.randomseed(strategies.seed)
+	math.randomseed(Strategies.seed)
 end
 
 -- EXECUTE
 
-control.init()
+Control.init()
 
 print("Welcome to PokeBot "..GAME_NAME.." version "..VERSION)
-STREAMING_MODE = not walk.init()
+STREAMING_MODE = not Walk.init()
 if INTERNAL and STREAMING_MODE then
 	RESET_FOR_TIME = true
 end
@@ -108,18 +108,18 @@ end
 if CUSTOM_SEED then
 	client.reboot_core()
 else
-	hasAlreadyStartedPlaying = utils.ingame()
+	hasAlreadyStartedPlaying = Utils.ingame()
 end
 
-strategies.init(hasAlreadyStartedPlaying)
+Strategies.init(hasAlreadyStartedPlaying)
 if RESET_FOR_TIME and hasAlreadyStartedPlaying then
 	RESET_FOR_TIME = false
 	print("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.")
 end
 if STREAMING_MODE then
-	bridge.init()
+	Bridge.init()
 else
-	input.setDebug(true)
+	Input.setDebug(true)
 end
 
 -- Main loop
@@ -127,23 +127,23 @@ end
 local previousMap
 
 while true do
-	local currentMap = memory.value("game", "map")
+	local currentMap = Memory.value("game", "map")
 	if currentMap ~= previousMap then
-		input.clear()
+		Input.clear()
 		previousMap = currentMap
 	end
-	if strategies.frames then
-		if memory.value("game", "battle") == 0 then
-			strategies.frames = strategies.frames + 1
+	if Strategies.frames then
+		if Memory.value("game", "battle") == 0 then
+			Strategies.frames = Strategies.frames + 1
 		end
-		gui.text(0, 80, strategies.frames)
+		gui.text(0, 80, Strategies.frames)
 	end
-	if bridge.polling then
+	if Bridge.polling then
 		pollForResponse()
 	end
 
-	if not input.update() then
-		if not utils.ingame() then
+	if not Input.update() then
+		if not Utils.ingame() then
 			if currentMap == 0 then
 				if running then
 					if not hasAlreadyStartedPlaying then
@@ -157,69 +157,69 @@ while true do
 				end
 			else
 				if not running then
-					bridge.liveSplit()
+					Bridge.liveSplit()
 					running = true
 				end
 				choosePlayerNames()
 			end
 		else
-			local battleState = memory.value("game", "battle")
+			local battleState = Memory.value("game", "battle")
 			if battleState > 0 then
 				if battleState == 1 then
 					if not inBattle then
-						control.wildEncounter()
+						Control.wildEncounter()
 						inBattle = true
 					end
 				end
 				local isCritical
-				local battleMenu = memory.value("battle", "menu")
+				local battleMenu = Memory.value("battle", "menu")
 				if battleMenu == 94 then
 					isCritical = false
-				elseif memory.double("battle", "our_hp") == 0 then
-					if memory.value("battle", "critical") == 1 then
+				elseif Memory.double("battle", "our_hp") == 0 then
+					if Memory.value("battle", "critical") == 1 then
 						isCritical = true
 					end
 				end
 				if isCritical ~= nil and isCritical ~= criticaled then
 					criticaled = isCritical
-					strategies.criticaled = criticaled
+					Strategies.criticaled = criticaled
 				end
 			else
 				inBattle = false
 			end
-			local currentHP = pokemon.index(0, "hp")
+			local currentHP = Pokemon.index(0, "hp")
 			-- if currentHP ~= lastHP then
-			-- 	bridge.hp(currentHP, pokemon.index(0, "max_hp"))
+			-- 	Bridge.hp(currentHP, Pokemon.index(0, "max_hp"))
 			-- 	lastHP = currentHP
 			-- end
-			if currentHP == 0 and not control.canDie() and pokemon.index(0) > 0 then
-				strategies.death(currentMap)
-			elseif walk.strategy then
-				if strategies.execute(walk.strategy) then
-					walk.traverse(currentMap)
+			if currentHP == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
+				Strategies.death(currentMap)
+			elseif Walk.strategy then
+				if Strategies.execute(Walk.strategy) then
+					Walk.traverse(currentMap)
 				end
 			elseif battleState > 0 then
-				if not control.shouldCatch(partySize) then
-					battle.automate()
+				if not Control.shouldCatch(partySize) then
+					Battle.automate()
 				end
-			elseif textbox.handle() then
-				walk.traverse(currentMap)
+			elseif Textbox.handle() then
+				Walk.traverse(currentMap)
 			end
 		end
 	end
 
 	if STREAMING_MODE then
-		local newSecs = memory.raw(0x1A44)
-		if newSecs ~= oldSecs and (newSecs > 0 or memory.raw(0x1A45) > 0) then
-			bridge.time(utils.elapsedTime())
+		local newSecs = Memory.raw(0x1A44)
+		if newSecs ~= oldSecs and (newSecs > 0 or Memory.raw(0x1A45) > 0) then
+			Bridge.time(Utils.elapsedTime())
 			oldSecs = newSecs
 		end
 	elseif PAINT_ON then
-		paint.draw(currentMap)
+		Paint.draw(currentMap)
 	end
 
-	input.advance()
+	Input.advance()
 	emu.frameadvance()
 end
 
-bridge.close()
+Bridge.close()

@@ -1,33 +1,33 @@
-local battle = {}
+local Battle = {}
 
-local textbox = require "action.textbox"
+local Textbox = require "action.textbox"
 
-local combat = require "ai.combat"
-local control = require "ai.control"
+local Combat = require "ai.combat"
+local Control = require "ai.control"
 
-local memory = require "util.memory"
-local menu = require "util.menu"
-local input = require "util.input"
-local utils = require "util.utils"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
+local Input = require "util.input"
+local Utils = require "util.utils"
 
-local inventory = require "storage.inventory"
-local pokemon = require "storage.pokemon"
+local Inventory = require "storage.inventory"
+local Pokemon = require "storage.pokemon"
 
 local function potionsForHit(potion, curr_hp, max_hp)
 	if not potion then
 		return
 	end
-	local ours, killAmount = combat.inKillRange()
+	local ours, killAmount = Combat.inKillRange()
 	if ours then
-		return utils.canPotionWith(potion, killAmount, curr_hp, max_hp)
+		return Utils.canPotionWith(potion, killAmount, curr_hp, max_hp)
 	end
 end
 
 local function recover()
-	if control.canRecover() then
-		local currentHP = pokemon.index(0, "hp")
+	if Control.canRecover() then
+		local currentHP = Pokemon.index(0, "hp")
 		if currentHP > 0 then
-			local maxHP = pokemon.index(0, "max_hp")
+			local maxHP = Pokemon.index(0, "max_hp")
 			if currentHP < maxHP then
 				local first, second
 				if potionIn == "full" then
@@ -48,216 +48,216 @@ local function recover()
 						second = "super_potion"
 					end
 				end
-				local potion = inventory.contains(first, second)
+				local potion = Inventory.contains(first, second)
 				if potionsForHit(potion, currentHP, maxHP) then
-					inventory.use(potion, nil, true)
+					Inventory.use(potion, nil, true)
 					return true
 				end
 			end
 		end
 	end
-	if memory.value("battle", "paralyzed") == 64 then
-		local heals = inventory.contains("paralyze_heal", "full_restore")
+	if Memory.value("battle", "paralyzed") == 64 then
+		local heals = Inventory.contains("paralyze_heal", "full_restore")
 		if heals then
-			inventory.use(heals, nil, true)
+			Inventory.use(heals, nil, true)
 			return true
 		end
 	end
 end
 
 local function openBattleMenu()
-	if memory.value("battle", "text") == 1 then
-		input.cancel()
+	if Memory.value("battle", "text") == 1 then
+		Input.cancel()
 		return false
 	end
-	local battleMenu = memory.value("battle", "menu")
-	local col = menu.getCol()
+	local battleMenu = Memory.value("battle", "menu")
+	local col = Menu.getCol()
 	if battleMenu == 106 or (battleMenu == 94 and col == 5) then
 		return true
 	elseif battleMenu == 94 then
-		local rowSelected = memory.value("menu", "row")
+		local rowSelected = Memory.value("menu", "row")
 		if col == 9 then
 			if rowSelected == 1 then
-				input.press("Up")
+				Input.press("Up")
 			else
-				input.press("A")
+				Input.press("A")
 			end
 		else
-			input.press("Left")
+			Input.press("Left")
 		end
 	else
-		input.press("B")
+		Input.press("B")
 	end
 end
 
 local function attack(attackIndex)
-	if memory.double("battle", "opponent_hp") < 1 then
-		input.cancel()
+	if Memory.double("battle", "opponent_hp") < 1 then
+		Input.cancel()
 	elseif openBattleMenu() then
-		menu.select(attackIndex, true, false, false, false, 3)
+		Menu.select(attackIndex, true, false, false, false, 3)
 	end
 end
 
 -- Table functions
 
-function battle.swapMove(sidx, fidx)
+function Battle.swapMove(sidx, fidx)
 	if openBattleMenu() then
-		local selection = memory.value("menu", "selection_mode")
+		local selection = Memory.value("menu", "selection_mode")
 		local swapSelect
 		if selection == sidx then
 			swapSelect = fidx
 		else
 			swapSelect = sidx
 		end
-		if menu.select(swapSelect, false, false, nil, true, 3) then
-			input.press("Select")
+		if Menu.select(swapSelect, false, false, nil, true, 3) then
+			Input.press("Select")
 		end
 	end
 end
 
-function battle.isActive()
-	return memory.value("game", "battle") > 0
+function Battle.isActive()
+	return Memory.value("game", "battle") > 0
 end
 
-function battle.isTrainer()
-	local battleType = memory.value("game", "battle")
+function Battle.isTrainer()
+	local battleType = Memory.value("game", "battle")
 	if battleType == 2 then
 		return true
 	end
 	if battleType == 1 then
-		battle.run()
+		Battle.run()
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
-function battle.opponent()
-	return pokemon.getName(memory.value("battle", "opponent_id"))
+function Battle.opponent()
+	return Pokemon.getName(Memory.value("battle", "opponent_id"))
 end
 
-function battle.run()
-	if memory.double("battle", "opponent_hp") < 1 then
-		input.cancel()
-	elseif memory.value("battle", "menu") ~= 94 then
-		if memory.value("menu", "text_length") == 127 then
-			input.press("B")
+function Battle.run()
+	if Memory.double("battle", "opponent_hp") < 1 then
+		Input.cancel()
+	elseif Memory.value("battle", "menu") ~= 94 then
+		if Memory.value("menu", "text_length") == 127 then
+			Input.press("B")
 		else
-			input.cancel()
+			Input.cancel()
 		end
-	elseif textbox.handle() then
-		local selected = memory.value("menu", "selection")
+	elseif Textbox.handle() then
+		local selected = Memory.value("menu", "selection")
 		if selected == 239 then
-			input.press("A", 2)
+			Input.press("A", 2)
 		else
-			input.escape()
+			Input.escape()
 		end
 	end
 end
 
-function battle.handleWild()
-	if memory.value("game", "battle") ~= 1 then
+function Battle.handleWild()
+	if Memory.value("game", "battle") ~= 1 then
 		return true
 	end
-	battle.run()
+	Battle.run()
 end
 
-function battle.fight(move, isNumber, skipBuffs)
+function Battle.fight(move, isNumber, skipBuffs)
 	if move then
 		if not isNumber then
-			move = pokemon.battleMove(move)
+			move = Pokemon.battleMove(move)
 		end
 		attack(move)
 	else
-		move = combat.bestMove()
+		move = Combat.bestMove()
 		if move then
 			attack(move.midx)
-		elseif memory.value("menu", "text_length") == 127 then
-			input.press("B")
+		elseif Memory.value("menu", "text_length") == 127 then
+			Input.press("B")
 		else
-			input.cancel()
+			Input.cancel()
 		end
 	end
 end
 
-function battle.swap(target)
-	local battleMenu = memory.value("battle", "menu")
-	if utils.onPokemonSelect(battleMenu) then
-		if menu.getCol() == 0 then
-			menu.select(pokemon.indexOf(target), true)
+function Battle.swap(target)
+	local battleMenu = Memory.value("battle", "menu")
+	if Utils.onPokemonSelect(battleMenu) then
+		if Menu.getCol() == 0 then
+			Menu.select(Pokemon.indexOf(target), true)
 		else
-			input.press("A")
+			Input.press("A")
 		end
 	elseif battleMenu == 94 then
-		local selected = memory.value("menu", "selection")
+		local selected = Memory.value("menu", "selection")
 		if selected == 199 then
-			input.press("A", 2)
-		elseif menu.getCol() == 9 then
-			input.press("Right", 0)
+			Input.press("A", 2)
+		elseif Menu.getCol() == 9 then
+			Input.press("Right", 0)
 		else
-			input.press("Up", 0)
+			Input.press("Up", 0)
 		end
 	else
-		input.cancel()
+		Input.cancel()
 	end
 end
 
 function movePP(name)
-	local midx = pokemon.battleMove(name)
+	local midx = Pokemon.battleMove(name)
 	if not midx then
 		return 0
 	end
-	return memory.raw(0x102C + midx)
+	return Memory.raw(0x102C + midx)
 end
-battle.pp = movePP
+Battle.pp = movePP
 
-function battle.automate(moveName, skipBuffs)
+function Battle.automate(moveName, skipBuffs)
 	if not recover() then
-		local state = memory.value("game", "battle")
+		local state = Memory.value("game", "battle")
 		if state == 0 then
-			input.cancel()
+			Input.cancel()
 		else
 			if moveName and movePP(moveName) == 0 then
 				moveName = nil
 			end
 			if state == 1 then
-				if control.shouldFight() then
-					battle.fight(moveName, false, skipBuffs)
+				if Control.shouldFight() then
+					Battle.fight(moveName, false, skipBuffs)
 				else
-					battle.run()
+					Battle.run()
 				end
 			elseif state == 2 then
-				battle.fight(moveName, false, skipBuffs)
+				Battle.fight(moveName, false, skipBuffs)
 			end
 		end
 	end
 end
 
-function battle.sacrifice(...)
-	local sacrifice = pokemon.getSacrifice(...)
+function Battle.sacrifice(...)
+	local sacrifice = Pokemon.getSacrifice(...)
 	if sacrifice then
-		battle.swap(sacrifice)
+		Battle.swap(sacrifice)
 		return true
 	end
 	return false
 end
 
-function battle.redeployNidoking()
-	if pokemon.isDeployed("nidoking") then
+function Battle.redeployNidoking()
+	if Pokemon.isDeployed("nidoking") then
 		return false
 	end
-	local battleMenu = memory.value("battle", "menu")
-	if utils.onPokemonSelect(battleMenu) then
-		menu.select(0, true)
-	elseif battleMenu == 95 and menu.getCol() == 1 then
-		input.press("A")
+	local battleMenu = Memory.value("battle", "menu")
+	if Utils.onPokemonSelect(battleMenu) then
+		Menu.select(0, true)
+	elseif battleMenu == 95 and Menu.getCol() == 1 then
+		Input.press("A")
 	else
-		local __, turns = combat.bestMove()
+		local __, turns = Combat.bestMove()
 		if turns == 1 then
 			forced = "sand_attack"
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 	end
 	return true
 end
 
-return battle
+return Battle

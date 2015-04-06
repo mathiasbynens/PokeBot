@@ -28,13 +28,13 @@ MD5: 3d45c1ee9abd5738df46d2bdda8b57dc
 SHA-1: ea9bcae617fdf159b045185467ae58b2e4a48b9a
 ```
 
-Open the ROM file with BizHawk (Drag the .gb file onto EmuHawk), and Pokémon Red should start up. 
+Open the ROM file with BizHawk (Drag the .gb file onto EmuHawk), and Pokémon Red should start up.
 The colors may look weird.  To fix this, go to GB>Palette Editor, and then find the POKEMON RED.pal file which should be under Gameboy>Palettes in the directory where BizHawk was unextracted.
 
 
 ##Running the bot##
 If you want to test the full run, change [this line](https://github.com/kylecoburn/PokeBot/blob/52232581f227b829ea283d795ddaf60a52ce24fe/main.lua#L4) to be false.
-Then, under the 'Tools' menu, select 'Lua Console'. 
+Then, under the 'Tools' menu, select 'Lua Console'.
 Click the open folder button, and navigate to the PokéBot folder you downloaded. Select 'main.lua' and press open. The bot should start running!
 
 Seeds

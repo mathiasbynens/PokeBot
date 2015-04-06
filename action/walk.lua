@@ -1,14 +1,13 @@
-local walk = {}
+local Walk = {}
 
-local control = require "ai.control"
+local Control = require "ai.control"
 local paths = require("data."..GAME_NAME..".paths")
 
-local input = require "util.input"
-local memory = require "util.memory"
-local player = require "util.player"
-local utils = require "util.utils"
+local Input = require "util.input"
+local Memory = require "util.memory"
+local Player = require "util.player"
 
-local pokemon = require "storage.pokemon"
+local Pokemon = require "storage.pokemon"
 
 local path, stepIdx, currentMap
 local pathIdx = 0
@@ -26,7 +25,7 @@ end
 
 local function completeStep(region)
 	stepIdx = stepIdx + 1
-	return walk.traverse(region)
+	return Walk.traverse(region)
 end
 
 -- Helper functions
@@ -44,31 +43,31 @@ function dir(px, py, dx, dy)
 	end
 	return direction
 end
-walk.dir = dir
+Walk.dir = dir
 
 function step(dx, dy)
-	local px, py = player.position()
+	local px, py = Player.position()
 	if px == dx and py == dy then
 		return true
 	end
-	input.press(dir(px, py, dx, dy), 0)
+	Input.press(dir(px, py, dx, dy), 0)
 end
-walk.step = step
+Walk.step = step
 
 -- Table functions
 
-function walk.reset()
+function Walk.reset()
 	path = nil
 	pathIdx = 0
 	customIdx = 1
 	customDir = 1
 	currentMap = nil
-	walk.strategy = nil
+	Walk.strategy = nil
 end
 
-function walk.init()
-	local region = memory.value("game", "map")
-	local px, py = player.position()
+function Walk.init()
+	local region = Memory.value("game", "map")
+	local px, py = Player.position()
 	if region == 0 and px == 0 and py == 0 then
 		return false
 	end
@@ -85,10 +84,10 @@ function walk.init()
 	end
 end
 
-function walk.traverse(region)
+function Walk.traverse(region)
 	local newIndex
 	if not path or currentMap ~= region then
-		walk.strategy = nil
+		Walk.strategy = nil
 		setPath(pathIdx + 1, region)
 		newIndex = pathIdx
 		customIdx = 1
@@ -98,36 +97,36 @@ function walk.traverse(region)
 	end
 	local tile = path[stepIdx]
 	if tile.c then
-		control.set(tile)
+		Control.set(tile)
 		return completeStep(region)
 	end
 	if tile.s then
-		if walk.strategy then
-			walk.strategy = nil
+		if Walk.strategy then
+			Walk.strategy = nil
 			return completeStep(region)
 		end
-		walk.strategy = tile
+		Walk.strategy = tile
 	elseif step(tile[1], tile[2]) then
-		pokemon.updateParty()
+		Pokemon.updateParty()
 		return completeStep(region)
 	end
 	return newIndex
 end
 
-function walk.canMove()
-	return memory.value("player", "moving") == 0 and memory.value("player", "fighting") == 0
+function Walk.canMove()
+	return Memory.value("player", "moving") == 0 and Memory.value("player", "fighting") == 0
 end
 
 -- Custom path
 
-function walk.invertCustom(silent)
+function Walk.invertCustom(silent)
 	if not silent then
 		customIdx = customIdx + customDir
 	end
 	customDir = customDir * -1
 end
 
-function walk.custom(cpath, increment)
+function Walk.custom(cpath, increment)
 	if not cpath then
 		customIdx = 1
 		customDir = 1
@@ -147,8 +146,8 @@ function walk.custom(cpath, increment)
 	end
 	local t1, t2 = tile[1], tile[2]
 	if t2 == nil then
-		if player.face(t1) then
-			input.press("A", 2)
+		if Player.face(t1) then
+			Input.press("A", 2)
 		end
 		return t1
 	end
@@ -157,4 +156,4 @@ function walk.custom(cpath, increment)
 	end
 end
 
-return walk
+return Walk

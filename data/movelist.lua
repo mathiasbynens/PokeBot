@@ -1,4 +1,4 @@
-local movelist = {}
+local Movelist = {}
 -- http://bulbapedia.bulbagarden.net/wiki/List_of_moves#List_of_moves
 
 local moves = {
@@ -1513,8 +1513,8 @@ local moves = {
 	},
 }
 
-function movelist.get(id)
+function Movelist.get(id)
 	return moves[id]
 end
 
-return movelist
+return Movelist

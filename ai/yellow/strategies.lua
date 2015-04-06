@@ -1,4 +1,4 @@
-local strategies = require "ai.strategies"
+local Strategies = require "ai.strategies"
 
 local combat = require "ai.combat"
 local control = require "ai.control"
@@ -18,24 +18,24 @@ local utils = require "util.utils"
 local inventory = require "storage.inventory"
 local pokemon = require "storage.pokemon"
 
-local status = strategies.status
+local status = Strategies.status
 
-strategies.timeRequirements = {}
+Strategies.timeRequirements = {}
 
 -- STRATEGIES
 
-local strategyFunctions = strategies.functions
+local strategyFunctions = Strategies.functions
 
 -- PROCESS
 
-function strategies.initGame(midGame)
+function Strategies.initGame(midGame)
 	if not STREAMING_MODE then
-		-- strategies.setYolo("")
+		-- Strategies.setYolo("")
 	end
 end
 
-function strategies.resetGame()
-	status = strategies.status
+function Strategies.resetGame()
+	status = Strategies.status
 end
 
-return strategies
+return Strategies

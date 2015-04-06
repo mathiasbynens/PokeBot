@@ -1,48 +1,48 @@
-local strategies = {}
+local Strategies = {}
 
-local combat = require "ai.combat"
-local control = require "ai.control"
+local Combat = require "ai.combat"
+local Control = require "ai.control"
 
-local battle = require "action.battle"
-local textbox = require "action.textbox"
-local walk = require "action.walk"
+local Battle = require "action.battle"
+local Textbox = require "action.textbox"
+local Walk = require "action.walk"
 
-local bridge = require "util.bridge"
-local input = require "util.input"
-local memory = require "util.memory"
-local menu = require "util.menu"
-local player = require "util.player"
-local utils = require "util.utils"
+local Bridge = require "util.bridge"
+local Input = require "util.input"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
+local Player = require "util.player"
+local Utils = require "util.utils"
 
-local inventory = require "storage.inventory"
-local pokemon = require "storage.pokemon"
+local Inventory = require "storage.inventory"
+local Pokemon = require "storage.pokemon"
 
 local splitNumber, splitTime = 0, 0
 local resetting
 local strategyFunctions
 
 local status = {tries = 0, tempDir = nil, canProgress = nil, initialized = false}
-strategies.status = status
-strategies.deepRun = false
+Strategies.status = status
+Strategies.deepRun = false
 
 -- RISK/RESET
 
-strategies.timeRequirements = {}
+Strategies.timeRequirements = {}
 
-function strategies.getTimeRequirement(name)
-	return strategies.timeRequirements[name]()
+function Strategies.getTimeRequirement(name)
+	return Strategies.timeRequirements[name]()
 end
 
-function strategies.hardReset(message, extra, wait)
+function Strategies.hardReset(message, extra, wait)
 	resetting = true
-	if strategies.seed then
+	if Strategies.seed then
 		if extra then
-			extra = extra.." | "..strategies.seed
+			extra = extra.." | "..Strategies.seed
 		else
-			extra = strategies.seed
+			extra = Strategies.seed
 		end
 	end
-	bridge.chat(message, extra)
+	Bridge.chat(message, extra)
 	if wait and INTERNAL and not STREAMING_MODE then
 		strategyFunctions.wait()
 	end
@@ -50,138 +50,138 @@ function strategies.hardReset(message, extra, wait)
 	return true
 end
 
-function strategies.reset(reason, extra, wait)
-	local time = utils.elapsedTime()
+function Strategies.reset(reason, extra, wait)
+	local time = Utils.elapsedTime()
 	local resetString = "Reset"
 	if time then
 		resetString = resetString.." after "..time
 	end
-	resetString = " "..resetString.." at "..control.areaName
+	resetString = " "..resetString.." at "..Control.areaName
 	local separator
-	if strategies.deepRun and not control.yolo then
+	if Strategies.deepRun and not Control.yolo then
 		separator = " BibleThump"
 	else
 		separator = ":"
 	end
 	resetString = resetString..separator.." "..reason
-	return strategies.hardReset(resetString, extra, wait)
+	return Strategies.hardReset(resetString, extra, wait)
 end
 
-function strategies.death(extra)
+function Strategies.death(extra)
 	local reason
-	if strategies.criticaled then
+	if Strategies.criticaled then
 		reason = "Critical'd"
-	elseif control.yolo then
+	elseif Control.yolo then
 		reason = "Yolo strats"
 	else
 		reason = "Died"
 	end
-	return strategies.reset(reason, extra)
+	return Strategies.reset(reason, extra)
 end
 
-function strategies.overMinute(min)
-	return utils.igt() > min * 60
+function Strategies.overMinute(min)
+	return Utils.igt() > min * 60
 end
 
-function strategies.resetTime(timeLimit, reason, once)
-	if strategies.overMinute(timeLimit) then
+function Strategies.resetTime(timeLimit, reason, once)
+	if Strategies.overMinute(timeLimit) then
 		reason = "Took too long to "..reason
 		if RESET_FOR_TIME then
-			return strategies.reset(reason)
+			return Strategies.reset(reason)
 		end
 		if once then
-			print(reason.." "..utils.elapsedTime())
+			print(reason.." "..Utils.elapsedTime())
 		end
 	end
 end
 
-function strategies.setYolo(name)
+function Strategies.setYolo(name)
 	if not RESET_FOR_TIME then
 		return false
 	end
-	local minimumTime = strategies.getTimeRequirement(name)
-	local shouldYolo = strategies.overMinute(minimumTime)
-	if control.yolo ~= shouldYolo then
-		control.yolo = shouldYolo
-		control.setYolo(shouldYolo)
+	local minimumTime = Strategies.getTimeRequirement(name)
+	local shouldYolo = Strategies.overMinute(minimumTime)
+	if Control.yolo ~= shouldYolo then
+		Control.yolo = shouldYolo
+		Control.setYolo(shouldYolo)
 		local prefix
-		if control.yolo then
+		if Control.yolo then
 			prefix = "en"
 		else
 			prefix = "dis"
 		end
-		print("YOLO "..prefix.."abled at "..control.areaName)
+		print("YOLO "..prefix.."abled at "..Control.areaName)
 	end
-	return control.yolo
+	return Control.yolo
 end
 
 -- HELPERS
 
-function strategies.initialize()
+function Strategies.initialize()
 	if not initialized then
 		initialized = true
 		return true
 	end
 end
 
-function strategies.canHealFor(damage)
-	local curr_hp = pokemon.index(0, "hp")
-	local max_hp = pokemon.index(0, "max_hp")
+function Strategies.canHealFor(damage)
+	local curr_hp = Pokemon.index(0, "hp")
+	local max_hp = Pokemon.index(0, "max_hp")
 	if max_hp - curr_hp > 3 then
 		local healChecks = {"full_restore", "super_potion", "potion"}
 		for idx,potion in ipairs(healChecks) do
-			if inventory.contains(potion) and utils.canPotionWith(potion, damage, curr_hp, max_hp) then
+			if Inventory.contains(potion) and Utils.canPotionWith(potion, damage, curr_hp, max_hp) then
 				return potion
 			end
 		end
 	end
 end
 
-function strategies.hasHealthFor(opponent, extra)
+function Strategies.hasHealthFor(opponent, extra)
 	if not extra then
 		extra = 0
 	end
-	return pokemon.index(0, "hp") + extra > combat.healthFor(opponent)
+	return Pokemon.index(0, "hp") + extra > Combat.healthFor(opponent)
 end
 
-function strategies.damaged(factor)
+function Strategies.damaged(factor)
 	if not factor then
 		factor = 1
 	end
-	return pokemon.index(0, "hp") * factor < pokemon.index(0, "max_hp")
+	return Pokemon.index(0, "hp") * factor < Pokemon.index(0, "max_hp")
 end
 
-function strategies.opponentDamaged(factor)
+function Strategies.opponentDamaged(factor)
 	if not factor then
 		factor = 1
 	end
-	return memory.double("battle", "opponent_hp") * factor < memory.double("battle", "opponent_max_hp")
+	return Memory.double("battle", "opponent_hp") * factor < Memory.double("battle", "opponent_max_hp")
 end
 
-function strategies.redHP()
-	return math.ceil(pokemon.index(0, "max_hp") * 0.2)
+function Strategies.redHP()
+	return math.ceil(Pokemon.index(0, "max_hp") * 0.2)
 end
 
-function strategies.buffTo(buff, defLevel)
-	if battle.isActive() then
+function Strategies.buffTo(buff, defLevel)
+	if Battle.isActive() then
 		canProgress = true
 		local forced
-		if defLevel and memory.double("battle", "opponent_defense") > defLevel then
+		if defLevel and Memory.double("battle", "opponent_defense") > defLevel then
 			forced = buff
 		end
-		battle.automate(forced, true)
+		Battle.automate(forced, true)
 	elseif canProgress then
 		return true
 	else
-		battle.automate()
+		Battle.automate()
 	end
 end
 
-function strategies.dodgeUp(npc, sx, sy, dodge, offset)
-	if not battle.handleWild() then
+function Strategies.dodgeUp(npc, sx, sy, dodge, offset)
+	if not Battle.handleWild() then
 		return false
 	end
-	local px, py = player.position()
+	local px, py = Player.position()
 	if py < sy - 1 then
 		return true
 	end
@@ -189,7 +189,7 @@ function strategies.dodgeUp(npc, sx, sy, dodge, offset)
 	if py < sy then
 		wy = py - 1
 	elseif px == sx or px == dodge then
-		if px - memory.raw(npc) == offset then
+		if px - Memory.raw(npc) == offset then
 			if px == sx then
 				wx = dodge
 			else
@@ -199,7 +199,7 @@ function strategies.dodgeUp(npc, sx, sy, dodge, offset)
 			wy = py - 1
 		end
 	end
-	walk.step(wx, wy)
+	Walk.step(wx, wy)
 end
 
 local function dodgeH(options)
@@ -207,7 +207,7 @@ local function dodgeH(options)
 	if options.left then
 		left = -1
 	end
-	local px, py = player.position()
+	local px, py = Player.position()
 	if px * left > options.sx * left + (options.dist or 1) * left then
 		return true
 	end
@@ -215,7 +215,7 @@ local function dodgeH(options)
 	if px * left > options.sx * left then
 		wx = px + 1 * left
 	elseif py == options.sy or py == options.dodge then
-		if py - memory.raw(options.npc) == options.offset then
+		if py - Memory.raw(options.npc) == options.offset then
 			if py == options.sy then
 				wy = options.dodge
 			else
@@ -225,73 +225,73 @@ local function dodgeH(options)
 			wx = px + 1 * left
 		end
 	end
-	walk.step(wx, wy)
+	Walk.step(wx, wy)
 end
 
-function strategies.completedMenuFor(data)
-	local count = inventory.count(data.item)
+function Strategies.completedMenuFor(data)
+	local count = Inventory.count(data.item)
 	if count == 0 or count + (data.amount or 1) <= status.tries then
 		return true
 	end
 	return false
 end
 
-function strategies.closeMenuFor(data)
-	if (not tempDir and not data.close) or data.chain or menu.close() then
+function Strategies.closeMenuFor(data)
+	if (not tempDir and not data.close) or data.chain or Menu.close() then
 		return true
 	end
 end
 
-function strategies.useItem(data)
-	local main = memory.value("menu", "main")
+function Strategies.useItem(data)
+	local main = Memory.value("menu", "main")
 	if status.tries == 0 then
-		status.tries = inventory.count(data.item)
+		status.tries = Inventory.count(data.item)
 		if status.tries == 0 then
-			if strategies.closeMenuFor(data) then
+			if Strategies.closeMenuFor(data) then
 				return true
 			end
 			return false
 		end
 	end
-	if strategies.completedMenuFor(data) then
-		if strategies.closeMenuFor(data) then
+	if Strategies.completedMenuFor(data) then
+		if Strategies.closeMenuFor(data) then
 			return true
 		end
 	else
-		if inventory.use(data.item, data.poke) then
+		if Inventory.use(data.item, data.poke) then
 			tempDir = true
 		else
-			menu.pause()
+			Menu.pause()
 		end
 	end
 end
 
 local function completedSkillFor(data)
 	if data.map then
-		if data.map ~= memory.value("game", "map") then
+		if data.map ~= Memory.value("game", "map") then
 			return true
 		end
 	elseif data.x or data.y then
-		local px, py = player.position()
+		local px, py = Player.position()
 		if data.x == px or data.y == py then
 			return true
 		end
 	elseif data.done then
-		if memory.raw(data.done) > (data.val or 0) then
+		if Memory.raw(data.done) > (data.val or 0) then
 			return true
 		end
-	elseif status.tries > 0 and not menu.isOpen() then
+	elseif status.tries > 0 and not Menu.isOpen() then
 		return true
 	end
 	return false
 end
 
-function strategies.isPrepared(...)
+function Strategies.isPrepared(...)
 	if status.tries == 0 then
 		status.tries = {}
 	end
 	for i,name in ipairs(arg) do
-		local currentCount = inventory.count(name)
+		local currentCount = Inventory.count(name)
 		if currentCount > 0 then
 			local previousCount = status.tries[name]
 			if previousCount == nil or currentCount == previousCount then
@@ -302,13 +302,13 @@ function strategies.isPrepared(...)
 	return true
 end
 
-function strategies.prepare(...)
+function Strategies.prepare(...)
 	if status.tries == 0 then
 		status.tries = {}
 	end
 	local item
 	for idx,name in ipairs(arg) do
-		local currentCount = inventory.count(name)
+		local currentCount = Inventory.count(name)
 		local needsItem = currentCount > 0
 		local previousCount = status.tries[name]
 		if previousCount == nil then
@@ -324,108 +324,108 @@ function strategies.prepare(...)
 	if not item then
 		return true
 	end
-	if battle.isActive() then
-		inventory.use(item, nil, true)
+	if Battle.isActive() then
+		Inventory.use(item, nil, true)
 	else
-		input.cancel()
+		Input.cancel()
 	end
 end
 
 -- GENERALIZED STRATEGIES
 
-strategies.functions = {
+Strategies.functions = {
 
 	startFrames = function()
-		strategies.frames = 0
+		Strategies.frames = 0
 		return true
 	end,
 
 	reportFrames = function()
-		print("FR "..strategies.frames)
-		local repels = memory.value("player", "repel")
+		print("FR "..Strategies.frames)
+		local repels = Memory.value("player", "repel")
 		if repels > 0 then
 			print("S "..repels)
 		end
-		strategies.frames = nil
+		Strategies.frames = nil
 		return true
 	end,
 
 	split = function(data)
-		bridge.split(data and data.finished)
+		Bridge.split(data and data.finished)
 		if not INTERNAL then
 			splitNumber = splitNumber + 1
 
 			local timeDiff
-			splitTime, timeDiff = utils.timeSince(splitTime)
+			splitTime, timeDiff = Utils.timeSince(splitTime)
 			if timeDiff then
-				print(splitNumber..". "..control.areaName..": "..utils.elapsedTime().." ("..timeDiff..")")
+				print(splitNumber..". "..Control.areaName..": "..Utils.elapsedTime().." ("..timeDiff..")")
 			end
 		end
 		return true
 	end,
 
 	interact = function(data)
-		if battle.handleWild() then
-			if battle.isActive() then
+		if Battle.handleWild() then
+			if Battle.isActive() then
 				return true
 			end
-			if textbox.isActive() then
+			if Textbox.isActive() then
 				if status.tries > 0 then
 					return true
 				end
 				status.tries = status.tries - 1
-				input.cancel()
-			elseif player.interact(data.dir) then
+				Input.cancel()
+			elseif Player.interact(data.dir) then
 				status.tries = status.tries + 1
 			end
 		end
 	end,
 
 	confirm = function(data)
-		if battle.handleWild() then
-			if textbox.isActive() then
+		if Battle.handleWild() then
+			if Textbox.isActive() then
 				status.tries = status.tries + 1
-				input.cancel(data.type or "A")
+				Input.cancel(data.type or "A")
 			else
 				if status.tries > 0 then
 					return true
 				end
-				player.interact(data.dir)
+				Player.interact(data.dir)
 			end
 		end
 	end,
 
 	item = function(data)
-		if battle.handleWild() then
-			if data.full and not inventory.isFull() then
-				if strategies.closeMenuFor(data) then
+		if Battle.handleWild() then
+			if data.full and not Inventory.isFull() then
+				if Strategies.closeMenuFor(data) then
 					return true
 				end
 				return false
 			end
-			return strategies.useItem(data)
+			return Strategies.useItem(data)
 		end
 	end,
 
 	potion = function(data)
-		local curr_hp = pokemon.index(0, "hp")
+		local curr_hp = Pokemon.index(0, "hp")
 		if curr_hp == 0 then
 			return false
 		end
 		local toHP
-		if control.yolo and data.yolo ~= nil then
+		if Control.yolo and data.yolo ~= nil then
 			toHP = data.yolo
 		else
 			toHP = data.hp
 		end
 		if type(toHP) == "string" then
-			toHP = combat.healthFor(toHP)
+			toHP = Combat.healthFor(toHP)
 		end
 		local toHeal = toHP - curr_hp
 		if toHeal > 0 then
 			local toPotion
 			if data.forced then
-				toPotion = inventory.contains(data.forced)
+				toPotion = Inventory.contains(data.forced)
 			else
 				local p_first, p_second, p_third
 				if toHeal > 50 then
@@ -445,24 +445,24 @@ strategies.functions = {
 						p_third = "full_restore"
 					end
 				end
-				toPotion = inventory.contains(p_first, p_second, p_third)
+				toPotion = Inventory.contains(p_first, p_second, p_third)
 			end
 			if toPotion then
-				if menu.pause() then
-					inventory.use(toPotion)
+				if Menu.pause() then
+					Inventory.use(toPotion)
 					tempDir = true
 				end
 				return false
 			end
 			--TODO report wanted potion
 		end
-		if strategies.closeMenuFor(data) then
+		if Strategies.closeMenuFor(data) then
 			return true
 		end
 	end,
 
 	teach = function(data)
-		if data.full and not inventory.isFull() then
+		if data.full and not Inventory.isFull() then
 			return true
 		end
 		local itemName
@@ -471,8 +471,8 @@ strategies.functions = {
 		else
 			itemName = data.move
 		end
-		if pokemon.hasMove(data.move) then
-			local main = memory.value("menu", "main")
+		if Pokemon.hasMove(data.move) then
+			local main = Memory.value("menu", "main")
 			if main == 128 then
 				if data.chain then
 					return true
@@ -480,44 +480,44 @@ strategies.functions = {
 			elseif main < 3 then
 				return true
 			end
-			input.press("B")
+			Input.press("B")
 		else
-			if strategies.initialize() then
-				if not inventory.contains(itemName) then
-					return strategies.reset("Unable to teach move "..itemName.." to "..data.poke, nil, true)
+			if Strategies.initialize() then
+				if not Inventory.contains(itemName) then
+					return Strategies.reset("Unable to teach move "..itemName.." to "..data.poke, nil, true)
 				end
 			end
 			local replacement
 			if data.replace then
-				replacement = pokemon.moveIndex(data.replace, data.poke) - 1
+				replacement = Pokemon.moveIndex(data.replace, data.poke) - 1
 			else
 				replacement = 0
 			end
-			if inventory.teach(itemName, data.poke, replacement, data.alt) then
+			if Inventory.teach(itemName, data.poke, replacement, data.alt) then
 				tempDir = true
 			else
-				menu.pause()
+				Menu.pause()
 			end
 		end
 	end,
 
 	skill = function(data)
 		if completedSkillFor(data) then
-			if not textbox.isActive() then
+			if not Textbox.isActive() then
 				return true
 			end
-			input.press("B")
-		elseif not data.dir or player.face(data.dir) then
-			if pokemon.use(data.move) then
+			Input.press("B")
+		elseif not data.dir or Player.face(data.dir) then
+			if Pokemon.use(data.move) then
 				status.tries = status.tries + 1
 			else
-				menu.pause()
+				Menu.pause()
 			end
 		end
 	end,
 
 	fly = function(data)
-		if memory.value("game", "map") == data.map then
+		if Memory.value("game", "map") == data.map then
 			return true
 		end
 		local cities = {
@@ -529,9 +529,9 @@ strategies.functions = {
 			cinnabar = {70, "Down"},
 		}
 
-		local main = memory.value("menu", "main")
+		local main = Memory.value("menu", "main")
 		if main == 228 then
-			local currentFly = memory.raw(0x1FEF)
+			local currentFly = Memory.raw(0x1FEF)
 			local destination = cities[data.dest]
 			local press
 			if destination[1] - currentFly == 0 then
@@ -539,25 +539,25 @@ strategies.functions = {
 			else
 				press = destination[2]
 			end
-			input.press(press)
-		elseif not pokemon.use("fly") then
-			menu.pause()
+			Input.press(press)
+		elseif not Pokemon.use("fly") then
+			Menu.pause()
 		end
 	end,
 
 	bicycle = function()
-		if memory.raw(0x1700) == 1 then
-			if textbox.handle() then
+		if Memory.raw(0x1700) == 1 then
+			if Textbox.handle() then
 				return true
 			end
 		else
-			return strategies.useItem({item="bicycle"})
+			return Strategies.useItem({item="bicycle"})
 		end
 	end,
 
 	wait = function()
 		print("Please save state")
-		input.press("Start", 9001)
+		Input.press("Start", 9001)
 	end,
 
 	emuSpeed = function(data)
@@ -566,66 +566,66 @@ strategies.functions = {
 	end,
 
 	waitToTalk = function()
-		if battle.isActive() then
+		if Battle.isActive() then
 			canProgress = false
-			battle.automate()
-		elseif textbox.isActive() then
+			Battle.automate()
+		elseif Textbox.isActive() then
 			canProgress = true
-			input.cancel()
+			Input.cancel()
 		elseif canProgress then
 			return true
 		end
 	end,
 
 	waitToPause = function()
-		local main = memory.value("menu", "main")
+		local main = Memory.value("menu", "main")
 		if main == 128 then
 			if canProgress then
 				return true
 			end
-		elseif battle.isActive() then
+		elseif Battle.isActive() then
 			canProgress = false
-			battle.automate()
+			Battle.automate()
 		elseif main == 123 then
 			canProgress = true
-			input.press("B")
-		elseif textbox.handle() then
-			input.press("Start", 2)
+			Input.press("B")
+		elseif Textbox.handle() then
+			Input.press("Start", 2)
 		end
 	end,
 
 	waitToFight = function(data)
-		if battle.isActive() then
+		if Battle.isActive() then
 			canProgress = true
-			battle.automate()
+			Battle.automate()
 		elseif canProgress then
 			return true
-		elseif textbox.handle() then
+		elseif Textbox.handle() then
 			if data.dir then
-				player.interact(data.dir)
+				Player.interact(data.dir)
 			else
-				input.cancel()
+				Input.cancel()
 			end
 		end
 	end,
 
 	allowDeath = function(data)
-		control.canDie(data.on)
+		Control.canDie(data.on)
 		return true
 	end,
 
 	-- ROUTE
 
 	dodgePalletBoy = function()
-		return strategies.dodgeUp(0x0223, 14, 14, 15, 7)
+		return Strategies.dodgeUp(0x0223, 14, 14, 15, 7)
 	end,
 
 	helix = function()
-		if battle.handleWild() then
-			if inventory.contains("helix_fossil") then
+		if Battle.handleWild() then
+			if Inventory.contains("helix_fossil") then
 				return true
 			end
-			player.interact("Up")
+			Player.interact("Up")
 		end
 	end,
 
@@ -651,13 +651,13 @@ strategies.functions = {
 	end,
 
 	playPokeflute = function()
-		if battle.isActive() then
+		if Battle.isActive() then
 			return true
 		end
-		if memory.value("battle", "menu") == 95 then
-			input.press("A")
-		elseif menu.pause() then
-			inventory.use("pokeflute")
+		if Memory.value("battle", "menu") == 95 then
+			Input.press("A")
+		elseif Menu.pause() then
+			Inventory.use("pokeflute")
 		end
 	end,
 
@@ -668,19 +668,19 @@ strategies.functions = {
 		else
 			pos = data.x
 		end
-		local newP = memory.raw(pos)
+		local newP = Memory.raw(pos)
 		if status.tries == 0 then
 			status.tries = {start=newP}
 		elseif status.tries.start ~= newP then
 			return true
 		end
-		input.press(data.dir, 0)
+		Input.press(data.dir, 0)
 	end,
 }
 
-strategyFunctions = strategies.functions
+strategyFunctions = Strategies.functions
 
-function strategies.execute(data)
+function Strategies.execute(data)
 	if strategyFunctions[data.s](data) then
 		status = {tries=0}
 		if resetting then
@@ -692,21 +692,21 @@ function strategies.execute(data)
 	return false
 end
 
-function strategies.init(midGame)
+function Strategies.init(midGame)
 	if not STREAMING_MODE then
-		splitTime = utils.timeSince(0)
+		splitTime = Utils.timeSince(0)
 	end
 	if midGame then
-		combat.factorPP(true)
+		Combat.factorPP(true)
 	end
-	strategies.initGame(midGame)
+	Strategies.initGame(midGame)
 end
 
-function strategies.softReset()
+function Strategies.softReset()
 	status = {}
 	splitNumber, splitTime = 0, 0
 	resetting = nil
-	strategies.resetGame()
+	Strategies.resetGame()
 end
 
-return strategies
+return Strategies

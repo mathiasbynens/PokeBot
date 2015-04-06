@@ -1,4 +1,4 @@
-local bridge = {}
+local Bridge = {}
 
 local socket
 if INTERNAL then
@@ -36,7 +36,7 @@ end
 
 -- Wrapper functions
 
-function bridge.init()
+function Bridge.init()
 	if socket then
 		-- io.popen("java -jar Main.jar")
 		client = socket.connect("127.0.0.1", 13378)
@@ -51,17 +51,17 @@ function bridge.init()
 	end
 end
 
-function bridge.tweet(message) -- Two of the same tweet in a row will only send one
+function Bridge.tweet(message) -- Two of the same tweet in a row will only send one
 	print("tweet::"..message)
 	return send("tweet", message)
 end
 
-function bridge.pollForName()
-	bridge.polling = true
+function Bridge.pollForName()
+	Bridge.polling = true
 	send("poll_name")
 end
 
-function bridge.chat(message, extra)
+function Bridge.chat(message, extra)
 	if extra then
 		print(message.." || "..extra)
 	else
@@ -70,25 +70,25 @@ function bridge.chat(message, extra)
 	return send("msg", message)
 end
 
-function bridge.time(message)
+function Bridge.time(message)
 	if not timeStopped then
 		return send("time", message)
 	end
 end
 
-function bridge.stats(message)
+function Bridge.stats(message)
 	return send("stats", message)
 end
 
-function bridge.command(command)
+function Bridge.command(command)
 	return send("livesplit_command", command);
 end
 
-function bridge.comparisonTime()
+function Bridge.comparisonTime()
 	return send("livesplit_getcomparisontime");
 end
 
-function bridge.process()
+function Bridge.process()
 	local response = readln()
 	if response then
 		-- print(">"..response)
@@ -100,42 +100,42 @@ function bridge.process()
 	end
 end
 
-function bridge.input(key)
+function Bridge.input(key)
 	send("input", key)
 end
 
-function bridge.caught(name)
+function Bridge.caught(name)
 	if name then
 		send("caught", name)
 	end
 end
 
-function bridge.hp(curr, max)
+function Bridge.hp(curr, max)
 	send("hp", curr..","..max)
 end
 
-function bridge.liveSplit()
+function Bridge.liveSplit()
 	send("start")
 	timeStopped = false
 end
 
-function bridge.split(finished)
+function Bridge.split(finished)
 	if finished then
 		timeStopped = true
 	end
 	send("split")
 end
 
-function bridge.encounter()
+function Bridge.encounter()
 	send("encounter")
 end
 
-function bridge.reset()
+function Bridge.reset()
 	send("reset")
 	timeStopped = false
 end
 
-function bridge.close()
+function Bridge.close()
 	if client then
 		client:close()
 		client = nil
@@ -143,4 +143,4 @@ function bridge.close()
 	print("Bridge closed")
 end
 
-return bridge
+return Bridge

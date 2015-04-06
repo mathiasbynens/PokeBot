@@ -1,26 +1,26 @@
-local shop = {}
+local Shop = {}
 
-local textbox = require "action.textbox"
+local Textbox = require "action.textbox"
 
-local input = require "util.input"
-local memory = require "util.memory"
-local menu = require "util.menu"
-local player = require "util.player"
+local Input = require "util.input"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
+local Player = require "util.player"
 
-local inventory = require "storage.inventory"
+local Inventory = require "storage.inventory"
 
-function shop.transaction(options)
+function Shop.transaction(options)
 	local item, itemMenu, menuIdx, quantityMenu
 	if options.sell then
 		menuIdx = 1
 		itemMenu = 29
 		quantityMenu = 158
 		for i,sit in ipairs(options.sell) do
-			local idx = inventory.indexOf(sit.name)
+			local idx = Inventory.indexOf(sit.name)
 			if idx ~= -1 then
 				item = sit
 				item.index = idx
-				item.amount = inventory.count(sit.name)
+				item.amount = Inventory.count(sit.name)
 				break
 			end
 		end
@@ -30,7 +30,7 @@ function shop.transaction(options)
 		itemMenu = 123
 		quantityMenu = 161
 		for i,bit in ipairs(options.buy) do
-			local needed = (bit.amount or 1) - inventory.count(bit.name)
+			local needed = (bit.amount or 1) - Inventory.count(bit.name)
 			if needed > 0 then
 				item = bit
 				item.amount = needed
@@ -39,44 +39,44 @@ function shop.transaction(options)
 		end
 	end
 	if not item then
-		if not textbox.isActive() then
+		if not Textbox.isActive() then
 			return true
 		end
-		input.press("B")
-	elseif player.isFacing(options.direction or "Left") then
-		if textbox.isActive() then
-			if menu.isCurrently(32, "shop") then
-				menu.select(menuIdx, true, false, "shop")
-			elseif menu.getCol() == 15 then
-				input.press("A")
-			elseif menu.isCurrently(itemMenu, "transaction") then
-				if menu.select(item.index, "accelerate", true, "transaction", true) then
-					if menu.isCurrently(quantityMenu, "shop") then
-						local currAmount = memory.value("shop", "transaction_amount")
-						if menu.balance(currAmount, item.amount, false, 99, true) then
-							input.press("A")
+		Input.press("B")
+	elseif Player.isFacing(options.direction or "Left") then
+		if Textbox.isActive() then
+			if Menu.isCurrently(32, "shop") then
+				Menu.select(menuIdx, true, false, "shop")
+			elseif Menu.getCol() == 15 then
+				Input.press("A")
+			elseif Menu.isCurrently(itemMenu, "transaction") then
+				if Menu.select(item.index, "accelerate", true, "transaction", true) then
+					if Menu.isCurrently(quantityMenu, "shop") then
+						local currAmount = Memory.value("shop", "transaction_amount")
+						if Menu.balance(currAmount, item.amount, false, 99, true) then
+							Input.press("A")
 						end
 					else
-						input.press("A")
+						Input.press("A")
 					end
 				end
 			else
-				input.press("B")
+				Input.press("B")
 			end
 		else
-			input.press("A", 2)
+			Input.press("A", 2)
 		end
 	else
-		player.interact(options.direction or "Left")
+		Player.interact(options.direction or "Left")
 	end
 	return false
 end
 
-function shop.vend(options)
+function Shop.vend(options)
 	local item
 	menuIdx = 0
 	for i,bit in ipairs(options.buy) do
-		local needed = (bit.amount or 1) - inventory.count(bit.name)
+		local needed = (bit.amount or 1) - Inventory.count(bit.name)
 		if needed > 0 then
 			item = bit
 			item.buy = needed
@@ -84,22 +84,22 @@ function shop.vend(options)
 		end
 	end
 	if not item then
-		if not textbox.isActive() then
+		if not Textbox.isActive() then
 			return true
 		end
-		input.press("B")
-	elseif player.face(options.direction) then
-		if textbox.isActive() then
-			if memory.value("battle", "text") > 1 and memory.value("battle", "menu") ~= 95 then
-				menu.select(item.index, true)
+		Input.press("B")
+	elseif Player.face(options.direction) then
+		if Textbox.isActive() then
+			if Memory.value("battle", "text") > 1 and Memory.value("battle", "menu") ~= 95 then
+				Menu.select(item.index, true)
 			else
-				input.press("A")
+				Input.press("A")
 			end
 		else
-			input.press("A", 2)
+			Input.press("A", 2)
 		end
 	end
 	return false
 end
 
-return shop
+return Shop

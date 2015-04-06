@@ -1,7 +1,7 @@
-local settings = {}
+local Settings = {}
 
-local memory = require "util.memory"
-local menu = require "util.menu"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
 
 local yellow = YELLOW
 
@@ -30,23 +30,23 @@ local function isEnabled(name)
 			battle_animation = 128,
 			battle_style = 64
 		}
-		local settingMask = memory.value("setting", "yellow_bitmask", true)
+		local settingMask = Memory.value("setting", "yellow_bitmask", true)
 		return bit.band(settingMask, matching[name]) == desired[name]
 	else
-		return memory.value("setting", name) == desired[name]
+		return Memory.value("setting", name) == desired[name]
 	end
 end
 
-function settings.set(...)
+function Settings.set(...)
 	for i,name in ipairs(arg) do
 		if not isEnabled(name) then
-			if menu.open(settings_menu, 1) then
-				menu.setOption(name, desired[name])
+			if Menu.open(settings_menu, 1) then
+				Menu.setOption(name, desired[name])
 			end
 			return false
 		end
 	end
-	return menu.cancel(settings_menu)
+	return Menu.cancel(settings_menu)
 end
 
-return settings
+return Settings

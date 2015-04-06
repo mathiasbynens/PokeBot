@@ -1,31 +1,31 @@
-local strategies = require "ai.strategies"
+local Strategies = require "ai.strategies"
 
-local combat = require "ai.combat"
-local control = require "ai.control"
+local Combat = require "ai.combat"
+local Control = require "ai.control"
 
-local battle = require "action.battle"
-local shop = require "action.shop"
-local textbox = require "action.textbox"
-local walk = require "action.walk"
+local Battle = require "action.battle"
+local Shop = require "action.shop"
+local Textbox = require "action.textbox"
+local Walk = require "action.walk"
 
-local bridge = require "util.bridge"
-local input = require "util.input"
-local memory = require "util.memory"
-local menu = require "util.menu"
-local player = require "util.player"
-local utils = require "util.utils"
+local Bridge = require "util.bridge"
+local Input = require "util.input"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
+local Player = require "util.player"
+local Utils = require "util.utils"
 
-local inventory = require "storage.inventory"
-local pokemon = require "storage.pokemon"
+local Inventory = require "storage.inventory"
+local Pokemon = require "storage.pokemon"
 
 local level4Nidoran = true -- 57 vs 96 (d39)
 local nidoAttack, nidoSpeed, nidoSpecial = 0, 0, 0
 local squirtleAtt, squirtleDef, squirtleSpd, squirtleScl
 local riskGiovanni, maxEtherSkip
 
-local status = strategies.status
+local status = Strategies.status
 
-strategies.timeRequirements = {
+Strategies.timeRequirements = {
 
 	bulbasaur = function()
 		return 2.25
@@ -33,7 +33,7 @@ strategies.timeRequirements = {
 
 	nidoran = function()
 		local timeLimit = 6.33
-		if pokemon.inParty("spearow") then
+		if Pokemon.inParty("spearow") then
 			timeLimit = timeLimit + 0.67
 		end
 		return timeLimit
@@ -44,7 +44,7 @@ strategies.timeRequirements = {
 		if nidoAttack > 15 and nidoSpeed > 14 then
 			timeLimit = timeLimit + 0.25
 		end
-		if pokemon.inParty("paras") then
+		if Pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
 		return timeLimit
@@ -52,7 +52,7 @@ strategies.timeRequirements = {
 
 	mankey = function()
 		local timeLimit = 32.5
-		if pokemon.inParty("paras") then
+		if Pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
 		return timeLimit
@@ -60,7 +60,7 @@ strategies.timeRequirements = {
 
 	goldeen = function()
 		local timeLimit = 37.5
-		if pokemon.inParty("paras") then
+		if Pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
 		return timeLimit
@@ -68,7 +68,7 @@ strategies.timeRequirements = {
 
 	misty = function()
 		local timeLimit = 39.5
-		if pokemon.inParty("paras") then
+		if Pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
 		return timeLimit
@@ -113,10 +113,10 @@ strategies.timeRequirements = {
 -- HELPERS
 
 local function nidoranDSum(disabled)
-	local sx, sy = player.position()
+	local sx, sy = Player.position()
 	if not disabled and status.tries == nil then
-		local opponentName = battle.opponent()
-		local opLevel = memory.value("battle", "opponent_level")
+		local opponentName = Battle.opponent()
+		local opLevel = Memory.value("battle", "opponent_level")
 		if opponentName == "rattata" then
 			if opLevel == 2 then
 				status.tries = {0, 4, 12}
@@ -146,7 +146,7 @@ local function nidoranDSum(disabled)
 		end
 	end
 	if not disabled and status.tries ~= 0 then
-		if status.tries[tries.idx] == 0 then
+		if status.tries[status.tries.idx] == 0 then
 			status.tries.idx = status.tries.idx + 1
 			if status.tries.idx > 3 then
 				status.tries = 0
@@ -154,7 +154,7 @@ local function nidoranDSum(disabled)
 			return nidoranDSum()
 		end
 		if status.tries.x ~= sx or status.tries.y ~= sy then
-			status.tries[tries.idx] = status.tries[tries.idx] - 1
+			status.tries[status.tries.idx] = status.tries[status.tries.idx] - 1
 			status.tries.x, status.tries.y = sx, sy
 		end
 		if status.tries.idx == 2 then
@@ -170,145 +170,145 @@ local function nidoranDSum(disabled)
 	else
 		sx = 33
 	end
-	walk.step(sx, sy)
+	Walk.step(sx, sy)
 end
 
 -- STRATEGIES
 
-local strategyFunctions = strategies.functions
+local strategyFunctions = Strategies.functions
 
 -- General
 
 strategyFunctions.tweetMisty = function()
-	if not strategies.setYolo("misty") then
-		local timeLimit = strategies.getTimeRequirement("misty")
-		if not strategies.overMinute(timeLimit - 0.5) then
+	if not Strategies.setYolo("misty") then
+		local timeLimit = Strategies.getTimeRequirement("misty")
+		if not Strategies.overMinute(timeLimit - 0.5) then
 			local pbn = ""
-			if not strategies.overMinute(timeLimit - 1) then
+			if not Strategies.overMinute(timeLimit - 1) then
 				pbn = " (PB pace)"
 			end
-			local elt = utils.elapsedTime()
-			bridge.tweet("Got a run going, just beat Misty "..elt.." in"..pbn.." http://www.twitch.tv/thepokebot")
+			local elt = Utils.elapsedTime()
+			Bridge.tweet("Got a run going, just beat Misty "..elt.." in"..pbn.." http://www.twitch.tv/thepokebot")
 		end
 	end
 	return true
 end
 
 strategyFunctions.tweetVictoryRoad = function()
-	local elt = utils.elapsedTime()
+	local elt = Utils.elapsedTime()
 	local pbn = ""
-	if not strategies.overMinute(strategies.getTimeRequirement("victory_road")) then
+	if not Strategies.overMinute(Strategies.getTimeRequirement("victory_road")) then
 		pbn = " (PB pace)"
 	end
-	local elt = utils.elapsedTime()
-	bridge.tweet("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four http://www.twitch.tv/thepokebot")
+	local elt = Utils.elapsedTime()
+	Bridge.tweet("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four http://www.twitch.tv/thepokebot")
 	return true
 end
 
 strategyFunctions.fightXAccuracy = function()
-	return strategies.prepare("x_accuracy")
+	return Strategies.prepare("x_accuracy")
 end
 
 -- Route
 
 strategyFunctions.squirtleIChooseYou = function()
-	if pokemon.inParty("squirtle") then
-		bridge.caught("squirtle")
+	if Pokemon.inParty("squirtle") then
+		Bridge.caught("squirtle")
 		return true
 	end
-	if player.face("Up") then
-		textbox.name("A")
+	if Player.face("Up") then
+		Textbox.name("A")
 	end
 end
 
 strategyFunctions.fightBulbasaur = function()
-	if status.tries < 9000 and pokemon.index(0, "level") == 6 then
+	if status.tries < 9000 and Pokemon.index(0, "level") == 6 then
 		if status.tries > 200 then
-			squirtleAtt = pokemon.index(0, "attack")
-			squirtleDef = pokemon.index(0, "defense")
-			squirtleSpd = pokemon.index(0, "speed")
-			squirtleScl = pokemon.index(0, "special")
+			squirtleAtt = Pokemon.index(0, "attack")
+			squirtleDef = Pokemon.index(0, "defense")
+			squirtleSpd = Pokemon.index(0, "speed")
+			squirtleScl = Pokemon.index(0, "special")
 			if squirtleAtt < 11 and squirtleScl < 12 then
-				return strategies.reset("Bad Squirtle - "..squirtleAtt.." attack, "..squirtleScl.." special")
+				return Strategies.reset("Bad Squirtle - "..squirtleAtt.." attack, "..squirtleScl.." special")
 			end
 			status.tries = 9001
 		else
 			status.tries = status.tries + 1
 		end
 	end
-	if battle.isActive() and memory.double("battle", "opponent_hp") > 0 and strategies.resetTime(strategies.getTimeRequirement("bulbasaur"), "kill Bulbasaur") then
+	if Battle.isActive() and Memory.double("battle", "opponent_hp") > 0 and Strategies.resetTime(Strategies.getTimeRequirement("bulbasaur"), "kill Bulbasaur") then
 		return true
 	end
-	return strategies.buffTo("tail_whip", 6)
+	return Strategies.buffTo("tail_whip", 6)
 end
 
 -- dodgePalletBoy
 
 strategyFunctions.shopViridianPokeballs = function()
-	return shop.transaction{
+	return Shop.transaction{
 		buy = {{name="pokeball", index=0, amount=8}}
 	}
 end
 
 strategyFunctions.catchNidoran = function()
-	if not control.canCatch() then
+	if not Control.canCatch() then
 		return true
 	end
-	local pokeballs = inventory.count("pokeball")
-	local caught = memory.value("player", "party_size") - 1
+	local pokeballs = Inventory.count("pokeball")
+	local caught = Memory.value("player", "party_size") - 1
 	if pokeballs < 5 - caught * 2 then
-		return strategies.reset("Ran too low on PokeBalls", pokeballs)
+		return Strategies.reset("Ran too low on PokeBalls", pokeballs)
 	end
-	if battle.isActive() then
-		local isNidoran = pokemon.isOpponent("nidoran")
-		if isNidoran and memory.value("battle", "opponent_level") > 2 then
-			if strategies.initialize() then
-				bridge.pollForName()
+	if Battle.isActive() then
+		local isNidoran = Pokemon.isOpponent("nidoran")
+		if isNidoran and Memory.value("battle", "opponent_level") > 2 then
+			if Strategies.initialize() then
+				Bridge.pollForName()
 			end
 		end
 		status.tries = nil
-		if memory.value("menu", "text_input") == 240 then
-			textbox.name()
-		elseif memory.value("battle", "menu") == 95 then
+		if Memory.value("menu", "text_input") == 240 then
+			Textbox.name()
+		elseif Memory.value("battle", "menu") == 95 then
 			if isNidoran then
-				input.press("A")
+				Input.press("A")
 			else
-				input.cancel()
+				Input.cancel()
 			end
-		elseif not control.shouldCatch() then
-			if control.shouldFight() then
-				battle.fight()
+		elseif not Control.shouldCatch() then
+			if Control.shouldFight() then
+				Battle.fight()
 			else
-				battle.run()
+				Battle.run()
 			end
 		end
 	else
 		local noDSum
-		pokemon.updateParty()
-		local hasNidoran = pokemon.inParty("nidoran")
+		Pokemon.updateParty()
+		local hasNidoran = Pokemon.inParty("nidoran")
 		if hasNidoran then
 			if not tempDir then
-				bridge.caught("nidoran")
+				Bridge.caught("nidoran")
 				tempDir = true
 			end
-			if pokemon.getExp() > 205 then
-				level4Nidoran = pokemon.info("nidoran", "level") == 4
+			if Pokemon.getExp() > 205 then
+				level4Nidoran = Pokemon.info("nidoran", "level") == 4
 				return true
 			end
 			noDSum = true
 		end
 
-		local timeLimit = strategies.getTimeRequirement("nidoran")
+		local timeLimit = Strategies.getTimeRequirement("nidoran")
 		local resetMessage
 		if hasNidoran then
 			resetMessage = "get an experience kill before Brock"
 		else
 			resetMessage = "find a suitable Nidoran"
 		end
-		if strategies.resetTime(timeLimit, resetMessage) then
+		if Strategies.resetTime(timeLimit, resetMessage) then
 			return true
 		end
-		if not noDSum and strategies.overMinute(timeLimit - 0.25) then
+		if not noDSum and Strategies.overMinute(timeLimit - 0.25) then
 			noDSum = true
 		end
 		nidoranDSum(noDSum)
@@ -318,106 +318,106 @@ end
 -- 1: NIDORAN
 
 strategyFunctions.dodgeViridianOldMan = function()
-	return strategies.dodgeUp(0x0273, 18, 6, 17, 9)
+	return Strategies.dodgeUp(0x0273, 18, 6, 17, 9)
 end
 
 strategyFunctions.grabTreePotion = function()
-	if strategies.initialize() then
-		if pokemon.info("squirtle", "hp") > 15 or pokemon.info("spearow", "level") == 3 then
+	if Strategies.initialize() then
+		if Pokemon.info("squirtle", "hp") > 15 or Pokemon.info("spearow", "level") == 3 then
 			return true
 		end
 	end
-	if inventory.contains("potion") then
+	if Inventory.contains("potion") then
 		return true
 	end
 
-	local px, py = player.position()
+	local px, py = Player.position()
 	if px > 15 then
-		walk.step(15, 4)
+		Walk.step(15, 4)
 	else
-		player.interact("Left")
+		Player.interact("Left")
 	end
 end
 
 strategyFunctions.grabAntidote = function()
-	local px, py = player.position()
+	local px, py = Player.position()
 	if py < 11 then
 		return true
 	end
-	if pokemon.info("spearow", "level") == 3 then
+	if Pokemon.info("spearow", "level") == 3 then
 		if px < 26 then
 			px = 26
 		else
 			py = 10
 		end
-	elseif inventory.contains("antidote") then
+	elseif Inventory.contains("antidote") then
 		py = 10
 	else
-		player.interact("Up")
+		Player.interact("Up")
 	end
-	walk.step(px, py)
+	Walk.step(px, py)
 end
 
 strategyFunctions.grabForestPotion = function()
-	if battle.handleWild() then
-		local potionCount = inventory.count("potion")
-		if strategies.initialize() then
+	if Battle.handleWild() then
+		local potionCount = Inventory.count("potion")
+		if Strategies.initialize() then
 			tempDir = potionCount
 		end
 		if potionCount > 0 then
 			if tempDir and potionCount > tempDir then
 				tempDir = nil
 			end
-			local healthNeeded = (pokemon.info("spearow", "level") == 3) and 8 or 15
-			if pokemon.info("squirtle", "hp") <= healthNeeded then
-				if menu.pause() then
-					inventory.use("potion", "squirtle")
+			local healthNeeded = (Pokemon.info("spearow", "level") == 3) and 8 or 15
+			if Pokemon.info("squirtle", "hp") <= healthNeeded then
+				if Menu.pause() then
+					Inventory.use("potion", "squirtle")
 				end
 			else
 				return true
 			end
 		elseif not tempDir then
 			return true
-		elseif menu.close() then
-			player.interact("Up")
+		elseif Menu.close() then
+			Player.interact("Up")
 		end
 	end
 end
 
 strategyFunctions.fightWeedle = function()
-	if battle.isTrainer() then
+	if Battle.isTrainer() then
 		canProgress = true
-		local squirtleOut = pokemon.isDeployed("squirtle")
-		if squirtleOut and memory.value("battle", "our_status") > 0 and not inventory.contains("antidote") then
-			return strategies.reset("Poisoned, but we skipped the antidote")
+		local squirtleOut = Pokemon.isDeployed("squirtle")
+		if squirtleOut and Memory.value("battle", "our_status") > 0 and not Inventory.contains("antidote") then
+			return Strategies.reset("Poisoned, but we skipped the antidote")
 		end
-		local sidx = pokemon.indexOf("spearow")
-		if sidx ~= -1 and pokemon.index(sidx, "level") > 3 then
+		local sidx = Pokemon.indexOf("spearow")
+		if sidx ~= -1 and Pokemon.index(sidx, "level") > 3 then
 			sidx = -1
 		end
 		if sidx == -1 then
-			return strategies.buffTo("tail_whip", 5)
+			return Strategies.buffTo("tail_whip", 5)
 		end
-		if pokemon.index(sidx, "hp") < 1 then
-			local battleMenu = memory.value("battle", "menu")
-			if utils.onPokemonSelect(battleMenu) then
-				menu.select(pokemon.indexOf("squirtle"), true)
+		if Pokemon.index(sidx, "hp") < 1 then
+			local battleMenu = Memory.value("battle", "menu")
+			if Utils.onPokemonSelect(battleMenu) then
+				Menu.select(Pokemon.indexOf("squirtle"), true)
 			elseif battleMenu == 95 then
-				input.press("A")
+				Input.press("A")
 			elseif squirtleOut then
-				battle.automate()
+				Battle.automate()
 			else
-				input.cancel()
+				Input.cancel()
 			end
 		elseif squirtleOut then
-			battle.swap("spearow")
+			Battle.swap("spearow")
 		else
-			local peck = combat.bestMove()
+			local peck = Combat.bestMove()
 			local forced
-			if peck and peck.damage and peck.damage + 1 >= memory.double("battle", "opponent_hp") then
+			if peck and peck.damage and peck.damage + 1 >= Memory.double("battle", "opponent_hp") then
 				forced = "growl"
 			end
-			battle.fight(forced)
+			Battle.fight(forced)
 		end
 	elseif canProgress then
 		return true
@@ -425,86 +425,86 @@ strategyFunctions.fightWeedle = function()
 end
 
 strategyFunctions.equipForBrock = function(data)
-	if strategies.initialize() then
-		if pokemon.info("squirtle", "level") < 8 then
+	if Strategies.initialize() then
+		if Pokemon.info("squirtle", "level") < 8 then
 			local message, wait
-			if pokemon.info("spearow", "level") == 3 then
+			if Pokemon.info("spearow", "level") == 3 then
 				message = "Lost too much exp accidentally killing Weedle with Spearow"
 			else
 				message = "Did not reach level 8 before Brock"
 				wait = true
 			end
-			return strategies.reset(message, pokemon.getExp(), wait)
+			return Strategies.reset(message, Pokemon.getExp(), wait)
 		end
 		if data.anti then
-			local poisoned = pokemon.info("squirtle", "status") > 0
+			local poisoned = Pokemon.info("squirtle", "status") > 0
 			if not poisoned then
 				return true
 			end
-			if not inventory.contains("antidote") then
-				return strategies.reset("Poisoned, but we risked skipping the antidote")
+			if not Inventory.contains("antidote") then
+				return Strategies.reset("Poisoned, but we risked skipping the antidote")
 			end
-			local curr_hp = pokemon.info("squirtle", "hp")
-			if inventory.contains("potion") and curr_hp > 8 and curr_hp < 18 then
+			local curr_hp = Pokemon.info("squirtle", "hp")
+			if Inventory.contains("potion") and curr_hp > 8 and curr_hp < 18 then
 				return true
 			end
 		end
 	end
-	local main = memory.value("menu", "main")
-	local nidoranIndex = pokemon.indexOf("nidoran")
+	local main = Memory.value("menu", "main")
+	local nidoranIndex = Pokemon.indexOf("nidoran")
 	if nidoranIndex == 0 then
-		if menu.close() then
+		if Menu.close() then
 			return true
 		end
-	elseif menu.pause() then
-		local column = menu.getCol()
-		if pokemon.info("squirtle", "status") > 0 then
-			inventory.use("antidote", "squirtle")
-		elseif inventory.contains("potion") and pokemon.info("squirtle", "hp") < 15 then
-			inventory.use("potion", "squirtle")
+	elseif Menu.pause() then
+		local column = Menu.getCol()
+		if Pokemon.info("squirtle", "status") > 0 then
+			Inventory.use("antidote", "squirtle")
+		elseif Inventory.contains("potion") and Pokemon.info("squirtle", "hp") < 15 then
+			Inventory.use("potion", "squirtle")
 		else
 			if main == 128 then
 				if column == 11 then
-					menu.select(1, true)
+					Menu.select(1, true)
 				elseif column == 12 then
-					menu.select(1, true)
+					Menu.select(1, true)
 				else
-					input.press("B")
+					Input.press("B")
 				end
 			elseif main == 103 then --TODO check loop
-				if memory.value("menu", "selection_mode") == 1 then
-					menu.select(nidoranIndex, true)
+				if Memory.value("menu", "selection_mode") == 1 then
+					Menu.select(nidoranIndex, true)
 				else
-					menu.select(0, true)
+					Menu.select(0, true)
 				end
 			else
-				input.press("B")
+				Input.press("B")
 			end
 		end
 	end
 end
 
 strategyFunctions.fightBrock = function()
-	local squirtleHP = pokemon.info("squirtle", "hp")
+	local squirtleHP = Pokemon.info("squirtle", "hp")
 	if squirtleHP == 0 then
-		return strategies.death()
+		return Strategies.death()
 	end
-	if battle.isActive() then
+	if Battle.isActive() then
 		if status.tries < 1 then
 			status.tries = 1
 		end
-		local bubble, turnsToKill, turnsToDie = combat.bestMove()
-		if not pokemon.isDeployed("squirtle") then
-			battle.swap("squirtle")
-		elseif turnsToDie and turnsToDie < 2 and inventory.contains("potion") then
-			inventory.use("potion", "squirtle", true)
+		local bubble, turnsToKill, turnsToDie = Combat.bestMove()
+		if not Pokemon.isDeployed("squirtle") then
+			Battle.swap("squirtle")
+		elseif turnsToDie and turnsToDie < 2 and Inventory.contains("potion") then
+			Inventory.use("potion", "squirtle", true)
 		else
-			local battleMenu = memory.value("battle", "menu")
-			local bideTurns = memory.value("battle", "opponent_bide")
-			if battleMenu == 95 and menu.getCol() == 1 then
-				input.press("A")
+			local battleMenu = Memory.value("battle", "menu")
+			local bideTurns = Memory.value("battle", "opponent_bide")
+			if battleMenu == 95 and Menu.getCol() == 1 then
+				Input.press("A")
 			elseif bideTurns > 0 then
-				local onixHP = memory.double("battle", "opponent_hp")
+				local onixHP = Memory.double("battle", "opponent_hp")
 				if not canProgress then
 					canProgress = onixHP
 					tempDir = bideTurns
@@ -516,24 +516,24 @@ strategyFunctions.fightBrock = function()
 					elseif onixHP == canProgress then
 						forced = "tail_whip"
 					end
-					battle.fight(forced)
+					Battle.fight(forced)
 				else
-					input.cancel()
+					Input.cancel()
 				end
-			elseif utils.onPokemonSelect(battleMenu) then
-				menu.select(pokemon.indexOf("nidoran"), true)
+			elseif Utils.onPokemonSelect(battleMenu) then
+				Menu.select(Pokemon.indexOf("nidoran"), true)
 			else
 				canProgress = false
-				battle.fight()
+				Battle.fight()
 			end
 			if status.tries < 9000 then
-				local nidx = pokemon.indexOf("nidoran")
-				if pokemon.index(nidx, "level") == 8 then
-					local att = pokemon.index(nidx, "attack")
-					local def = pokemon.index(nidx, "defense")
-					local spd = pokemon.index(nidx, "speed")
-					local scl = pokemon.index(nidx, "special")
-					bridge.stats(att.." "..def.." "..spd.." "..scl)
+				local nidx = Pokemon.indexOf("nidoran")
+				if Pokemon.index(nidx, "level") == 8 then
+					local att = Pokemon.index(nidx, "attack")
+					local def = Pokemon.index(nidx, "defense")
+					local spd = Pokemon.index(nidx, "speed")
+					local scl = Pokemon.index(nidx, "special")
+					Bridge.stats(att.." "..def.." "..spd.." "..scl)
 					nidoAttack = att
 					nidoSpeed = spd
 					nidoSpecial = scl
@@ -545,7 +545,7 @@ strategyFunctions.fightBrock = function()
 						local resets = att < 15 or spd < 14 or scl < 12 or (att == 15 and spd == 14)
 						local nStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 						if resets then
-							return strategies.reset("Bad Nidoran - "..nStatus)
+							return Strategies.reset("Bad Nidoran - "..nStatus)
 						end
 						status.tries = 9001
 
@@ -579,7 +579,7 @@ strategyFunctions.fightBrock = function()
 							exclaim = "."
 						end
 						nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(level4Nidoran and "4" or "3").."."
-						bridge.chat(nStatus)
+						Bridge.chat(nStatus)
 					else
 						status.tries = status.tries + 1
 					end
@@ -588,52 +588,52 @@ strategyFunctions.fightBrock = function()
 		end
 	elseif status.tries > 0 then
 		return true
-	elseif textbox.handle() then
-		player.interact("Up")
+	elseif Textbox.handle() then
+		Player.interact("Up")
 	end
 end
 
 -- 2: BROCK
 
 strategyFunctions.shopPewterMart = function()
-	return shop.transaction{
+	return Shop.transaction{
 		buy = {{name="potion", index=1, amount=9}}
 	}
 end
 
 strategyFunctions.battleModeSet = function()
-	if memory.value("setting", "battle_style") == 10 then
-		if menu.close() then
+	if Memory.value("setting", "battle_style") == 10 then
+		if Menu.close() then
 			return true
 		end
-	elseif menu.pause() then
-		local main = memory.value("menu", "main")
+	elseif Menu.pause() then
+		local main = Memory.value("menu", "main")
 		if main == 128 then
-			if menu.getCol() ~= 11 then
-				input.press("B")
+			if Menu.getCol() ~= 11 then
+				Input.press("B")
 			else
-				menu.select(5, true)
+				Menu.select(5, true)
 			end
 		elseif main == 228 then
-			menu.setOption("battle_style", 8, 10)
+			Menu.setOption("battle_style", 8, 10)
 		else
-			input.press("B")
+			Input.press("B")
 		end
 	end
 end
 
 strategyFunctions.leer = function(data)
-	local bm = combat.bestMove()
+	local bm = Combat.bestMove()
 	if not bm or bm.minTurns < 3 then
-		if battle.isActive() then
+		if Battle.isActive() then
 			canProgress = true
 		elseif canProgress then
 			return true
 		end
-		battle.automate()
+		Battle.automate()
 		return false
 	end
-	local opp = battle.opponent()
+	local opp = Battle.opponent()
 	local defLimit = 9001
 	for i,poke in ipairs(data) do
 		if opp == poke[1] then
@@ -644,105 +644,105 @@ strategyFunctions.leer = function(data)
 			break
 		end
 	end
-	return strategies.buffTo("leer", defLimit)
+	return Strategies.buffTo("leer", defLimit)
 end
 
 strategyFunctions.bugCatcher = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		local isWeedle = pokemon.isOpponent("weedle")
+		local isWeedle = Pokemon.isOpponent("weedle")
 		if isWeedle and not tempDir then
 			tempDir = true
 		end
 		secondCaterpie = tempDir
 		if not isWeedle and secondCaterpie then
-			if level4Nidoran and nidoSpeed >= 14 and pokemon.index(0, "attack") >= 19 then
-				-- print("IA "..pokemon.index(0, "attack"))
-				battle.automate()
+			if level4Nidoran and nidoSpeed >= 14 and Pokemon.index(0, "attack") >= 19 then
+				-- print("IA "..Pokemon.index(0, "attack"))
+				Battle.automate()
 				return
 			end
 		end
-		strategies.functions.leer({{"caterpie",8}, {"weedle",7}})
+		Strategies.functions.leer({{"caterpie",8}, {"weedle",7}})
 	elseif canProgress then
 		return true
 	else
-		battle.automate()
+		Battle.automate()
 	end
 end
 
 strategyFunctions.shortsKid = function()
-	local fightingEkans = pokemon.isOpponent("ekans")
+	local fightingEkans = Pokemon.isOpponent("ekans")
 	if fightingEkans then
-		local wrapping = memory.value("battle", "turns") > 0
+		local wrapping = Memory.value("battle", "turns") > 0
 		if wrapping then
-			local curr_hp = memory.double("battle", "our_hp")
+			local curr_hp = Memory.double("battle", "our_hp")
 			if not tempDir then
 				tempDir = curr_hp
 			end
 			local wrapDamage = tempDir - curr_hp
-			if wrapDamage > 0 and wrapDamage < 7 and curr_hp < 14 and not strategies.opponentDamaged() then
-				inventory.use("potion", nil, true)
+			if wrapDamage > 0 and wrapDamage < 7 and curr_hp < 14 and not Strategies.opponentDamaged() then
+				Inventory.use("potion", nil, true)
 				return false
 			end
 		elseif tempDir then
 			tempDir = nil
 		end
 	end
-	control.battlePotion(fightingEkans or strategies.damaged(2))
-	return strategies.functions.leer({{"rattata",9}, {"ekans",10}})
+	Control.battlePotion(fightingEkans or Strategies.damaged(2))
+	return Strategies.functions.leer({{"rattata",9}, {"ekans",10}})
 end
 
 strategyFunctions.potionBeforeCocoons = function()
 	if nidoSpeed >= 15 then
 		return true
 	end
-	return strategies.functions.potion({hp=6, yolo=3})
+	return Strategies.functions.potion({hp=6, yolo=3})
 end
 
 strategyFunctions.swapHornAttack = function()
-	if pokemon.battleMove("horn_attack") == 1 then
+	if Pokemon.battleMove("horn_attack") == 1 then
 		return true
 	end
-	battle.swapMove(1, 3)
+	Battle.swapMove(1, 3)
 end
 
 strategyFunctions.fightMetapod = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		if memory.double("battle", "opponent_hp") > 0 and pokemon.isOpponent("metapod") then
+		if Memory.double("battle", "opponent_hp") > 0 and Pokemon.isOpponent("metapod") then
 			return true
 		end
-		battle.automate()
+		Battle.automate()
 	elseif canProgress then
 		return true
 	else
-		battle.automate()
+		Battle.automate()
 	end
 end
 
 strategyFunctions.catchFlierBackup = function()
-	if strategies.initialize() then
-		control.canDie(true)
+	if Strategies.initialize() then
+		Control.canDie(true)
 	end
-	if not control.canCatch() then
+	if not Control.canCatch() then
 		return true
 	end
-	local caught = pokemon.inParty("pidgey", "spearow")
-	if battle.isActive() then
-		if memory.double("battle", "our_hp") == 0 then
-			if pokemon.info("squirtle", "hp") == 0 then
-				control.canDie(false)
-			elseif utils.onPokemonSelect(memory.value("battle", "menu")) then
-				menu.select(pokemon.indexOf("squirtle"), true)
+	local caught = Pokemon.inParty("pidgey", "spearow")
+	if Battle.isActive() then
+		if Memory.double("battle", "our_hp") == 0 then
+			if Pokemon.info("squirtle", "hp") == 0 then
+				Control.canDie(false)
+			elseif Utils.onPokemonSelect(Memory.value("battle", "menu")) then
+				Menu.select(Pokemon.indexOf("squirtle"), true)
 			else
-				input.press("A")
+				Input.press("A")
 			end
-		elseif not control.shouldCatch() then
-			battle.run()
+		elseif not Control.shouldCatch() then
+			Battle.run()
 		end
 	else
 		local birdPath
-		local px, py = player.position()
+		local px, py = Player.position()
 		if caught then
 			if px > 33 then
 				return true
@@ -758,12 +758,12 @@ strategyFunctions.catchFlierBackup = function()
 			else
 				py = 10
 			end
-			walk.step(px, py)
+			Walk.step(px, py)
 		else
 			birdPath = {{32,10}, {32,11}, {34,11}, {34,10}, {37,10}}
 		end
 		if birdPath then
-			walk.custom(birdPath)
+			Walk.custom(birdPath)
 		end
 	end
 end
@@ -771,23 +771,23 @@ end
 -- 3: ROUTE 3
 
 strategyFunctions.startMtMoon = function()
-	control.moonEncounters = 0
-	control.canDie(false)
+	Control.moonEncounters = 0
+	Control.canDie(false)
 	return true
 end
 
 strategyFunctions.evolveNidorino = function()
-	if pokemon.inParty("nidorino") then
-		bridge.caught("nidorino")
+	if Pokemon.inParty("nidorino") then
+		Bridge.caught("nidorino")
 		return true
 	end
-	if battle.isActive() then
+	if Battle.isActive() then
 		status.tries = 0
 		canProgress = true
-		if memory.double("battle", "opponent_hp") == 0 then
-			input.press("A")
+		if Memory.double("battle", "opponent_hp") == 0 then
+			Input.press("A")
 		else
-			battle.automate()
+			Battle.automate()
 		end
 	elseif status.tries > 3600 then
 		print("Broke from Nidorino on tries")
@@ -796,21 +796,21 @@ strategyFunctions.evolveNidorino = function()
 		if canProgress then
 			status.tries = status.tries + 1
 		end
-		input.press("A")
+		Input.press("A")
 	end
 end
 
 strategyFunctions.evolveNidoking = function()
-	if battle.handleWild() then
-		if not inventory.contains("moon_stone") then
-			if strategies.initialize() then
-				bridge.caught("nidoking")
+	if Battle.handleWild() then
+		if not Inventory.contains("moon_stone") then
+			if Strategies.initialize() then
+				Bridge.caught("nidoking")
 			end
-			if menu.close() then
+			if Menu.close() then
 				return true
 			end
-		elseif not inventory.use("moon_stone") then
-			menu.pause()
+		elseif not Inventory.use("moon_stone") then
+			Menu.pause()
 		end
 	end
 end
@@ -818,15 +818,15 @@ end
 -- helix
 
 strategyFunctions.reportMtMoon = function()
-	if battle.pp("horn_attack") == 0 then
+	if Battle.pp("horn_attack") == 0 then
 		print("ERR: Ran out of Horn Attacks")
 	end
-	if control.moonEncounters then
+	if Control.moonEncounters then
 		local parasStatus
 		local conjunction = "but"
-		local goodEncounters = control.moonEncounters < 10
+		local goodEncounters = Control.moonEncounters < 10
 		local parasCatch
-		if pokemon.inParty("paras") then
+		if Pokemon.inParty("paras") then
 			parasCatch = "paras"
 			if goodEncounters then
 				conjunction = "and"
@@ -839,13 +839,13 @@ strategyFunctions.reportMtMoon = function()
 			end
 			parasStatus = "we didn't find a Paras :("
 		end
-		bridge.caught(parasCatch)
-		bridge.chat(control.moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
-		control.moonEncounters = nil
+		Bridge.caught(parasCatch)
+		Bridge.chat(Control.moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
+		Control.moonEncounters = nil
 	end
 
-	local timeLimit = strategies.getTimeRequirement("mt_moon")
-	strategies.resetTime(timeLimit, "complete Mt. Moon", true)
+	local timeLimit = Strategies.getTimeRequirement("mt_moon")
+	Strategies.resetTime(timeLimit, "complete Mt. Moon", true)
 	return true
 end
 
@@ -856,66 +856,66 @@ end
 -- dodgeCeruleanLeft
 
 strategyFunctions.rivalSandAttack = function(data)
-	if battle.isActive() then
-		if battle.redeployNidoking() then
+	if Battle.isActive() then
+		if Battle.redeployNidoking() then
 			return false
 		end
-		local opponent = battle.opponent()
-		if memory.value("battle", "accuracy") < 7 then
+		local opponent = Battle.opponent()
+		if Memory.value("battle", "accuracy") < 7 then
 			local sacrifice
 			if opponent == "pidgeotto" then
-				local __, turns = combat.bestMove()
+				local __, turns = Combat.bestMove()
 				if turns == 1 then
-					sacrifice = pokemon.getSacrifice("pidgey", "spearow", "paras", "oddish", "squirtle")
+					sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "paras", "oddish", "squirtle")
 				end
 			elseif opponent == "raticate" then
-				sacrifice = pokemon.getSacrifice("pidgey", "spearow", "oddish")
+				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "oddish")
 			end
-			if battle.sacrifice(sacrifice) then
+			if Battle.sacrifice(sacrifice) then
 				return false
 			end
 		end
 
 		if opponent == "pidgeotto" then
-			combat.disableThrash = true
+			Combat.disableThrash = true
 		elseif opponent == "raticate" then
-			combat.disableThrash = strategies.opponentDamaged() or (not control.yolo and pokemon.index(0, "hp") < 32) -- RISK
+			Combat.disableThrash = Strategies.opponentDamaged() or (not Control.yolo and Pokemon.index(0, "hp") < 32) -- RISK
 		elseif opponent == "ivysaur" then
-			if not control.yolo and strategies.damaged(5) and inventory.contains("super_potion") then
-				inventory.use("super_potion", nil, true)
+			if not Control.yolo and Strategies.damaged(5) and Inventory.contains("super_potion") then
+				Inventory.use("super_potion", nil, true)
 				return false
 			end
-			combat.disableThrash = strategies.opponentDamaged()
+			Combat.disableThrash = Strategies.opponentDamaged()
 		else
-			combat.disableThrash = false
+			Combat.disableThrash = false
 		end
-		battle.automate()
+		Battle.automate()
 		canProgress = true
 	elseif canProgress then
-		combat.disableThrash = false
+		Combat.disableThrash = false
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.teachThrash = function()
-	if strategies.initialize() then
-		if pokemon.hasMove("thrash") or pokemon.info("nidoking", "level") < 21 then
+	if Strategies.initialize() then
+		if Pokemon.hasMove("thrash") or Pokemon.info("nidoking", "level") < 21 then
 			return true
 		end
 	end
-	if strategies.functions.teach({move="thrash",item="rare_candy",replace="leer"}) then
-		if menu.close() then
-			local att = pokemon.index(0, "attack")
-			local def = pokemon.index(0, "defense")
-			local spd = pokemon.index(0, "speed")
-			local scl = pokemon.index(0, "special")
+	if Strategies.functions.teach({move="thrash",item="rare_candy",replace="leer"}) then
+		if Menu.close() then
+			local att = Pokemon.index(0, "attack")
+			local def = Pokemon.index(0, "defense")
+			local spd = Pokemon.index(0, "speed")
+			local scl = Pokemon.index(0, "special")
 			local statDesc = att.." "..def.." "..spd.." "..scl
 			nidoAttack = att
 			nidoSpeed = spd
 			nidoSpecial = scl
-			bridge.stats(statDesc)
+			Bridge.stats(statDesc)
 			print(statDesc)
 			return true
 		end
@@ -923,31 +923,31 @@ strategyFunctions.teachThrash = function()
 end
 
 strategyFunctions.potionForMankey = function()
-	if strategies.initialize() then
-		if pokemon.info("nidoking", "level") > 20 then
+	if Strategies.initialize() then
+		if Pokemon.info("nidoking", "level") > 20 then
 			return true
 		end
 	end
-	return strategies.functions.potion({hp=18, yolo=8})
+	return Strategies.functions.potion({hp=18, yolo=8})
 end
 
 strategyFunctions.redbarMankey = function()
-	if not strategies.setYolo("mankey") then
+	if not Strategies.setYolo("mankey") then
 		return true
 	end
-	local curr_hp, red_hp = pokemon.index(0, "hp"), strategies.redHP()
+	local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
 	if curr_hp <= red_hp then
 		return true
 	end
-	if strategies.initialize() then
-		if pokemon.info("nidoking", "level") < 23 or inventory.count("potion") < 3 then -- RISK
+	if Strategies.initialize() then
+		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 3 then -- RISK
 			return true
 		end
-		bridge.chat("Using Poison Sting to attempt to red-bar off Mankey")
+		Bridge.chat("Using Poison Sting to attempt to red-bar off Mankey")
 	end
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		local enemyMove, enemyTurns = combat.enemyAttack()
+		local enemyMove, enemyTurns = Combat.enemyAttack()
 		if enemyTurns then
 			if enemyTurns < 2 then
 				return true
@@ -957,42 +957,42 @@ strategyFunctions.redbarMankey = function()
 				return true
 			end
 		end
-		battle.automate("poison_sting")
+		Battle.automate("poison_sting")
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.thrashGeodude = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		if pokemon.isOpponent("geodude") and pokemon.isDeployed("nidoking") then
-			if battle.sacrifice("squirtle") then
+		if Pokemon.isOpponent("geodude") and Pokemon.isDeployed("nidoking") then
+			if Battle.sacrifice("squirtle") then
 				return false
 			end
 		end
-		battle.automate()
+		Battle.automate()
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.potionBeforeGoldeen = function()
-	if strategies.initialize() then
-		if strategies.setYolo("goldeen") or pokemon.index(0, "hp") > 7 then
+	if Strategies.initialize() then
+		if Strategies.setYolo("goldeen") or Pokemon.index(0, "hp") > 7 then
 			return true
 		end
 	end
-	return strategies.functions.potion({hp=64, chain=true})
+	return Strategies.functions.potion({hp=64, chain=true})
 end
 
 strategyFunctions.potionBeforeMisty = function()
 	local healAmount = 70
-	if control.yolo then
+	if Control.yolo then
 		if nidoAttack > 53 and nidoSpeed > 50 then
 			healAmount = 45
 		elseif nidoAttack > 53 then
@@ -1005,43 +1005,43 @@ strategyFunctions.potionBeforeMisty = function()
 			healAmount = 65
 		end
 	end
-	if strategies.initialize() then
+	if Strategies.initialize() then
 		local message
-		local potionCount = inventory.count("potion")
-		local needsToHeal = healAmount - pokemon.index(0, "hp")
+		local potionCount = Inventory.count("potion")
+		local needsToHeal = healAmount - Pokemon.index(0, "hp")
 		if potionCount * 20 < needsToHeal then
 			message = "Ran too low on potions to heal enough before Misty"
 		elseif healAmount < 60 then
 			message = "Limiting heals to attempt to get closer to red-bar off Misty"
 		end
 		if message then
-			bridge.chat(message, potionCount)
+			Bridge.chat(message, potionCount)
 		end
 	end
-	return strategies.functions.potion({hp=healAmount})
+	return Strategies.functions.potion({hp=healAmount})
 end
 
 strategyFunctions.fightMisty = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		if battle.redeployNidoking() then
+		if Battle.redeployNidoking() then
 			if tempDir == false then
 				tempDir = true
 			end
 			return false
 		end
 		local swappedOut = tempDir
-		if not swappedOut and combat.isConfused() then
+		if not swappedOut and Combat.isConfused() then
 			tempDir = false
-			if battle.sacrifice("pidgey", "spearow", "paras") then
+			if Battle.sacrifice("pidgey", "spearow", "paras") then
 				return false
 			end
 		end
-		battle.automate()
+		Battle.automate()
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
@@ -1049,54 +1049,54 @@ end
 
 strategyFunctions.potionBeforeRocket = function()
 	local minAttack = 55 -- RISK
-	if control.yolo then
+	if Control.yolo then
 		minAttack = minAttack - 1
 	end
 	if nidoAttack >= minAttack then
 		return true
 	end
-	return strategies.functions.potion({hp=10})
+	return Strategies.functions.potion({hp=10})
 end
 
 strategyFunctions.jingleSkip = function()
 	if canProgress then
-		local px, py = player.position()
+		local px, py = Player.position()
 		if px < 4 then
 			return true
 		end
-		input.press("Left", 0)
+		Input.press("Left", 0)
 	else
-		input.press("A", 0)
+		Input.press("A", 0)
 		canProgress = true
 	end
 end
 
 strategyFunctions.catchOddish = function()
-	if not control.canCatch() then
+	if not Control.canCatch() then
 		return true
 	end
-	local caught = pokemon.inParty("oddish", "paras")
-	local battleValue = memory.value("game", "battle")
-	local px, py = player.position()
+	local caught = Pokemon.inParty("oddish", "paras")
+	local battleValue = Memory.value("game", "battle")
+	local px, py = Player.position()
 	if battleValue > 0 then
 		if battleValue == 2 then
 			status.tries = 2
-			battle.automate()
+			Battle.automate()
 		else
 			if status.tries == 0 and py == 31 then
 				status.tries = 1
 			end
-			if not control.shouldCatch() then
-				battle.run()
+			if not Control.shouldCatch() then
+				Battle.run()
 			end
 		end
 	elseif status.tries == 1 and py == 31 then
-		player.interact("Left")
+		Player.interact("Left")
 	else
 		local path
 		if caught then
 			if not tempDir then
-				bridge.caught(pokemon.inParty("oddish"))
+				Bridge.caught(Pokemon.inParty("oddish"))
 				tempDir = true
 			end
 			if py < 21 then
@@ -1122,7 +1122,7 @@ strategyFunctions.catchOddish = function()
 			else
 				return true
 			end
-			walk.step(px, py)
+			Walk.step(px, py)
 		elseif px == 12 then
 			local dy
 			if py == 30 then
@@ -1130,27 +1130,27 @@ strategyFunctions.catchOddish = function()
 			else
 				dy = 30
 			end
-			walk.step(px, dy)
+			Walk.step(px, dy)
 		else
 			local path = {{15,19}, {15,25}, {15,25}, {15,27}, {14,27}, {14,30}, {12,30}}
-			walk.custom(path)
+			Walk.custom(path)
 		end
 	end
 end
 
 strategyFunctions.shopVermilionMart = function()
-	if strategies.initialize() then
-		strategies.setYolo("vermilion")
+	if Strategies.initialize() then
+		Strategies.setYolo("vermilion")
 	end
 	local buyArray, sellArray
-	if not inventory.contains("pokeball") or (not control.yolo and nidoAttack < 53) then
+	if not Inventory.contains("pokeball") or (not Control.yolo and nidoAttack < 53) then
 		sellArray = {{name="pokeball"}, {name="antidote"}, {name="tm34"}, {name="nugget"}}
 		buyArray = {{name="super_potion",index=1,amount=3}, {name="paralyze_heal",index=4,amount=2}, {name="repel",index=5,amount=3}}
 	else
 		sellArray = {{name="antidote"}, {name="tm34"}, {name="nugget"}}
 		buyArray = {{name="super_potion",index=1,amount=3}, {name="repel",index=5,amount=3}}
 	end
-	return shop.transaction {
+	return Shop.transaction {
 		sell = sellArray,
 		buy = buyArray
 	}
@@ -1159,25 +1159,25 @@ end
 -- rivalSandAttack
 
 strategyFunctions.trashcans = function()
-	local progress = memory.value("progress", "trashcans")
-	if textbox.isActive() then
+	local progress = Memory.value("progress", "trashcans")
+	if Textbox.isActive() then
 		if not canProgress then
 			if progress < 2 then
 				status.tries = status.tries + 1
 			end
 			canProgress = true
 		end
-		input.cancel()
+		Input.cancel()
 	else
 		if progress == 3 then
-			local px, py = player.position()
+			local px, py = Player.position()
 			if px == 4 and py == 6 then
 				status.tries = status.tries + 1
-				local timeLimit = strategies.getTimeRequirement("trash") + 1.5
-				if strategies.resetTime(timeLimit, "complete Trashcans ("..status.tries.." tries)") then
+				local timeLimit = Strategies.getTimeRequirement("trash") + 1.5
+				if Strategies.resetTime(timeLimit, "complete Trashcans ("..status.tries.." tries)") then
 					return true
 				end
-				strategies.setYolo("trash")
+				Strategies.setYolo("trash")
 
 				local prefix
 				local suffix = "!"
@@ -1196,7 +1196,7 @@ strategyFunctions.trashcans = function()
 					prefix = "Reset me now"
 					suffix = " BibleThump"
 				end
-				bridge.chat(prefix..", "..status.tries.." try Trashcans"..suffix, utils.elapsedTime())
+				Bridge.chat(prefix..", "..status.tries.." try Trashcans"..suffix, Utils.elapsedTime())
 				return true
 			end
 			local completePath = {
@@ -1213,11 +1213,11 @@ strategyFunctions.trashcans = function()
 					end
 				end
 			end
-			input.press(walkIn, 0)
+			Input.press(walkIn, 0)
 		elseif progress == 2 then
 			if canProgress then
 				canProgress = false
-				walk.invertCustom()
+				Walk.invertCustom()
 			end
 			local inverse = {
 				Up = "Down",
@@ -1225,11 +1225,11 @@ strategyFunctions.trashcans = function()
 				Down = "Up",
 				Left = "Right"
 			}
-			player.interact(inverse[tempDir])
+			Player.interact(inverse[tempDir])
 		else
 			local trashPath = {{2,11},{"Left"},{2,11}, {2,12},{4,12},{4,11},{"Right"},{4,11}, {4,9},{"Left"},{4,9}, {4,7},{"Right"},{4,7}, {4,6},{2,6},{2,7},{"Left"},{2,7}, {2,6},{4,6},{4,8},{9,8},{"Up"},{9,8}, {8,8},{8,9},{"Left"},{8,9}, {8,10},{9,10},{"Down"},{9,10},{8,10}}
 			if tempDir and type(tempDir) == "number" then
-				local px, py = player.position()
+				local px, py = Player.position()
 				local dx, dy = px, py
 				if py < 12 then
 					dy = 12
@@ -1239,91 +1239,91 @@ strategyFunctions.trashcans = function()
 					dx = 8
 				end
 				if px ~= dx or py ~= dy then
-					walk.step(dx, dy)
+					Walk.step(dx, dy)
 					return
 				end
 				tempDir = nil
 			end
-			tempDir = walk.custom(trashPath, canProgress)
+			tempDir = Walk.custom(trashPath, canProgress)
 			canProgress = false
 		end
 	end
 end
 
 strategyFunctions.fightSurge = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
 		local forced
-		if pokemon.isOpponent("voltorb") then
-			combat.disableThrash = true
-			local __, enemyTurns = combat.enemyAttack()
+		if Pokemon.isOpponent("voltorb") then
+			Combat.disableThrash = true
+			local __, enemyTurns = Combat.enemyAttack()
 			if not enemyTurns or enemyTurns > 2 then
 				forced = "bubblebeam"
-			elseif enemyTurns == 2 and not strategies.opponentDamaged() then
-				local curr_hp, red_hp = pokemon.index(0, "hp"), strategies.redHP()
+			elseif enemyTurns == 2 and not Strategies.opponentDamaged() then
+				local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
 				local afterHit = curr_hp - 20
 				if afterHit > 5 and afterHit <= red_hp then
 					forced = "bubblebeam"
 				end
 			end
 		else
-			combat.disableThrash = false
+			Combat.disableThrash = false
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 -- 7: SURGE
 
 strategyFunctions.procureBicycle = function()
-	if inventory.contains("bicycle") then
-		if not textbox.isActive() then
+	if Inventory.contains("bicycle") then
+		if not Textbox.isActive() then
 			return true
 		end
-		input.cancel()
-	elseif textbox.handle() then
-		player.interact("Right")
+		Input.cancel()
+	elseif Textbox.handle() then
+		Player.interact("Right")
 	end
 end
 
 strategyFunctions.swapBicycle = function()
-	local bicycleIdx = inventory.indexOf("bicycle")
+	local bicycleIdx = Inventory.indexOf("bicycle")
 	if bicycleIdx < 3 then
 		return true
 	end
-	local main = memory.value("menu", "main")
+	local main = Memory.value("menu", "main")
 	if main == 128 then
-		if menu.getCol() ~= 5 then
-			menu.select(2, true)
+		if Menu.getCol() ~= 5 then
+			Menu.select(2, true)
 		else
-			local selection = memory.value("menu", "selection_mode")
+			local selection = Memory.value("menu", "selection_mode")
 			if selection == 0 then
-				if menu.select(0, "accelerate", true, nil, true) then
-					input.press("Select")
+				if Menu.select(0, "accelerate", true, nil, true) then
+					Input.press("Select")
 				end
 			else
-				if menu.select(bicycleIdx, "accelerate", true, nil, true) then
-					input.press("Select")
+				if Menu.select(bicycleIdx, "accelerate", true, nil, true) then
+					Input.press("Select")
 				end
 			end
 		end
 	else
-		menu.pause()
+		Menu.pause()
 	end
 end
 
 strategyFunctions.redbarCubone = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		local forced
 		canProgress = true
-		if pokemon.isOpponent("cubone") then
-			local enemyMove, enemyTurns = combat.enemyAttack()
+		if Pokemon.isOpponent("cubone") then
+			local enemyMove, enemyTurns = Combat.enemyAttack()
 			if enemyTurns then
-				local curr_hp, red_hp = pokemon.index(0, "hp"), strategies.redHP()
+				local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
 				local clubDmg = enemyMove.damage
 				local afterHit = curr_hp - clubDmg
 				red_hp = red_hp - 2
@@ -1335,75 +1335,75 @@ strategyFunctions.redbarCubone = function()
 						forced = "thunderbolt"
 					end
 				end
-				if forced and strategies.initialize() then
-					bridge.chat("Using Thunderbolt to attempt to redbar off Cubone")
+				if forced and Strategies.initialize() then
+					Bridge.chat("Using Thunderbolt to attempt to redbar off Cubone")
 				end
 			end
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 	elseif canProgress then
 		return true
 	else
-		battle.automate()
+		Battle.automate()
 	end
 end
 
 strategyFunctions.shopTM07 = function()
-	return shop.transaction{
+	return Shop.transaction{
 		direction = "Up",
 		buy = {{name="horn_drill", index=3}}
 	}
 end
 
 strategyFunctions.shopRepels = function()
-	return shop.transaction{
+	return Shop.transaction{
 		direction = "Up",
 		buy = {{name="super_repel", index=3, amount=9}}
 	}
 end
 
 strategyFunctions.shopPokeDoll = function()
-	return shop.transaction{
+	return Shop.transaction{
 		direction = "Down",
 		buy = {{name="pokedoll", index=0}}
 	}
 end
 
 strategyFunctions.shopVending = function()
-	return shop.vend{
+	return Shop.vend{
 		direction = "Up",
 		buy = {{name="fresh_water", index=0}, {name="soda_pop", index=1}}
 	}
 end
 
 strategyFunctions.giveWater = function()
-	if not inventory.contains("fresh_water", "soda_pop") then
+	if not Inventory.contains("fresh_water", "soda_pop") then
 		return true
 	end
-	if textbox.isActive() then
-		input.cancel("A")
+	if Textbox.isActive() then
+		Input.cancel("A")
 	else
-		local cx, cy = memory.raw(0x0223) - 3, memory.raw(0x0222) - 3
-		local px, py = player.position()
-		if utils.dist(cx, cy, px, py) == 1 then
-			player.interact(walk.dir(px, py, cx, cy))
+		local cx, cy = Memory.raw(0x0223) - 3, Memory.raw(0x0222) - 3
+		local px, py = Player.position()
+		if Utils.dist(cx, cy, px, py) == 1 then
+			Player.interact(Walk.dir(px, py, cx, cy))
 		else
-			walk.step(cx, cy)
+			Walk.step(cx, cy)
 		end
 	end
 end
 
 strategyFunctions.shopExtraWater = function()
-	return shop.vend{
+	return Shop.vend{
 		direction = "Up",
 		buy = {{name="fresh_water", index=0}}
 	}
 end
 
 strategyFunctions.shopBuffs = function()
-	if strategies.initialize() then
+	if Strategies.initialize() then
 		local minSpecial = 45
-		if control.yolo then
+		if Control.yolo then
 			minSpecial = minSpecial - 1
 		end
 		if nidoAttack >= 54 and nidoSpecial >= minSpecial then
@@ -1418,117 +1418,117 @@ strategyFunctions.shopBuffs = function()
 	elseif nidoSpecial < 46 then
 		-- xspecAmt = xspecAmt - 1
 	end
-	return shop.transaction{
+	return Shop.transaction{
 		direction = "Up",
 		buy = {{name="x_accuracy", index=0, amount=10}, {name="x_speed", index=5, amount=4}, {name="x_special", index=6, amount=xspecAmt}}
 	}
 end
 
 strategyFunctions.deptElevator = function()
-	if textbox.isActive() then
+	if Textbox.isActive() then
 		canProgress = true
-		menu.select(0, false)
+		Menu.select(0, false)
 	else
 		if canProgress then
 			return true
 		end
-		player.interact("Up")
+		Player.interact("Up")
 	end
 end
 
 strategyFunctions.swapRepels = function()
-	local repelIdx = inventory.indexOf("super_repel")
+	local repelIdx = Inventory.indexOf("super_repel")
 	if repelIdx < 3 then
 		return true
 	end
-	local main = memory.value("menu", "main")
+	local main = Memory.value("menu", "main")
 	if main == 128 then
-		if menu.getCol() ~= 5 then
-			menu.select(2, true)
+		if Menu.getCol() ~= 5 then
+			Menu.select(2, true)
 		else
-			local selection = memory.value("menu", "selection_mode")
+			local selection = Memory.value("menu", "selection_mode")
 			if selection == 0 then
-				if menu.select(1, "accelerate", true, nil, true) then
-					input.press("Select")
+				if Menu.select(1, "accelerate", true, nil, true) then
+					Input.press("Select")
 				end
 			else
-				if menu.select(repelIdx, "accelerate", true, nil, true) then
-					input.press("Select")
+				if Menu.select(repelIdx, "accelerate", true, nil, true) then
+					Input.press("Select")
 				end
 			end
 		end
 	else
-		menu.pause()
+		Menu.pause()
 	end
 end
 
 -- 8: FLY
 
 strategyFunctions.lavenderRival = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
 		local forced
 		if nidoSpecial > 44 then -- RISK
-			local __, enemyTurns = combat.enemyAttack()
-			if enemyTurns and enemyTurns < 2 and pokemon.isOpponent("pidgeotto", "gyarados") then
-				battle.automate()
+			local __, enemyTurns = Combat.enemyAttack()
+			if enemyTurns and enemyTurns < 2 and Pokemon.isOpponent("pidgeotto", "gyarados") then
+				Battle.automate()
 				return false
 			end
 		end
-		if pokemon.isOpponent("gyarados") or strategies.prepare("x_accuracy") then
-			battle.automate()
+		if Pokemon.isOpponent("gyarados") or Strategies.prepare("x_accuracy") then
+			Battle.automate()
 		end
 	elseif canProgress then
 		return true
 	else
-		input.cancel()
+		Input.cancel()
 	end
 end
 
 strategyFunctions.pokeDoll = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		inventory.use("pokedoll", nil, true)
+		Inventory.use("pokedoll", nil, true)
 	elseif canProgress then
 		return true
 	else
-		input.cancel()
+		Input.cancel()
 	end
 end
 
 strategyFunctions.digFight = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		local currentlyDead = memory.double("battle", "our_hp") == 0
+		local currentlyDead = Memory.double("battle", "our_hp") == 0
 		if currentlyDead then
-			local backupPokemon = pokemon.getSacrifice("paras", "squirtle")
+			local backupPokemon = Pokemon.getSacrifice("paras", "squirtle")
 			if not backupPokemon then
-				return strategies.death()
+				return Strategies.death()
 			end
-			if utils.onPokemonSelect(memory.value("battle", "menu")) then
-				menu.select(pokemon.indexOf(backupPokemon), true)
+			if Utils.onPokemonSelect(Memory.value("battle", "menu")) then
+				Menu.select(Pokemon.indexOf(backupPokemon), true)
 			else
-				input.press("A")
+				Input.press("A")
 			end
 		else
-			battle.automate()
+			Battle.automate()
 		end
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.thunderboltFirst = function()
 	local forced
-	if pokemon.isOpponent("zubat") then
+	if Pokemon.isOpponent("zubat") then
 		canProgress = true
 		forced = "thunderbolt"
 	elseif canProgress then
 		return true
 	end
-	battle.automate(forced)
+	Battle.automate(forced)
 end
 
 -- 8: POKÉFLUTE
@@ -1536,21 +1536,21 @@ end
 -- playPokeflute
 
 strategyFunctions.drivebyRareCandy = function()
-	if textbox.isActive() then
+	if Textbox.isActive() then
 		canProgress = true
-		input.cancel()
+		Input.cancel()
 	elseif canProgress then
 		return true
 	else
-		local px, py = player.position()
+		local px, py = Player.position()
 		if py < 13 then
 			status.tries = 0
 			return
 		end
 		if py == 13 and status.tries % 2 == 0 then
-			input.press("A", 2)
+			Input.press("A", 2)
 		else
-			input.press("Up")
+			Input.press("Up")
 			status.tries = 0
 		end
 		status.tries = status.tries + 1
@@ -1558,73 +1558,73 @@ strategyFunctions.drivebyRareCandy = function()
 end
 
 strategyFunctions.safariCarbos = function()
-	if strategies.initialize() then
-		strategies.setYolo("safari_carbos")
+	if Strategies.initialize() then
+		Strategies.setYolo("safari_carbos")
 	end
 	local minSpeed = 50
-	if control.yolo then
+	if Control.yolo then
 		minSpeed = minSpeed - 1
 	end
 	if nidoSpeed >= minSpeed then
 		return true
 	end
-	if inventory.contains("carbos") then
-		if walk.step(20, 20) then
+	if Inventory.contains("carbos") then
+		if Walk.step(20, 20) then
 			return true
 		end
 	else
-		local px, py = player.position()
+		local px, py = Player.position()
 		if px < 21 then
-			walk.step(21, py)
+			Walk.step(21, py)
 		elseif px == 21 and py == 13 then
-			player.interact("Left")
+			Player.interact("Left")
 		else
-			walk.step(21, 13)
+			Walk.step(21, 13)
 		end
 	end
 end
 
 strategyFunctions.centerSkipFullRestore = function()
-	if strategies.initialize() then
-		if control.yolo or inventory.contains("full_restore") then
+	if Strategies.initialize() then
+		if Control.yolo or Inventory.contains("full_restore") then
 			return true
 		end
-		bridge.chat("We need to grab the backup Full Restore here.")
+		Bridge.chat("We need to grab the backup Full Restore here.")
 	end
-	local px, py = player.position()
+	local px, py = Player.position()
 	if px < 21 then
 		px = 21
 	elseif py < 9 then
 		py = 9
 	else
-		return strategies.functions.interact({dir="Down"})
+		return Strategies.functions.interact({dir="Down"})
 	end
-	walk.step(px, py)
+	Walk.step(px, py)
 end
 
 strategyFunctions.silphElevator = function()
-	if textbox.isActive() then
+	if Textbox.isActive() then
 		canProgress = true
-		menu.select(9, false, true)
+		Menu.select(9, false, true)
 	else
 		if canProgress then
 			return true
 		end
-		player.interact("Up")
+		Player.interact("Up")
 	end
 end
 
 strategyFunctions.fightSilphMachoke = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
 		if nidoSpecial > 44 then
-			return strategies.prepare("x_accuracy")
+			return Strategies.prepare("x_accuracy")
 		end
-		battle.automate("thrash")
+		Battle.automate("thrash")
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
@@ -1632,44 +1632,44 @@ strategyFunctions.silphCarbos = function()
 	if nidoSpeed > 50 then
 		return true
 	end
-	return strategies.functions.interact({dir="Left"})
+	return Strategies.functions.interact({dir="Left"})
 end
 
 strategyFunctions.silphRival = function()
-	if battle.isActive() then
-		if strategies.initialize() then
-			tempDir = combat.healthFor("RivalGyarados")
+	if Battle.isActive() then
+		if Strategies.initialize() then
+			tempDir = Combat.healthFor("RivalGyarados")
 			canProgress = true
 		end
 		local gyaradosDamage = tempDir
 
 		local forced
 		local readyToAttack = false
-		local opponentName = battle.opponent()
+		local opponentName = Battle.opponent()
 		if opponentName == "gyarados" then
 			readyToAttack = true
-			local hp, red_hp = pokemon.index(0, "hp"), strategies.redHP()
+			local hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
 			if hp > gyaradosDamage * 0.98 and hp - gyaradosDamage * 0.975 < red_hp then --TODO
-				if strategies.prepare("x_special") then
+				if Strategies.prepare("x_special") then
 					forced = "ice_beam"
 				else
 					readyToAttack = false
 				end
-			elseif strategies.isPrepared("x_special") then
+			elseif Strategies.isPrepared("x_special") then
 				local canPotion
-				if inventory.contains("potion") and hp + 20 > gyaradosDamage and hp + 20 - gyaradosDamage < red_hp then
+				if Inventory.contains("potion") and hp + 20 > gyaradosDamage and hp + 20 - gyaradosDamage < red_hp then
 					canPotion = "potion"
-				elseif inventory.contains("super_potion") and hp + 50 > gyaradosDamage and hp + 50 - gyaradosDamage < red_hp then
+				elseif Inventory.contains("super_potion") and hp + 50 > gyaradosDamage and hp + 50 - gyaradosDamage < red_hp then
 					canPotion = "super_potion"
 				end
 				if canPotion then
-					inventory.use(canPotion, nil, true)
+					Inventory.use(canPotion, nil, true)
 					readyToAttack = false
 				end
 			end
-		elseif strategies.prepare("x_accuracy", "x_speed") then
+		elseif Strategies.prepare("x_accuracy", "x_speed") then
 			if opName == "pidgeot" then
-				if nidoSpecial < 45 or strategies.hasHealthFor("KogaWeezing", 10) then --TODO remove for red bar
+				if nidoSpecial < 45 or Strategies.hasHealthFor("KogaWeezing", 10) then --TODO remove for red bar
 					forced = "thunderbolt"
 				end
 			elseif opponentName == "alakazam" or opponentName == "growlithe" then
@@ -1678,37 +1678,37 @@ strategyFunctions.silphRival = function()
 			readyToAttack = true
 		end
 		if readyToAttack then
-			battle.automate(forced)
+			Battle.automate(forced)
 		end
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.potionBeforeGiovanni = function()
 	-- TODO verify newly leveled
-	-- local curr_hp = pokemon.index(0, "hp")
-	-- if curr_hp < 16 and pokemon.index(0, "level") == 37 then
-	-- 	local rareCandyCount = inventory.count("rare_candy")
+	-- local curr_hp = Pokemon.index(0, "hp")
+	-- if curr_hp < 16 and Pokemon.index(0, "level") == 37 then
+	-- 	local rareCandyCount = Inventory.count("rare_candy")
 	-- 	if rareCandyCount > 2 then
-	-- 		if menu.pause() then
-	-- 			inventory.use("rare_candy", nil, false)
+	-- 		if Menu.pause() then
+	-- 			Inventory.use("rare_candy", nil, false)
 	-- 		end
 	-- 		return false
 	-- 	end
 	-- end
-	return strategies.functions.potion({hp=16, yolo=12, close=true})
+	return Strategies.functions.potion({hp=16, yolo=12, close=true})
 end
 
 strategyFunctions.fightSilphGiovanni = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
 		local forced
-		local opponentName = battle.opponent()
+		local opponentName = Battle.opponent()
 		if opponentName == "nidorino" then
-			if battle.pp("horn_drill") > 2 then
+			if Battle.pp("horn_drill") > 2 then
 				forced = "horn_drill"
 			else
 				forced = "earthquake"
@@ -1718,21 +1718,21 @@ strategyFunctions.fightSilphGiovanni = function()
 		elseif opponentName == "kangaskhan" or opponentName == "nidoqueen" then
 			forced = "horn_drill"
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 --	9: SILPH CO.
 
 strategyFunctions.potionBeforeHypno = function()
-	local curr_hp, red_hp = pokemon.index(0, "hp"), strategies.redHP()
+	local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
 	local healthUnderRedBar = red_hp - curr_hp
-	local yoloHP = combat.healthFor("HypnoHeadbutt") * 0.9
-	local useRareCandy = inventory.count("rare_candy") > 2
+	local yoloHP = Combat.healthFor("HypnoHeadbutt") * 0.9
+	local useRareCandy = Inventory.count("rare_candy") > 2
 
 	local healTarget
 	if healthUnderRedBar >= 0 then
@@ -1744,70 +1744,70 @@ strategyFunctions.potionBeforeHypno = function()
 		healTarget = "HypnoConfusion"
 		if useRareCandy then
 			useRareCandy = false --TODO
-			-- useRareCandy = curr_hp < combat.healthFor("KogaWeezing") * 0.85
+			-- useRareCandy = curr_hp < Combat.healthFor("KogaWeezing") * 0.85
 		end
 	end
 	if useRareCandy then
-		if menu.pause() then
-			inventory.use("rare_candy", nil, false)
+		if Menu.pause() then
+			Inventory.use("rare_candy", nil, false)
 		end
 		return false
 	end
 
-	return strategies.functions.potion({hp=healTarget, yolo=yoloHP, close=true})
+	return Strategies.functions.potion({hp=healTarget, yolo=yoloHP, close=true})
 end
 
 strategyFunctions.fightHypno = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		local forced
-		if pokemon.isOpponent("hypno") then
-			if pokemon.info("nidoking", "hp") > combat.healthFor("KogaWeezing") * 0.9 then
-				if combat.isDisabled(85) then
+		if Pokemon.isOpponent("hypno") then
+			if Pokemon.info("nidoking", "hp") > Combat.healthFor("KogaWeezing") * 0.9 then
+				if Combat.isDisabled(85) then
 					forced = "ice_beam"
 				else
 					forced = "thunderbolt"
 				end
 			end
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 		canProgress = true
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.fightKoga = function() --TODO x-accuracy?
-	if battle.isActive() then
+	if Battle.isActive() then
 		local forced
-		if pokemon.isOpponent("weezing") then
-			if strategies.opponentDamaged(2) then
-				inventory.use("pokeflute", nil, true)
+		if Pokemon.isOpponent("weezing") then
+			if Strategies.opponentDamaged(2) then
+				Inventory.use("pokeflute", nil, true)
 				return false
 			end
-			if combat.isDisabled(85) then
+			if Combat.isDisabled(85) then
 				forced = "ice_beam"
 			else
 				forced = "thunderbolt"
 			end
-			control.canDie(true)
+			Control.canDie(true)
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 		canProgress = true
 	elseif canProgress then
-		strategies.deepRun = true
+		Strategies.deepRun = true
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 -- 10: KOGA
 
 strategyFunctions.dodgeGirl = function()
-	local gx, gy = memory.raw(0x0223) - 5, memory.raw(0x0222)
-	local px, py = player.position()
+	local gx, gy = Memory.raw(0x0223) - 5, Memory.raw(0x0222)
+	local px, py = Player.position()
 	if py > gy then
 		if px > 3 then
 			px = 3
@@ -1821,41 +1821,41 @@ strategyFunctions.dodgeGirl = function()
 	else
 		px = 3
 	end
-	walk.step(px, py)
+	Walk.step(px, py)
 end
 
 strategyFunctions.cinnabarCarbos = function()
-	local px, py = player.position()
+	local px, py = Player.position()
 	if px == 21 then
 		return true
 	end
 	local minSpeed = 51
-	if control.yolo then
+	if Control.yolo then
 		minSpeed = minSpeed - 1
 	end
 	if nidoSpeed > minSpeed then -- TODO >=
-		walk.step(21, 20)
+		Walk.step(21, 20)
 	else
 		if py == 20 then
 			py = 21
-		elseif px == 17 and not inventory.contains("carbos") then
-			player.interact("Right")
+		elseif px == 17 and not Inventory.contains("carbos") then
+			Player.interact("Right")
 			return false
 		else
 			px = 21
 		end
-		walk.step(px, py)
+		Walk.step(px, py)
 	end
 end
 
 strategyFunctions.fightErika = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
 		local forced
-		local curr_hp, red_hp = pokemon.index(0, "hp"), strategies.redHP()
+		local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
 		local razorDamage = 34
 		if curr_hp > razorDamage and curr_hp - razorDamage < red_hp then
-			if strategies.opponentDamaged() then
+			if Strategies.opponentDamaged() then
 				forced = "thunderbolt"
 			elseif nidoSpecial < 45 then
 				forced = "ice_beam"
@@ -1865,68 +1865,68 @@ strategyFunctions.fightErika = function()
 		elseif riskGiovanni then
 			forced = "ice_beam"
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 -- 11: ERIKA
 
 strategyFunctions.waitToReceive = function()
-	local main = memory.value("menu", "main")
+	local main = Memory.value("menu", "main")
 	if main == 128 then
 		if canProgress then
 			return true
 		end
 	elseif main == 32 or main == 123 then
 		canProgress = true
-		input.cancel()
+		Input.cancel()
 	else
-		input.press("Start", 2)
+		Input.press("Start", 2)
 	end
 end
 
 -- 14: SABRINA
 
 strategyFunctions.earthquakeElixer = function(data)
-	if battle.pp("earthquake") >= data.min then
-		if strategies.closeMenuFor(data) then
+	if Battle.pp("earthquake") >= data.min then
+		if Strategies.closeMenuFor(data) then
 			return true
 		end
 		return false
 	end
-	if strategies.initialize() then
-		print("EQ Elixer: "..control.areaName)
+	if Strategies.initialize() then
+		print("EQ Elixer: "..Control.areaName)
 	end
-	return strategies.useItem({item="elixer", poke="nidoking", chain=data.chain, close=data.close})
+	return Strategies.useItem({item="elixer", poke="nidoking", chain=data.chain, close=data.close})
 end
 
 strategyFunctions.fightGiovanniMachoke = function()
-	if strategies.initialize() then
+	if Strategies.initialize() then
 		if nidoAttack >= 55 then
 			local eqPpRequired = nidoSpecial >= 47 and 7 or 8
-			if battle.pp("earthquake") >= eqPpRequired then
-				bridge.chat("Using Earthquake strats on the Machokes")
+			if Battle.pp("earthquake") >= eqPpRequired then
+				Bridge.chat("Using Earthquake strats on the Machokes")
 				return true
 			end
 		end
 	end
-	return strategies.prepare("x_special")
+	return Strategies.prepare("x_special")
 end
 
 strategyFunctions.checkGiovanni = function()
-	local ryhornDamage = math.floor(combat.healthFor("GiovanniRhyhorn") * 0.95) --RISK
-	if strategies.initialize() then
-		local earthquakePP = battle.pp("earthquake")
+	local ryhornDamage = math.floor(Combat.healthFor("GiovanniRhyhorn") * 0.95) --RISK
+	if Strategies.initialize() then
+		local earthquakePP = Battle.pp("earthquake")
 		if earthquakePP >= 2 then
 			if riskGiovanni then
 				if earthquakePP >= 5 then
-					bridge.chat("Saved enough Earthquake PP for safe strats on Giovanni")
-				elseif earthquakePP >= 3 and battle.pp("horn_drill") >= 5 and (control.yolo or pokemon.info("nidoking", "hp") >= ryhornDamage) then -- RISK
-					bridge.chat("Using risky strats on Giovanni to skip the extra Max Ether...")
+					Bridge.chat("Saved enough Earthquake PP for safe strats on Giovanni")
+				elseif earthquakePP >= 3 and Battle.pp("horn_drill") >= 5 and (Control.yolo or Pokemon.info("nidoking", "hp") >= ryhornDamage) then -- RISK
+					Bridge.chat("Using risky strats on Giovanni to skip the extra Max Ether...")
 				else
 					riskGiovanni = false
 				end
@@ -1934,21 +1934,21 @@ strategyFunctions.checkGiovanni = function()
 			return true
 		end
 		local message = "Ran out of Earthquake PP :( "
-		if control.yolo then
+		if Control.yolo then
 			message = message.."Risking on Giovanni."
 		else
 			message = message.."Time for standard strats."
 		end
-		bridge.chat(message)
+		Bridge.chat(message)
 		riskGiovanni = false
 	end
-	return strategies.functions.potion({hp=50, yolo=ryhornDamage})
+	return Strategies.functions.potion({hp=50, yolo=ryhornDamage})
 end
 
 strategyFunctions.fightGiovanni = function()
-	if battle.isActive() then
-		if strategies.initialize() then
-			tempDir = battle.pp("earthquake")
+	if Battle.isActive() then
+		if Strategies.initialize() then
+			tempDir = Battle.pp("earthquake")
 			canProgress = true
 		end
 		local forced, needsXSpecial
@@ -1957,91 +1957,91 @@ strategyFunctions.fightGiovanni = function()
 			if startEqPP < 5 then
 				needsXSpecial = true
 			end
-			if needsXSpecial or battle.pp("earthquake") < 4 then
+			if needsXSpecial or Battle.pp("earthquake") < 4 then
 				forced = "ice_beam"
 			end
 		else
 			needsXSpecial = startEqPP < 2
-			if pokemon.isOpponent("rhydon") then
+			if Pokemon.isOpponent("rhydon") then
 				forced = "ice_beam"
 			end
 		end
-		if needsXSpecial and not strategies.prepare("x_special") then
+		if needsXSpecial and not Strategies.prepare("x_special") then
 			return false
 		end
-		battle.automate(forced)
+		Battle.automate(forced)
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 -- 15: GIOVANNI
 
 strategyFunctions.viridianRival = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		if not canProgress then
-			if riskGiovanni or nidoSpecial < 45 or pokemon.index(0, "speed") < 134 then
+			if riskGiovanni or nidoSpecial < 45 or Pokemon.index(0, "speed") < 134 then
 				tempDir = "x_special"
 			else
 				print("Skip X Special strats!")
 			end
 			canProgress = true
 		end
-		if strategies.prepare("x_accuracy", tempDir) then
+		if Strategies.prepare("x_accuracy", tempDir) then
 			local forced
-			if pokemon.isOpponent("pidgeot") then
+			if Pokemon.isOpponent("pidgeot") then
 				forced = "thunderbolt"
 			elseif riskGiovanni then
-				if pokemon.isOpponent("rhyhorn") or strategies.opponentDamaged() then
+				if Pokemon.isOpponent("rhyhorn") or Strategies.opponentDamaged() then
 					forced = "ice_beam"
-				elseif pokemon.isOpponent("gyarados") then
+				elseif Pokemon.isOpponent("gyarados") then
 					forced = "thunderbolt"
-				elseif pokemon.isOpponent("growlithe", "alakazam") then
+				elseif Pokemon.isOpponent("growlithe", "alakazam") then
 					forced = "earthquake"
 				end
 			end
-			battle.automate(forced)
+			Battle.automate(forced)
 		end
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.ether = function(data)
-	local main = memory.value("menu", "main")
+	local main = Memory.value("menu", "main")
 	data.item = tempDir
-	if tempDir and strategies.completedMenuFor(data) then
-		if strategies.closeMenuFor(data) then
+	if tempDir and Strategies.completedMenuFor(data) then
+		if Strategies.closeMenuFor(data) then
 			return true
 		end
 	else
 		if not tempDir then
 			if data.max then
 				-- TODO don't skip center if not in redbar
-				maxEtherSkip = nidoAttack > 53 and battle.pp("earthquake") > 0 and battle.pp("horn_drill") > 3
+				maxEtherSkip = nidoAttack > 53 and Battle.pp("earthquake") > 0 and Battle.pp("horn_drill") > 3
 				if maxEtherSkip then
 					return true
 				end
-				bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center")
+				Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center")
 			end
-			tempDir = inventory.contains("ether", "max_ether")
+			tempDir = Inventory.contains("ether", "max_ether")
 			if not tempDir then
 				return true
 			end
-			status.tries = inventory.count(tempDir) --TODO remove?
+			status.tries = Inventory.count(tempDir) --TODO remove?
 		end
-		if memory.value("menu", "main") == 144 and menu.getCol() == 5 then
-			if memory.value("battle", "menu") ~= 95 then
-				menu.select(pokemon.battleMove("horn_drill"), true)
+		if Memory.value("menu", "main") == 144 and Menu.getCol() == 5 then
+			if Memory.value("battle", "menu") ~= 95 then
+				Menu.select(Pokemon.battleMove("horn_drill"), true)
 			else
-				input.cancel()
+				Input.cancel()
 			end
-		elseif menu.pause() then
-			inventory.use(tempDir, "nidoking")
+		elseif Menu.pause() then
+			Inventory.use(tempDir, "nidoking")
 		end
 	end
 end
@@ -2051,128 +2051,128 @@ strategyFunctions.pickMaxEther = function()
 		if maxEtherSkip then
 			return true
 		end
-		if memory.value("player", "moving") == 0 then
-			if player.isFacing("Right") then
+		if Memory.value("player", "moving") == 0 then
+			if Player.isFacing("Right") then
 				canProgress = true
 			end
 			status.tempDir = not tempDir
 			if status.tempDir then
-				input.press("Right", 1)
+				Input.press("Right", 1)
 			end
 		end
 		return false
 	end
-	if inventory.contains("max_ether") then
+	if Inventory.contains("max_ether") then
 		return true
 	end
-	player.interact("Right")
+	Player.interact("Right")
 end
 
 -- push
 
 strategyFunctions.potionBeforeLorelei = function()
-	if strategies.initialize() then
+	if Strategies.initialize() then
 		local canPotion
-		if inventory.contains("potion") and strategies.hasHealthFor("LoreleiDewgong", 20) then
+		if Inventory.contains("potion") and Strategies.hasHealthFor("LoreleiDewgong", 20) then
 			canPotion = true
-		elseif inventory.contains("super_potion") and strategies.hasHealthFor("LoreleiDewgong", 50) then
+		elseif Inventory.contains("super_potion") and Strategies.hasHealthFor("LoreleiDewgong", 50) then
 			canPotion = true
 		end
 		if not canPotion then
 			return true
 		end
-		bridge.chat("Healing before Lorelei to skip the Elite 4 Center...")
+		Bridge.chat("Healing before Lorelei to skip the Elite 4 Center...")
 	end
-	return strategies.functions.potion({hp=combat.healthFor("LoreleiDewgong")})
+	return Strategies.functions.potion({hp=Combat.healthFor("LoreleiDewgong")})
 end
 
 strategyFunctions.depositPokemon = function()
 	local toSize
-	if strategies.hasHealthFor("LoreleiDewgong") then
+	if Strategies.hasHealthFor("LoreleiDewgong") then
 		toSize = 1
 	else
 		toSize = 2
 	end
-	if memory.value("player", "party_size") == toSize then
-		if menu.close() then
+	if Memory.value("player", "party_size") == toSize then
+		if Menu.close() then
 			return true
 		end
 	else
-		if not textbox.isActive() then
-			player.interact("Up")
+		if not Textbox.isActive() then
+			Player.interact("Up")
 		else
-			local pc = memory.value("menu", "size")
-			if memory.value("battle", "menu") ~= 95 and (pc == 2 or pc == 4) then
-				local menuColumn = menu.getCol()
+			local pc = Memory.value("menu", "size")
+			if Memory.value("battle", "menu") ~= 95 and (pc == 2 or pc == 4) then
+				local menuColumn = Menu.getCol()
 				if menuColumn == 10 then
-					input.press("A")
+					Input.press("A")
 				elseif menuColumn == 5 then
 					local depositIndex = 1
 					local depositAllExtras = toSize == 1
-					if not depositAllExtras and pokemon.indexOf("pidgey", "spearow") == 1 then
+					if not depositAllExtras and Pokemon.indexOf("pidgey", "spearow") == 1 then
 						depositIndex = 2
 					end
-					menu.select(depositIndex)
+					Menu.select(depositIndex)
 				else
-					menu.select(1)
+					Menu.select(1)
 				end
 			else
-				input.press("A")
+				Input.press("A")
 			end
 		end
 	end
 end
 
 strategyFunctions.centerSkip = function()
-	strategies.setYolo("e4center")
+	Strategies.setYolo("e4center")
 	local message = "Skipping the Center and attempting to red-bar "
-	if strategies.hasHealthFor("LoreleiDewgong") then
+	if Strategies.hasHealthFor("LoreleiDewgong") then
 		message = message.."off Lorelei..."
 	else
 		message = message.."the Elite 4!"
 	end
-	bridge.chat(message)
+	Bridge.chat(message)
 	return true
 end
 
 strategyFunctions.lorelei = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		if battle.redeployNidoking() then
+		if Battle.redeployNidoking() then
 			return false
 		end
 		local forced
-		local opponentName = battle.opponent()
+		local opponentName = Battle.opponent()
 		if opponentName == "dewgong" then
-			if battle.sacrifice("pidgey", "spearow", "squirtle", "paras", "oddish") then
+			if Battle.sacrifice("pidgey", "spearow", "squirtle", "paras", "oddish") then
 				return false
 			end
 		elseif opponentName == "jinx" then
-			if battle.pp("horn_drill") < 2 then
+			if Battle.pp("horn_drill") < 2 then
 				forced = "earthquake"
 			end
 		end
-		if strategies.prepare("x_accuracy") then
-			battle.automate(forced)
+		if Strategies.prepare("x_accuracy") then
+			Battle.automate(forced)
 		end
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 -- 16: LORELEI
 
 strategyFunctions.bruno = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
 		local forced
-		if pokemon.isOpponent("onix") then
+		if Pokemon.isOpponent("onix") then
 			forced = "ice_beam"
-			-- local curr_hp, red_hp = pokemon.info("nidoking", "hp"), strategies.redHP()
+			-- local curr_hp, red_hp = Pokemon.info("nidoking", "hp"), Strategies.redHP()
 			-- if curr_hp > red_hp then
-			-- 	local enemyMove, enemyTurns = combat.enemyAttack()
+			-- 	local enemyMove, enemyTurns = Combat.enemyAttack()
 			-- 	if enemyTurns and enemyTurns > 1 then
 			-- 		local rockDmg = enemyMove.damage
 			-- 		if curr_hp - rockDmg <= red_hp then
@@ -2181,90 +2181,90 @@ strategyFunctions.bruno = function()
 			-- 	end
 			-- end
 		end
-		if strategies.prepare("x_accuracy") then
-			battle.automate(forced)
+		if Strategies.prepare("x_accuracy") then
+			Battle.automate(forced)
 		end
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.agatha = function() --TODO test without x acc
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
-		if combat.isSleeping() then
-			inventory.use("pokeflute", nil, true)
+		if Combat.isSleeping() then
+			Inventory.use("pokeflute", nil, true)
 			return false
 		end
-		if pokemon.isOpponent("gengar") then
-			local currentHP = pokemon.info("nidoking", "hp")
-			if not control.yolo and currentHP <= 56 and not strategies.isPrepared("x_speed") then
-				local toPotion = inventory.contains("full_restore", "super_potion")
+		if Pokemon.isOpponent("gengar") then
+			local currentHP = Pokemon.info("nidoking", "hp")
+			if not Control.yolo and currentHP <= 56 and not Strategies.isPrepared("x_speed") then
+				local toPotion = Inventory.contains("full_restore", "super_potion")
 				if toPotion then
-					inventory.use(toPotion, nil, true)
+					Inventory.use(toPotion, nil, true)
 					return false
 				end
 			end
-			if not strategies.prepare("x_speed") then
+			if not Strategies.prepare("x_speed") then
 				return false
 			end
 		end
-		battle.automate()
+		Battle.automate()
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.prepareForLance = function()
 	local enableFull
-	if strategies.hasHealthFor("LanceGyarados", 100) then
-		enableFull = inventory.count("super_potion") < 2
-	elseif strategies.hasHealthFor("LanceGyarados", 50) then
-		enableFull = not inventory.contains("super_potion")
+	if Strategies.hasHealthFor("LanceGyarados", 100) then
+		enableFull = Inventory.count("super_potion") < 2
+	elseif Strategies.hasHealthFor("LanceGyarados", 50) then
+		enableFull = not Inventory.contains("super_potion")
 	else
 		enableFull = true
 	end
-	local min_recovery = combat.healthFor("LanceGyarados")
-	return strategies.functions.potion({hp=min_recovery, full=enableFull, chain=true})
+	local min_recovery = Combat.healthFor("LanceGyarados")
+	return Strategies.functions.potion({hp=min_recovery, full=enableFull, chain=true})
 end
 
 strategyFunctions.lance = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		canProgress = true
 		local xItem
-		if pokemon.isOpponent("dragonair") then
+		if Pokemon.isOpponent("dragonair") then
 			xItem = "x_speed"
 		else
 			xItem = "x_special"
 		end
-		if strategies.prepare(xItem) then
-			battle.automate()
+		if Strategies.prepare(xItem) then
+			Battle.automate()
 		end
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.prepareForBlue = function()
-	if strategies.initialize() then
-		strategies.setYolo("blue")
+	if Strategies.initialize() then
+		Strategies.setYolo("blue")
 	end
-	local skyDmg = combat.healthFor("BlueSky") * 0.925
-	local wingDmg = combat.healthFor("BluePidgeot")
-	return strategies.functions.potion({hp=skyDmg-50, yolo=wingDmg, full=true})
+	local skyDmg = Combat.healthFor("BlueSky") * 0.925
+	local wingDmg = Combat.healthFor("BluePidgeot")
+	return Strategies.functions.potion({hp=skyDmg-50, yolo=wingDmg, full=true})
 end
 
 strategyFunctions.blue = function()
-	if battle.isActive() then
+	if Battle.isActive() then
 		if not canProgress then
 			canProgress = true
-			if nidoSpecial >= 45 and pokemon.index(0, "speed") >= 52 and inventory.contains("x_special") then
+			if nidoSpecial >= 45 and Pokemon.index(0, "speed") >= 52 and Inventory.contains("x_special") then
 				tempDir = "x_special"
 			else
 				tempDir = "x_speed"
@@ -2274,7 +2274,7 @@ strategyFunctions.blue = function()
 			end
 		end
 
-		local boostFirst = pokemon.index(0, "hp") < 55
+		local boostFirst = Pokemon.index(0, "hp") < 55
 		local firstItem, secondItem
 		if boostFirst then
 			firstItem = tempDir
@@ -2286,86 +2286,86 @@ strategyFunctions.blue = function()
 
 		local forced = "horn_drill"
 
-		if memory.value("battle", "turns") > 0 then
-			local skyDamage = combat.healthFor("BlueSky")
+		if Memory.value("battle", "turns") > 0 then
+			local skyDamage = Combat.healthFor("BlueSky")
 			local healCutoff = skyDamage * 0.825
-			if strategies.initialize() then
-				if not strategies.isPrepared("x_accuracy", tempDir) then
+			if Strategies.initialize() then
+				if not Strategies.isPrepared("x_accuracy", tempDir) then
 					local msg = "Uh oh... First-turn Sky Attack could end the run here, "
-					if pokemon.index(0, "hp") > skyDamage then
+					if Pokemon.index(0, "hp") > skyDamage then
 						msg = msg.."no criticals pls D:"
-					elseif strategies.canHealFor(healCutoff) then
+					elseif Strategies.canHealFor(healCutoff) then
 						msg = msg.."attempting to heal for it"
-						if not strategies.canHealFor(skyDamage) then
+						if not Strategies.canHealFor(skyDamage) then
 							msg = msg.." (damage range)"
 						end
 						msg = msg.."."
 					else
 						msg = msg.."and nothing left to heal with BibleThump"
 					end
-					bridge.chat(msg)
+					Bridge.chat(msg)
 				end
 			end
 
-			if strategies.prepare(firstItem) then
-				if not strategies.isPrepared(secondItem) then
-					local toPotion = strategies.canHealFor(healCutoff)
+			if Strategies.prepare(firstItem) then
+				if not Strategies.isPrepared(secondItem) then
+					local toPotion = Strategies.canHealFor(healCutoff)
 					if toPotion then
-						inventory.use(toPotion, nil, true)
+						Inventory.use(toPotion, nil, true)
 						return false
 					end
 				end
-				if strategies.prepare("x_accuracy", tempDir) then
-					battle.automate(forced)
+				if Strategies.prepare("x_accuracy", tempDir) then
+					Battle.automate(forced)
 				end
 			end
 		else
-			if strategies.prepare(firstItem, secondItem) then
-				if pokemon.isOpponent("alakazam") then
+			if Strategies.prepare(firstItem, secondItem) then
+				if Pokemon.isOpponent("alakazam") then
 					if tempDir == "x_speed" then
 						forced = "earthquake"
 					end
-				elseif pokemon.isOpponent("rhydon") then
+				elseif Pokemon.isOpponent("rhydon") then
 					if tempDir == "x_special" then
 						forced = "ice_beam"
 					end
 				end
-				battle.automate(forced)
+				Battle.automate(forced)
 			end
 		end
 	elseif canProgress then
 		return true
 	else
-		textbox.handle()
+		Textbox.handle()
 	end
 end
 
 strategyFunctions.champion = function()
 	if canProgress then
 		if status.tries > 1500 then
-			return strategies.hardReset("Beat the game in "..canProgress.." !")
+			return Strategies.hardReset("Beat the game in "..canProgress.." !")
 		end
 		if status.tries == 0 then
-			bridge.tweet("Beat Pokemon Red in "..canProgress.."!")
-			if strategies.seed then
-				print("v"..VERSION..": "..utils.frames().." frames, with seed "..strategies.seed)
+			Bridge.tweet("Beat Pokemon Red in "..canProgress.."!")
+			if Strategies.seed then
+				print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
 				print("Please save this seed number to share, if you would like proof of your run!")
 			end
 		end
 		status.tries = status.tries + 1
-	elseif memory.value("menu", "shop_current") == 252 then
-		strategies.functions.split({finished=true})
-		canProgress = utils.elapsedTime()
+	elseif Memory.value("menu", "shop_current") == 252 then
+		Strategies.functions.split({finished=true})
+		canProgress = Utils.elapsedTime()
 	else
-		input.cancel()
+		Input.cancel()
 	end
 end
 
 -- PROCESS
 
-function strategies.initGame(midGame)
+function Strategies.initGame(midGame)
 	if not STREAMING_MODE then
-		-- strategies.setYolo("bulbasaur")
+		-- Strategies.setYolo("bulbasaur")
 		nidoAttack = 55
 		nidoSpeed = 50
 		nidoSpecial = 45
@@ -2374,9 +2374,9 @@ function strategies.initGame(midGame)
 	end
 end
 
-function strategies.resetGame()
+function Strategies.resetGame()
 	maxEtherSkip = false
-	status = strategies.status
+	status = Strategies.status
 end
 
-return strategies
+return Strategies

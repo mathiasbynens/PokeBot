@@ -1,9 +1,5 @@
 local Memory = {}
 
--- memory.usememorydomain("WRAM")
--- print(memory.getcurrentmemorydomain())
--- print(memory.getcurrentmemorydomainsize())
-
 local memoryNames = {
 	setting = {
 		text_speed = 0x0D3D,

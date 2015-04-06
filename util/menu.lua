@@ -1,7 +1,7 @@
-local menu = {}
+local Menu = {}
 
-local input = require "util.input"
-local memory = require "util.memory"
+local Input = require "util.input"
+local Memory = require "util.memory"
 
 local yellow = GAME_NAME == "yellow"
 
@@ -15,9 +15,9 @@ local function getRow(menuType, scrolls)
 	else
 		menuType = "row"
 	end
-	local row = memory.value("menu", menuType)
+	local row = Memory.value("menu", menuType)
 	if scrolls then
-		row = row + memory.value("menu", "scroll_offset")
+		row = row + Memory.value("menu", "scroll_offset")
 	end
 	return row
 end
@@ -39,7 +39,7 @@ local function setRow(desired, throttle, scrolls, menuType, loop)
 	else
 		sliding = false
 	end
-	return menu.balance(currentRow, desired, true, loop, throttle)
+	return Menu.balance(currentRow, desired, true, loop, throttle)
 end
 
 local function isCurrently(desired, menuType)
@@ -48,48 +48,48 @@ local function isCurrently(desired, menuType)
 	else
 		menuType = "current"
 	end
-	return memory.value("menu", menuType) == desired
+	return Memory.value("menu", menuType) == desired
 end
-menu.isCurrently = isCurrently
+Menu.isCurrently = isCurrently
 
 -- Menu
 
-function menu.getCol()
-	return memory.value("menu", "column")
+function Menu.getCol()
+	return Memory.value("menu", "column")
 end
 
-function menu.open(desired, atIndex, menuType)
+function Menu.open(desired, atIndex, menuType)
 	if isCurrently(desired, menuType) then
 		return true
 	end
-	menu.select(atIndex, false, false, menuType)
+	Menu.select(atIndex, false, false, menuType)
 	return false
 end
 
-function menu.select(option, throttle, scrolls, menuType, dontPress, loop)
+function Menu.select(option, throttle, scrolls, menuType, dontPress, loop)
 	if setRow(option, throttle, scrolls, menuType, loop) then
 		local delay = 1
 		if throttle then
 			delay = 2
 		end
 		if not dontPress then
-			input.press("A", delay)
+			Input.press("A", delay)
 		end
 		return true
 	end
 end
 
-function menu.cancel(desired, menuType)
+function Menu.cancel(desired, menuType)
 	if not isCurrently(desired, menuType) then
 		return true
 	end
-	input.press("B")
+	Input.press("B")
 	return false
 end
 
 -- Selections
 
-function menu.balance(current, desired, inverted, looping, throttle)
+function Menu.balance(current, desired, inverted, looping, throttle)
 	if current == desired then
 		sliding = false
 		return true
@@ -104,14 +104,14 @@ function menu.balance(current, desired, inverted, looping, throttle)
 		goUp = not goUp
 	end
 	if goUp then
-		input.press("Up", throttle)
+		Input.press("Up", throttle)
 	else
-		input.press("Down", throttle)
+		Input.press("Down", throttle)
 	end
 	return false
 end
 
-function menu.sidle(current, desired, looping, throttle)
+function Menu.sidle(current, desired, looping, throttle)
 	if current == desired then
 		return true
 	end
@@ -125,29 +125,29 @@ function menu.sidle(current, desired, looping, throttle)
 		goLeft = not goLeft
 	end
 	if goLeft then
-		input.press("Left", throttle)
+		Input.press("Left", throttle)
 	else
-		input.press("Right", throttle)
+		Input.press("Right", throttle)
 	end
 	return false
 end
 
-function menu.setCol(desired)
-	return menu.sidle(menu.getCol(), desired)
+function Menu.setCol(desired)
+	return Menu.sidle(Menu.getCol(), desired)
 end
 
 -- Options
 
-function menu.setOption(name, desired)
+function Menu.setOption(name, desired)
 	if yellow then
 		local rowFor = {
 			text_speed = 0,
 			battle_animation = 1,
 			battle_style = 2
 		}
-		local currentRow = memory.raw(0x0D3D, true)
-		if menu.balance(currentRow, rowFor[name], true, false, true) then
-			input.press("Left")
+		local currentRow = Memory.raw(0x0D3D, true)
+		if Menu.balance(currentRow, rowFor[name], true, false, true) then
+			Input.press("Left")
 		end
 	else
 		local rowFor = {
@@ -155,11 +155,11 @@ function menu.setOption(name, desired)
 			battle_animation = 8,
 			battle_style = 13
 		}
-		if memory.value("setting", name) == desired then
+		if Memory.value("setting", name) == desired then
 			return true
 		end
 		if setRow(rowFor[name], true, false, "settings") then
-			menu.setCol(desired)
+			Menu.setCol(desired)
 		end
 	end
 	return false
@@ -167,31 +167,31 @@ end
 
 -- Pause menu
 
-function menu.isOpen()
-	return memory.value("game", "textbox") == 1 or memory.value("menu", "current") == 24
+function Menu.isOpen()
+	return Memory.value("game", "textbox") == 1 or Memory.value("menu", "current") == 24
 end
 
-function menu.close()
-	if memory.value("game", "textbox") == 0 and memory.value("menu", "main") < 8 then
+function Menu.close()
+	if Memory.value("game", "textbox") == 0 and Memory.value("menu", "main") < 8 then
 		return true
 	end
-	input.press("B")
+	Input.press("B")
 end
 
-function menu.pause()
-	if memory.value("game", "textbox") == 1 then
-		if memory.value("battle", "menu") == 95 then
-			input.cancel()
+function Menu.pause()
+	if Memory.value("game", "textbox") == 1 then
+		if Memory.value("battle", "menu") == 95 then
+			Input.cancel()
 		else
-			local main = memory.value("menu", "main")
+			local main = Memory.value("menu", "main")
 			if main > 2 and main ~= 64 then
 				return true
 			end
-			input.press("B")
+			Input.press("B")
 		end
 	else
-		input.press("Start", 2)
+		Input.press("Start", 2)
 	end
 end
 
-return menu
+return Menu

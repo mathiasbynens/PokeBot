@@ -1,7 +1,7 @@
-local input = {}
+local Input = {}
 
-local bridge = require "util.bridge"
-local memory = require "util.memory"
+local Bridge = require "util.bridge"
+local Memory = require "util.memory"
 
 local lastSend
 local currentButton, remainingFrames, setForFrame
@@ -11,7 +11,7 @@ local bCancel = true
 local function bridgeButton(btn)
 	if btn ~= lastSend then
 		lastSend = btn
-		bridge.input(btn)
+		Bridge.input(btn)
 	end
 end
 
@@ -28,7 +28,7 @@ local function sendButton(button, ab)
 	setForFrame = button
 end
 
-function input.press(button, frames)
+function Input.press(button, frames)
 	if setForFrame then
 		print("ERR: Reassigning "..setForFrame.." to "..button)
 		return
@@ -49,9 +49,9 @@ function input.press(button, frames)
 	sendButton(button)
 end
 
-function input.cancel(accept)
-	if accept and memory.value("menu", "shop_current") == 20 then
-		input.press(accept)
+function Input.cancel(accept)
+	if accept and Memory.value("menu", "shop_current") == 20 then
+		Input.press(accept)
 	else
 		local button
 		if bCancel then
@@ -65,18 +65,18 @@ function input.cancel(accept)
 	end
 end
 
-function input.escape()
+function Input.escape()
 	local inputTable = {Right=true, Down=true}
 	joypad.set(inputTable)
 	bridgeButton("D,R")
 end
 
-function input.clear()
+function Input.clear()
 	currentButton = nil
 	remainingFrames = -1
 end
 
-function input.update()
+function Input.update()
 	if currentButton then
 		remainingFrames = remainingFrames - 1
 		if remainingFrames >= 0 then
@@ -91,19 +91,19 @@ function input.update()
 	setForFrame = nil
 end
 
-function input.advance()
+function Input.advance()
 	if not setForFrame then
 		bridgeButton("e")
 	end
 end
 
-function input.setDebug(enabled)
+function Input.setDebug(enabled)
 	debug = enabled
 end
 
-function input.test(fn, completes)
+function Input.test(fn, completes)
 	while true do
-		if not input.update() then
+		if not Input.update() then
 			if fn() and completes then
 				break
 			end
@@ -115,4 +115,4 @@ function input.test(fn, completes)
 	end
 end
 
-return input
+return Input

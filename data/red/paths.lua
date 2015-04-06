@@ -1,4 +1,4 @@
-local paths = {
+local Paths = {
 	-- Red's room
 	{38, {3,6}, {5,6}, {5,1}, {7,1}},
 	-- Red's house
@@ -447,4 +447,4 @@ local paths = {
 	{118, {4,2}, {s="champion"}}
 }
 
-return paths
+return Paths

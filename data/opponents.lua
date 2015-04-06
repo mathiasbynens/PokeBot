@@ -1,4 +1,4 @@
-local opponents = {
+local Opponents = {
 
 	RivalGyarados = {
 		type1 = "water",
@@ -222,4 +222,4 @@ local opponents = {
 
 }
 
-return opponents
+return Opponents

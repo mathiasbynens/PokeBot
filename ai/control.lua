@@ -1,17 +1,15 @@
-local control = {}
+local Control = {}
 
-local combat = require "ai.combat"
-local strategies
+local Combat = require "ai.combat"
+local Strategies
 
-local bridge = require "util.bridge"
-local memory = require "util.memory"
-local menu = require "util.menu"
-local paint = require "util.paint"
-local player = require "util.player"
-local utils = require "util.utils"
+local Bridge = require "util.bridge"
+local Memory = require "util.memory"
+local Paint = require "util.paint"
+local Utils = require "util.utils"
 
-local inventory = require "storage.inventory"
-local pokemon = require "storage.pokemon"
+local Inventory = require "storage.inventory"
+local Pokemon = require "storage.pokemon"
 
 local potionInBattle = true
 local fightEncounter, caveFights = 0, 0
@@ -22,20 +20,20 @@ local shouldCatch, attackIdx
 local extraEncounter, maxEncounters
 local battleYolo
 
-control.areaName = "Unknown"
-control.moonEncounters = nil
-control.yolo = false
+Control.areaName = "Unknown"
+Control.moonEncounters = nil
+Control.yolo = false
 
 local controlFunctions = {
 
 	a = function(data)
-		control.areaName = data.a
+		Control.areaName = data.a
 		return true
 	end,
 
 	potion = function(data)
 		if data.b ~= nil then
-			control.battlePotion(data.b)
+			Control.battlePotion(data.b)
 		end
 		battleYolo = data.yolo
 	end,
@@ -48,11 +46,11 @@ local controlFunctions = {
 	end,
 
 	pp = function(data)
-		combat.factorPP(data.on)
+		Combat.factorPP(data.on)
 	end,
 
 	setThrash = function(data)
-		combat.disableThrash = data.disable
+		Combat.disableThrash = data.disable
 	end,
 
 	disableCatch = function()
@@ -113,11 +111,11 @@ local controlFunctions = {
 
 -- COMBAT
 
-function control.battlePotion(enable)
+function Control.battlePotion(enable)
 	potionInBattle = enable
 end
 
-function control.canDie(enabled)
+function Control.canDie(enabled)
 	if enabled == nil then
 		return canDie
 	end
@@ -125,25 +123,25 @@ function control.canDie(enabled)
 end
 
 local function isNewFight()
-	if fightEncounter < encounters and memory.double("battle", "opponent_hp") == memory.double("battle", "opponent_max_hp") then
+	if fightEncounter < encounters and Memory.double("battle", "opponent_hp") == Memory.double("battle", "opponent_max_hp") then
 		fightEncounter = encounters
 		return true
 	end
 end
 
-function control.shouldFight()
+function Control.shouldFight()
 	if not shouldFight then
 		return false
 	end
-	local expTotal = pokemon.getExp()
+	local expTotal = Pokemon.getExp()
 	if expTotal < minExp then
-		local oid = memory.value("battle", "opponent_id")
-		local olvl = memory.value("battle", "opponent_level")
+		local oid = Memory.value("battle", "opponent_id")
+		local olvl = Memory.value("battle", "opponent_level")
 		for i,p in ipairs(shouldFight) do
-			if oid == pokemon.getID(p.name) and (not p.lvl or utils.match(olvl, p.lvl)) then
+			if oid == Pokemon.getID(p.name) and (not p.lvl or Utils.match(olvl, p.lvl)) then
 				if oneHits then
-					local move = combat.bestMove()
-					if move and move.maxDamage * 0.925 < memory.double("battle", "opponent_hp") then
+					local move = Combat.bestMove()
+					if move and move.maxDamage * 0.925 < Memory.double("battle", "opponent_hp") then
 						return false
 					end
 				end
@@ -153,24 +151,24 @@ function control.shouldFight()
 	end
 end
 
-function control.canCatch(partySize)
+function Control.canCatch(partySize)
 	if not partySize then
-		partySize = memory.value("player", "party_size")
+		partySize = Memory.value("player", "party_size")
 	end
-	local pokeballs = inventory.count("pokeball")
+	local pokeballs = Inventory.count("pokeball")
 	local minimumCount = 4 - partySize
 	if pokeballs < minimumCount then
-		strategies.reset("Not enough PokeBalls", pokeballs)
+		Strategies.reset("Not enough PokeBalls", pokeballs)
 		return false
 	end
 	return true
 end
 
-function control.shouldCatch(partySize)
+function Control.shouldCatch(partySize)
 	if maxEncounters and encounters > maxEncounters then
-		local extraCount = extraEncounter and pokemon.inParty(extraEncounter)
+		local extraCount = extraEncounter and Pokemon.inParty(extraEncounter)
 		if not extraCount or encounters > maxEncounters + 1 then
-			strategies.reset("Too many encounters", encounters)
+			Strategies.reset("Too many encounters", encounters)
 			return false
 		end
 	end
@@ -178,27 +176,27 @@ function control.shouldCatch(partySize)
 		return false
 	end
 	if not partySize then
-		partySize = memory.value("player", "party_size")
+		partySize = Memory.value("player", "party_size")
 	end
 	if partySize == 4 then
 		shouldCatch = nil
 		return false
 	end
-	if not control.canCatch(partySize) then
+	if not Control.canCatch(partySize) then
 		return true
 	end
-	local oid = memory.value("battle", "opponent_id")
+	local oid = Memory.value("battle", "opponent_id")
 	for i,poke in ipairs(shouldCatch) do
-		if oid == pokemon.getID(poke.name) and not pokemon.inParty(poke.name, poke.alt) then
-			if not poke.lvl or utils.match(memory.value("battle", "opponent_level"), poke.lvl) then
-				local penultimate = poke.hp and memory.double("battle", "opponent_hp") > poke.hp
+		if oid == Pokemon.getID(poke.name) and not Pokemon.inParty(poke.name, poke.alt) then
+			if not poke.lvl or Utils.match(Memory.value("battle", "opponent_level"), poke.lvl) then
+				local penultimate = poke.hp and Memory.double("battle", "opponent_hp") > poke.hp
 				if penultimate then
-					penultimate = combat.nonKill()
+					penultimate = Combat.nonKill()
 				end
 				if penultimate then
 					require("action.battle").fight(penultimate.midx, true)
 				else
-					inventory.use("pokeball", nil, true)
+					Inventory.use("pokeball", nil, true)
 				end
 				return true
 			end
@@ -208,36 +206,36 @@ end
 
 -- Items
 
-function control.canRecover()
-	return potionInBattle and (not battleYolo or not control.yolo)
+function Control.canRecover()
+	return potionInBattle and (not battleYolo or not Control.yolo)
 end
 
-function control.set(data)
+function Control.set(data)
 	controlFunctions[data.c](data)
 end
 
-function control.setYolo(enabled)
-	control.yolo = enabled
+function Control.setYolo(enabled)
+	Control.yolo = enabled
 end
 
-function control.setPotion(enabled)
+function Control.setPotion(enabled)
 	potionInBattle = enabled
 end
 
-function control.encounters()
+function Control.encounters()
 	return encounters
 end
 
-function control.wildEncounter()
+function Control.wildEncounter()
 	encounters = encounters + 1
-	paint.wildEncounters(encounters)
-	bridge.encounter()
-	if control.moonEncounters then
-		control.moonEncounters = control.moonEncounters + 1
+	Paint.wildEncounters(encounters)
+	Bridge.encounter()
+	if Control.moonEncounters then
+		Control.moonEncounters = Control.moonEncounters + 1
 	end
 end
 
-function control.reset()
+function Control.reset()
 	canDie = false
 	oneHits = false
 	shouldCatch = nil
@@ -248,12 +246,12 @@ function control.reset()
 	fightEncounter = 0
 	caveFights = 0
 	battleYolo = false
-	control.yolo = false
+	Control.yolo = false
 	maxEncounters = nil
 end
 
-function control.init()
-	strategies = require("ai."..GAME_NAME..".strategies")
+function Control.init()
+	Strategies = require("ai."..GAME_NAME..".strategies")
 end
 
-return control
+return Control
