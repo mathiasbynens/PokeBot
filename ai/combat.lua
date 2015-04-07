@@ -89,6 +89,9 @@ local function calcDamage(move, attacker, defender, rng)
 		typeEffect2 = 1
 	end
 	damage = floor(damage * typeEffect1 * typeEffect2)
+	if move.multiple then
+		damage = damage * move.multiple
+	end
 	if rng then
 		return damage, damage
 	end
@@ -342,7 +345,7 @@ function Combat.inKillRange(draw)
 	if isConfused then
 		hpReq = hpReq + math.floor(ours.hp * 0.2)
 	end
-	if ours.hp < hpReq then
+	if ours.hp <= hpReq then
 		local outspeed = enemyAttack.outspeed
 		if outspeed and outspeed ~= true then
 			outspeed = Memory.value("battle", "turns") > 0

@@ -218,6 +218,7 @@ local moves = {
 		power = 30,
 		max_pp = 30,
 		accuracy = 100,
+		multiple = 2,
 	},
 	{
 		name = 'Mega-Kick',
@@ -282,6 +283,7 @@ local moves = {
 		power = 15,
 		max_pp = 20,
 		accuracy = 85,
+		multiple = 2,
 	},
 	{
 		name = 'Horn-Drill',
