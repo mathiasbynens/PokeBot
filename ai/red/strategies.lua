@@ -41,6 +41,10 @@ Strategies.timeRequirements = {
 		return timeLimit
 	end,
 
+	brock = function()
+		return 11
+	end,
+
 	mt_moon = function()
 		local timeLimit = 27
 		if nidoAttack > 15 and nidoSpeed > 14 then
@@ -190,7 +194,7 @@ strategyFunctions.tweetMisty = function()
 				pbn = " (PB pace)"
 			end
 			local elt = Utils.elapsedTime()
-			Bridge.tweet("Got a run going, just beat Misty "..elt.." in"..pbn.." http://www.twitch.tv/thepokebot")
+			Strategies.tweetProgress("Got a run going, just beat Misty "..elt.." in"..pbn)
 		end
 	end
 	return true
@@ -203,7 +207,7 @@ strategyFunctions.tweetVictoryRoad = function()
 		pbn = " (PB pace)"
 	end
 	local elt = Utils.elapsedTime()
-	Bridge.tweet("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four http://www.twitch.tv/thepokebot")
+	Strategies.tweetProgress("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four")
 	return true
 end
 
@@ -2346,7 +2350,7 @@ strategyFunctions.champion = function()
 			return Strategies.hardReset("Beat the game in "..status.canProgress.." !")
 		end
 		if status.tries == 0 then
-			Bridge.tweet("Beat Pokemon Red in "..status.canProgress.."!")
+			Strategies.tweetProgress("Beat Pokemon Red in "..status.canProgress.."!", true)
 			if Strategies.seed then
 				print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
 				print("Please save this seed number to share, if you would like proof of your run!")

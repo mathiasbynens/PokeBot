@@ -53,19 +53,22 @@ end
 
 function Strategies.reset(reason, extra, wait)
 	local time = Utils.elapsedTime()
-	local resetString = "Reset"
+	local resetMessage = "Reset"
 	if time then
-		resetString = resetString.." after "..time
+		resetMessage = resetMessage.." after "..time
 	end
-	resetString = " "..resetString.." at "..Control.areaName
+	resetMessage = " "..resetMessage.." at "..Control.areaName
 	local separator
 	if Strategies.deepRun and not Control.yolo then
 		separator = " BibleThump"
 	else
 		separator = ":"
 	end
-	resetString = resetString..separator.." "..reason
-	return Strategies.hardReset(resetString, extra, wait)
+	resetMessage = resetMessage..separator.." "..reason
+	if status.tweeted then
+		Strategies.tweetProgress(resetMessage, true)
+	end
+	return Strategies.hardReset(resetMessage, extra, wait)
 end
 
 function Strategies.death(extra)
@@ -117,6 +120,14 @@ function Strategies.setYolo(name)
 end
 
 -- HELPERS
+
+function Strategies.tweetProgress(message, finished)
+	if not finished then
+		status.tweeted = true
+		message = message.." http://www.twitch.tv/thepokebot"
+	end
+	Bridge.tweet(message)
+end
 
 function Strategies.initialize()
 	if not status.initialized then
