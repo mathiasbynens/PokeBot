@@ -26,6 +26,7 @@ local pokeIDs = {
 	meowth = 77,
 	pikachu = 84,
 	dragonair = 89,
+	sandshrew = 96,
 	zubat = 107,
 	ekans = 108,
 	paras = 109,
@@ -74,6 +75,7 @@ local data = {
 	hp = {1, true},
 	status = {4},
 	moves = {8},
+	pp = {28},
 	level = {33},
 	max_hp = {34, true},
 
@@ -205,6 +207,11 @@ function Pokemon.updateParty()
 			previousPartySize = partySize
 		end
 	end
+end
+
+function Pokemon.pp(index, move)
+	local midx = Pokemon.battleMove(move)
+	return Memory.raw(getAddress(index) + 28 + midx)
 end
 
 -- General

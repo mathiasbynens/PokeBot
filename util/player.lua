@@ -5,6 +5,7 @@ local Textbox = require "action.textbox"
 local Input = require "util.input"
 local Memory = require "util.memory"
 
+local yellow = YELLOW
 local facingDirections = {Up=8, Right=1, Left=2, Down=4}
 
 function Player.isFacing(direction)
@@ -22,7 +23,7 @@ end
 
 function Player.interact(direction)
 	if Player.face(direction) then
-		Input.press("A", 2)
+		Input.press("A", yellow and 3 or 2)
 		return true
 	end
 end

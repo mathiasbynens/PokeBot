@@ -44,6 +44,10 @@ function Utils.key(needle, haystack)
 	return nil
 end
 
+function Utils.capitalize(string)
+	return string:sub(1, 1):toUpperCase()..string:sub(1)
+end
+
 -- GAME
 
 function Utils.canPotionWith(potion, forDamage, curr_hp, max_hp)
@@ -64,7 +68,7 @@ end
 
 function Utils.onPokemonSelect(battleMenu)
 	if yellow then
-		return battleMenu == 27
+		return battleMenu == 27 or battleMenu == 243
 	end
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
 end
