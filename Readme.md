@@ -28,18 +28,18 @@ MD5: 3d45c1ee9abd5738df46d2bdda8b57dc
 SHA-1: ea9bcae617fdf159b045185467ae58b2e4a48b9a
 ```
 
-Open the ROM file with BizHawk (Drag the .gb file onto EmuHawk), and Pokémon Red should start up. 
+Open the ROM file with BizHawk (Drag the .gb file onto EmuHawk), and Pokémon Red should start up.
 The colors may look weird.  To fix this, go to GB>Palette Editor, and then find the POKEMON RED.pal file which should be under Gameboy>Palettes in the directory where BizHawk was unextracted.
 
 
 ##Running the bot##
-If you want to test the full run, change [this line](https://github.com/kylecoburn/PokeBot/blob/52232581f227b829ea283d795ddaf60a52ce24fe/main.lua#L4) to be false.
-Then, under the 'Tools' menu, select 'Lua Console'. 
-Click the open folder button, and navigate to the PokéBot folder you downloaded. Select 'main.lua' and press open. The bot should start running!
+If you want to test the full run, change [this line](https://github.com/kylecoburn/PokeBot/blob/52232581f227b829ea283d795ddaf60a52ce24fe/main.lua#L4) to be `false`.
+Then, under the 'Tools' menu, select 'Lua Console'.
+Click the open folder button, and navigate to the PokéBot folder you downloaded. Select `main.lua` and press open. The bot should start running!
 
 Seeds
 =====
-PokéBot comes with a built-in run recording feature that takes advantage of random number seeding to reproduce runs in their entirety. Any time the bot resets or beats the game, it will log a number to the Lua console that is the seed for the run. If you set 'CUSTOM_SEED' in main.lua to that number, the bot will reproduce your run, allowing you to share your times with others. Note that making any other modifications will prevent this from working. So if you want to make changes to the bot and share your time, be sure to fork the repo and push your changes.
+PokéBot comes with a built-in run recording feature that takes advantage of random number seeding to reproduce runs in their entirety. Any time the bot resets or beats the game, it will log a number to the Lua console that is the seed for the run. If you set `CUSTOM_SEED` in `main.lua` to that number, the bot will reproduce your run, allowing you to [share your times with others](Seeds.md). Note that making any other modifications will prevent this from working. So if you want to make changes to the bot and share your time, be sure to fork the repo and push your changes.
 
 Credits
 =======
