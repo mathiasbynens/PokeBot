@@ -18,12 +18,10 @@ local Utils = require "util.utils"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
-local level4Nidoran = true -- 57 vs 96 (d39)
-local nidoAttack, nidoSpeed, nidoSpecial = 0, 0, 0
-local squirtleAtt, squirtleDef, squirtleSpd, squirtleScl
 local riskGiovanni, maxEtherSkip
 
 local status = Strategies.status
+local stats = Strategies.stats
 
 -- TIME CONSTRAINTS
 
@@ -38,6 +36,8 @@ Strategies.timeRequirements = {
 		if Pokemon.inParty("spearow") then
 			timeLimit = timeLimit + 0.67
 		end
+		if stats.nidoran.attack == 16 and stats.nidoran.speed > 14 then
+
 		return timeLimit
 	end,
 
@@ -51,7 +51,7 @@ Strategies.timeRequirements = {
 
 	mt_moon = function()
 		local timeLimit = 26.75
-		if nidoAttack > 15 and nidoSpeed > 14 then
+		if stats.nidoran.attack > 15 and stats.nidoran.speed > 14 then
 			timeLimit = timeLimit + 0.25
 		end
 		if Pokemon.inParty("paras") then
@@ -90,13 +90,13 @@ Strategies.timeRequirements = {
 
 	trash = function()
 		local timeLimit = 47
-		if nidoSpecial > 44 then
+		if stats.nidoran.special > 44 then
 			timeLimit = timeLimit + 0.25
 		end
-		if nidoAttack > 53 then
+		if stats.nidoran.attack > 53 then
 			timeLimit = timeLimit + 0.25
 		end
-		if nidoAttack >= 54 and nidoSpecial >= 45 then
+		if stats.nidoran.attack >= 54 and stats.nidoran.special >= 45 then
 			timeLimit = timeLimit + 0.25
 		end
 		return timeLimit
@@ -234,12 +234,14 @@ end
 strategyFunctions.fightBulbasaur = function()
 	if status.tries < 9000 and Pokemon.index(0, "level") == 6 then
 		if status.tries > 200 then
-			squirtleAtt = Pokemon.index(0, "attack")
-			squirtleDef = Pokemon.index(0, "defense")
-			squirtleSpd = Pokemon.index(0, "speed")
-			squirtleScl = Pokemon.index(0, "special")
-			if squirtleAtt < 11 and squirtleScl < 12 then
-				return Strategies.reset("Bad Squirtle - "..squirtleAtt.." attack, "..squirtleScl.." special")
+			stats.squirtle = {
+				attack = Pokemon.index(0, "attack"),
+				defense = Pokemon.index(0, "defense"),
+				speed = Pokemon.index(0, "speed"),
+				special = Pokemon.index(0, "special"),
+			}
+			if stats.squirtle.attack < 11 and stats.squirtle.special < 12 then
+				return Strategies.reset("Bad Squirtle - "..stats.squirtle.attack.." attack, "..stats.squirtle.special.." special")
 			end
 			status.tries = 9001
 		else
@@ -302,7 +304,7 @@ strategyFunctions.catchNidoran = function()
 				end
 			end
 			if gotExperience then
-				level4Nidoran = Pokemon.info("nidoran", "level") == 4
+				stats.nidoran = {level4 = (Pokemon.info("nidoran", "level") == 4)}
 				return true
 			end
 			noDSum = true
@@ -513,12 +515,16 @@ strategyFunctions.fightBrock = function()
 					local spd = Pokemon.index(nidx, "speed")
 					local scl = Pokemon.index(nidx, "special")
 					Bridge.stats(att.." "..def.." "..spd.." "..scl)
-					nidoAttack = att
-					nidoSpeed = spd
-					nidoSpecial = scl
+					stats.nidoran = {
+						attack = att,
+						defense = def,
+						speed = spd,
+						special = scl,
+						level4 = stats.nidoran.level4
+					}
 					if status.tries > 300 then
 						local statDiff = (16 - att) + (15 - spd) + (13 - scl)
-						if not level4Nidoran then
+						if not stats.nidoran.level4 then
 							statDiff = statDiff + 1
 						end
 						local resets = att < 15 or spd < 14 or scl < 12 or (att == 15 and spd == 14)
@@ -561,7 +567,7 @@ strategyFunctions.fightBrock = function()
 							superlative = " min stat"
 							exclaim = "."
 						end
-						nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(level4Nidoran and "4" or "3").."."
+						nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3").."."
 						Bridge.chat(nStatus)
 					else
 						status.tries = status.tries + 1
@@ -614,7 +620,7 @@ strategyFunctions.bugCatcher = function()
 		end
 		secondCaterpie = status.tempDir
 		if not isWeedle and secondCaterpie then
-			if level4Nidoran and nidoSpeed >= 14 and Pokemon.index(0, "attack") >= 19 then
+			if stats.nidoran.level4 and stats.nidoran.speed >= 14 and Pokemon.index(0, "attack") >= 19 then
 				-- print("IA "..Pokemon.index(0, "attack"))
 				Battle.automate()
 				return
@@ -651,7 +657,7 @@ strategyFunctions.shortsKid = function()
 end
 
 strategyFunctions.potionBeforeCocoons = function()
-	if nidoSpeed >= 15 then
+	if stats.nidoran.speed >= 15 then
 		return true
 	end
 	return Strategies.functions.potion({hp=6, yolo=3})
@@ -750,9 +756,13 @@ strategyFunctions.teachThrash = function()
 			local spd = Pokemon.index(0, "speed")
 			local scl = Pokemon.index(0, "special")
 			local statDesc = att.." "..def.." "..spd.." "..scl
-			nidoAttack = att
-			nidoSpeed = spd
-			nidoSpecial = scl
+			stats.nidoran = {
+				attack = att,
+				defense = def,
+				speed = spd,
+				special = scl,
+				level4 = stats.nidoran.level4
+			}
 			Bridge.stats(statDesc)
 			print(statDesc)
 			return true
@@ -830,16 +840,18 @@ end
 
 strategyFunctions.potionBeforeMisty = function()
 	local healAmount = 70
+	local hasEnoughAttack = stats.nidoran.attack >= (yolo and 52 or 53)
+	local canSpeedTie = stats.nidoran.speed > 50
 	if Control.yolo then
-		if nidoAttack > 53 and nidoSpeed > 50 then
+		if hasEnoughAttack and hasEnoughSpeed then
 			healAmount = 45
-		elseif nidoAttack > 53 then
+		elseif hasEnoughAttack or canSpeedTie then
 			healAmount = 65
 		end
 	else
-		if nidoAttack > 53 and nidoSpeed > 51 then -- RISK
+		if hasEnoughAttack and stats.nidoran.speed > 51 then
 			healAmount = 45
-		elseif nidoAttack > 53 and nidoSpeed > 50 then
+		elseif hasEnoughAttack and canSpeedTie then
 			healAmount = 65
 		end
 	end
@@ -890,7 +902,7 @@ strategyFunctions.potionBeforeRocket = function()
 	if Control.yolo then
 		minAttack = minAttack - 1
 	end
-	if nidoAttack >= minAttack then
+	if stats.nidoran.attack >= minAttack then
 		return true
 	end
 	return Strategies.functions.potion({hp=10})
@@ -1242,7 +1254,7 @@ strategyFunctions.shopBuffs = function()
 		if Control.yolo then
 			minSpecial = minSpecial - 1
 		end
-		if nidoAttack >= 54 and nidoSpecial >= minSpecial then
+		if stats.nidoran.attack >= 54 and stats.nidoran.special >= minSpecial then
 			riskGiovanni = true
 			print("Giovanni skip strats!")
 		end
@@ -1251,7 +1263,7 @@ strategyFunctions.shopBuffs = function()
 	local xspecAmt = 4
 	if riskGiovanni then
 		xspecAmt = xspecAmt + 1
-	elseif nidoSpecial < 46 then
+	elseif stats.nidoran.special < 46 then
 		-- xspecAmt = xspecAmt - 1
 	end
 	return Shop.transaction{
@@ -1304,7 +1316,7 @@ strategyFunctions.lavenderRival = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		local forced
-		if nidoSpecial > 44 then -- RISK
+		if stats.nidoran.special > 44 then -- RISK
 			local __, enemyTurns = Combat.enemyAttack()
 			if enemyTurns and enemyTurns < 2 and Pokemon.isOpponent("pidgeotto", "gyarados") then
 				Battle.automate()
@@ -1398,10 +1410,7 @@ strategyFunctions.safariCarbos = function()
 		Strategies.setYolo("safari_carbos")
 	end
 	local minSpeed = 50
-	if Control.yolo then
-		minSpeed = minSpeed - 1
-	end
-	if nidoSpeed >= minSpeed then
+	if stats.nidoran.speed >= minSpeed then
 		return true
 	end
 	if Inventory.contains("carbos") then
@@ -1453,7 +1462,7 @@ end
 strategyFunctions.fightSilphMachoke = function()
 	if Battle.isActive() then
 		status.canProgress = true
-		if nidoSpecial > 44 then
+		if stats.nidoran.special > 44 then
 			return Strategies.prepare("x_accuracy")
 		end
 		Battle.automate("thrash")
@@ -1465,7 +1474,7 @@ strategyFunctions.fightSilphMachoke = function()
 end
 
 strategyFunctions.silphCarbos = function()
-	if nidoSpeed > 50 then
+	if stats.nidoran.speed >= 51 then
 		return true
 	end
 	return Strategies.functions.interact({dir="Left"})
@@ -1505,7 +1514,7 @@ strategyFunctions.silphRival = function()
 			end
 		elseif Strategies.prepare("x_accuracy", "x_speed") then
 			if opName == "pidgeot" then
-				if nidoSpecial < 45 or Strategies.hasHealthFor("KogaWeezing", 10) then --TODO remove for red bar
+				if stats.nidoran.special < 45 or Strategies.hasHealthFor("KogaWeezing", 10) then --TODO remove for red bar
 					forced = "thunderbolt"
 				end
 			elseif opponentName == "alakazam" or opponentName == "growlithe" then
@@ -1665,11 +1674,11 @@ strategyFunctions.cinnabarCarbos = function()
 	if px == 21 then
 		return true
 	end
-	local minSpeed = 51
+	local minSpeed = 52
 	if Control.yolo then
 		minSpeed = minSpeed - 1
 	end
-	if nidoSpeed > minSpeed then -- TODO >=
+	if stats.nidoran.speed >= minSpeed then
 		Walk.step(21, 20)
 	else
 		if py == 20 then
@@ -1693,7 +1702,7 @@ strategyFunctions.fightErika = function()
 		if curr_hp > razorDamage and curr_hp - razorDamage < red_hp then
 			if Strategies.opponentDamaged() then
 				forced = "thunderbolt"
-			elseif nidoSpecial < 45 then
+			elseif stats.nidoran.special < 45 then
 				forced = "ice_beam"
 			else
 				forced = "thunderbolt"
@@ -1742,8 +1751,8 @@ end
 
 strategyFunctions.fightGiovanniMachoke = function()
 	if Strategies.initialize() then
-		if nidoAttack >= 55 then
-			local eqPpRequired = nidoSpecial >= 47 and 7 or 8
+		if stats.nidoran.attack >= 55 then
+			local eqPpRequired = stats.nidoran.special >= 47 and 7 or 8
 			if Battle.pp("earthquake") >= eqPpRequired then
 				Bridge.chat("Using Earthquake strats on the Machokes")
 				return true
@@ -1818,7 +1827,7 @@ end
 strategyFunctions.viridianRival = function()
 	if Battle.isActive() then
 		if not status.canProgress then
-			if riskGiovanni or nidoSpecial < 45 or Pokemon.index(0, "speed") < 134 then
+			if riskGiovanni or stats.nidoran.special < 45 or Pokemon.index(0, "speed") < 134 then
 				status.tempDir = "x_special"
 			else
 				print("Skip X Special strats!")
@@ -1858,7 +1867,7 @@ strategyFunctions.ether = function(data)
 		if not status.tempDir then
 			if data.max then
 				-- TODO don't skip center if not in redbar
-				maxEtherSkip = nidoAttack > 53 and Battle.pp("earthquake") > 0 and Battle.pp("horn_drill") > 3
+				maxEtherSkip = stats.nidoran.attack > 53 and Battle.pp("earthquake") > 0 and Battle.pp("horn_drill") > 3
 				if maxEtherSkip then
 					return true
 				end

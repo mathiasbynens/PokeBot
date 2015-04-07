@@ -20,15 +20,16 @@ local Pokemon = require "storage.pokemon"
 local yellow = YELLOW
 local splitNumber, splitTime = 0, 0
 local resetting
-local strategyFunctions
 
 local status = {tries = 0, tempDir = nil, canProgress = nil, initialized = false}
+local stats = {}
 Strategies.status = status
+Strategies.stats = stats
 Strategies.deepRun = false
 
--- RISK/RESET
+local strategyFunctions
 
-Strategies.timeRequirements = {}
+-- RISK/RESET
 
 function Strategies.getTimeRequirement(name)
 	return Strategies.timeRequirements[name]()
@@ -46,8 +47,9 @@ function Strategies.hardReset(message, extra, wait)
 	Bridge.chat(message, extra)
 	if wait and INTERNAL and not STREAMING_MODE then
 		strategyFunctions.wait()
+	else
+		client.reboot_core()
 	end
-	client.reboot_core()
 	return true
 end
 
@@ -565,7 +567,7 @@ Strategies.functions = {
 
 	wait = function()
 		print("Please save state")
-		Input.press("Start", 9001)
+		Input.press("Start", 999999999)
 	end,
 
 	emuSpeed = function(data)
@@ -638,7 +640,7 @@ Strategies.functions = {
 		for i,poke in ipairs(data) do
 			if opp == poke[1] then
 				local minimumAttack = poke[3]
-				if not minimumAttack or nidoAttack > minimumAttack then
+				if not minimumAttack or stats.nidoran.attack > minimumAttack then
 					defLimit = poke[2]
 				end
 				break
@@ -931,6 +933,7 @@ end
 function Strategies.softReset()
 	status = {tries=0}
 	Strategies.status = status
+	Strategies.stats = {}
 	splitNumber, splitTime = 0, 0
 	resetting = nil
 	Strategies.deepRun = false

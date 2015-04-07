@@ -45,7 +45,7 @@ function Utils.key(needle, haystack)
 end
 
 function Utils.capitalize(string)
-	return string:sub(1, 1):toUpperCase()..string:sub(1)
+	return string:sub(1, 1):upper()..string:sub(1)
 end
 
 -- GAME
