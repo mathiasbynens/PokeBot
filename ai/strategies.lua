@@ -622,10 +622,192 @@ Strategies.functions = {
 		return true
 	end,
 
+	leer = function(data)
+		local bm = Combat.bestMove()
+		if not bm or bm.minTurns < 3 then
+			if Battle.isActive() then
+				status.canProgress = true
+			elseif status.canProgress then
+				return true
+			end
+			Battle.automate()
+			return false
+		end
+		local opp = Battle.opponent()
+		local defLimit = 9001
+		for i,poke in ipairs(data) do
+			if opp == poke[1] then
+				local minimumAttack = poke[3]
+				if not minimumAttack or nidoAttack > minimumAttack then
+					defLimit = poke[2]
+				end
+				break
+			end
+		end
+		return Strategies.buffTo("leer", defLimit)
+	end,
+
 	-- ROUTE
+
+	swapNidoran = function()
+		local main = Memory.value("menu", "main")
+		local nidoranIndex = Pokemon.indexOf("nidoran")
+		if nidoranIndex == 0 then
+			if Menu.close() then
+				return true
+			end
+		elseif Menu.pause() then
+			if yellow then
+				if Inventory.contains("potion") and Pokemon.info("nidoran", "hp") < 15 then
+					Inventory.use("potion", "nidoran")
+					return false
+				end
+			else
+				if Pokemon.info("squirtle", "status") > 0 then
+					Inventory.use("antidote", "squirtle")
+					return false
+				end
+				if Inventory.contains("potion") and Pokemon.info("squirtle", "hp") < 15 then
+					Inventory.use("potion", "squirtle")
+					return false
+				end
+			end
+
+			local column = Menu.getCol()
+			if main == 128 then
+				if column == 11 then
+					Menu.select(1, true)
+				elseif column == 12 then
+					Menu.select(1, true)
+				else
+					Input.press("B")
+				end
+			elseif main == Menu.pokemon then --TODO check loop
+				if Memory.value("menu", "selection_mode") == 1 then
+					Menu.select(nidoranIndex, true)
+				else
+					Menu.select(0, true)
+				end
+			else
+				Input.press("B")
+			end
+		end
+	end,
+
+	swapHornAttack = function()
+		if Pokemon.battleMove("horn_attack") == 1 then
+			return true
+		end
+		Battle.swapMove(1, 3)
+	end,
 
 	dodgePalletBoy = function()
 		return Strategies.dodgeUp(0x0223, 14, 14, 15, 7)
+	end,
+
+	evolveNidorino = function()
+		if Pokemon.inParty("nidorino") then
+			Bridge.caught("nidorino")
+			return true
+		end
+		if Battle.isActive() then
+			status.tries = 0
+			status.canProgress = true
+			if Memory.double("battle", "opponent_hp") == 0 then
+				Input.press("A")
+			else
+				Battle.automate()
+			end
+		elseif status.tries > 3600 then
+			print("Broke from Nidorino on tries")
+			return true
+		else
+			if status.canProgress then
+				status.tries = status.tries + 1
+			end
+			Input.press("A")
+		end
+	end,
+
+	catchFlierBackup = function()
+		if Strategies.initialize() then
+			Control.canDie(true)
+		end
+		if not Control.canCatch() then
+			return true
+		end
+		local caught = Pokemon.inParty("pidgey", "spearow")
+		if Battle.isActive() then
+			if Memory.double("battle", "our_hp") == 0 then
+				if Pokemon.info("squirtle", "hp") == 0 then
+					Control.canDie(false)
+				elseif Utils.onPokemonSelect(Memory.value("battle", "menu")) then
+					Menu.select(Pokemon.indexOf("squirtle"), true)
+				else
+					Input.press("A")
+				end
+			else
+				Battle.handle()
+			end
+		else
+			local birdPath
+			local px, py = Player.position()
+			if caught then
+				if px > 33 then
+					return true
+				end
+				local startY = 9
+				if px > 28 then
+					startY = py
+				end
+				birdPath = {{32,startY}, {32,11}, {34,11}}
+			elseif px == 37 then
+				if py == 10 then
+					py = 11
+				else
+					py = 10
+				end
+				Walk.step(px, py)
+			else
+				birdPath = {{32,10}, {32,11}, {34,11}, {34,10}, {37,10}}
+			end
+			if birdPath then
+				Walk.custom(birdPath)
+			end
+		end
+	end,
+
+	startMtMoon = function()
+		Control.moonEncounters = 0
+		Control.canDie(false)
+		return true
+	end,
+
+	evolveNidoking = function(data)
+		if Battle.handleWild() then
+			if Strategies.initialize() then
+				if data.paras and not Pokemon.inParty("paras") then
+					return true
+				end
+				if data.exp and Pokemon.getExp() > data.exp then
+					return true
+				end
+				if not Inventory.contains("moon_stone") then
+					return true
+				end
+			end
+			if not Inventory.contains("moon_stone") then
+				if not status.canProgress then
+					Bridge.caught("nidoking")
+					status.canProgress = true
+				end
+				if Menu.close() then
+					return true
+				end
+			elseif not Inventory.use("moon_stone") then
+				Menu.pause()
+			end
+		end
 	end,
 
 	helix = function()
@@ -635,6 +817,40 @@ Strategies.functions = {
 			end
 			Player.interact("Up")
 		end
+	end,
+
+	reportMtMoon = function()
+		if Battle.pp("horn_attack") == 0 then
+			print("ERR: Ran out of Horn Attacks")
+		end
+		if Control.moonEncounters then
+			local catchPokemon = yellow and "sandshrew" or "paras"
+			local capsName = Utils.capitalize(catchPokemon)
+			local parasStatus
+			local conjunction = "but"
+			local goodEncounters = Control.moonEncounters < 10
+			local catchDescription
+			if Pokemon.inParty(catchPokemon) then
+				catchDescription = catchPokemon
+				if goodEncounters then
+					conjunction = "and"
+				end
+				parasStatus = "we found a "..capsName.."!"
+			else
+				catchDescription = "no_"..catchPokemon
+				if not goodEncounters then
+					conjunction = "and"
+				end
+				parasStatus = "we didn't find a "..capsName.." :("
+			end
+			Bridge.caught(catchDescription)
+			Bridge.chat(Control.moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
+			Control.moonEncounters = nil
+		end
+
+		local timeLimit = Strategies.getTimeRequirement("mt_moon")
+		Strategies.resetTime(timeLimit, "complete Mt. Moon", true)
+		return true
 	end,
 
 	dodgeCerulean = function()
