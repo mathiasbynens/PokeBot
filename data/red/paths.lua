@@ -158,7 +158,7 @@ local Paths = {
 	-- Departure
 	{94, {14,2}},
 	-- To Surge
-	{5, {18,29}, {18,26}, {30,26}, {30,14}, {15,14}, {15,17}, {s="potion",hp=20,yolo=5,forced="potion",chain=true}, {s="potion",hp=8,yolo=5,chain=true}, {s="teach",move="cut",poke="oddish",alt="paras",chain=true}, {s="skill",move="cut",done=0x0D4D}, {15,20}, {12,20}, {12,19}},
+	{5, {18,29}, {18,26}, {30,26}, {30,14}, {15,14}, {15,17}, {s="potionBeforeSurge"}, {s="teach",move="cut",poke="oddish",alt="paras",chain=true}, {s="skill",move="cut",done=0x0D4D}, {15,20}, {12,20}, {12,19}},
 	-- Trashcans
 	{92, {4,17}, {c="a",a="Surge's Gym"}, {4,16}, {2,16}, {2,11}, {s="trashcans"}, {4,6}, {4,3}, {5,3}, {5,2}, {s="interact",dir="Up"}, {s="fightSurge"}, {s="split"}, {4,2}, {4,13}, {5,13}, {5,18}},
 

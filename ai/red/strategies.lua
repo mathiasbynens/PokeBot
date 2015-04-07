@@ -1098,6 +1098,23 @@ strategyFunctions.trashcans = function()
 	end
 end
 
+strategyFunctions.potionBeforeSurge = function()
+	local yoloHp = 5
+	if Strategies.initialize() then
+		if Control.yolo then
+			local curr_hp = Combat.hp()
+			if curr_hp > yoloHp and curr_hp <= 21 then
+				Bridge.chat("Attempting to keep red-bar through Surge", curr_hp)
+				return true
+			end
+		end
+	end
+	if Inventory.contains("potion") then
+		return Strategies.functions.potion({hp=20, yolo=yoloHp, forced="potion", chain=true})
+	end
+	return Strategies.functions.potion({hp=8, yolo=yoloHp, chain=true})
+end
+
 strategyFunctions.fightSurge = function()
 	if Battle.isActive() then
 		status.canProgress = true
