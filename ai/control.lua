@@ -24,6 +24,7 @@ local yellow = YELLOW
 
 Control.areaName = "Unknown"
 Control.moonEncounters = nil
+Control.getMoonExp = true
 Control.yolo = false
 
 local function withinOneKill(forExp)
@@ -81,25 +82,43 @@ local controlFunctions = {
 		shouldFight = {{name="rattata"}, {name="pidgey"}, {name="nidoran"}, {name="nidoranf",lvl={2}}}
 	end,
 
+	startMtMoon = function()
+		Control.moonEncounters = 0
+		Control.canDie(false)
+		Control.getMoonExp = true
+		if not yellow then
+			local nidoStats = Strategies.stats.nidoran
+			if nidoStats.attack == 16 and not nidoStats.level4 then
+				Control.getMoonExp = false
+			end
+		end
+	end,
+
 	moon1Exp = function()
-		minExp = 2704
-		shouldFight = {{name="zubat",lvl={9,10}}}
-		oneHits = true
+		if Control.getMoonExp then
+			minExp = 2704
+			shouldFight = {{name="zubat",lvl={9,10}}}
+			oneHits = true
+		end
 	end,
 
 	moon2Exp = function()
-		minExp = 3011
-		shouldFight = {{name="zubat"}, {name="paras"}}
-		oneHits = not withinOneKill(minExp)
+		if Control.getMoonExp then
+			minExp = 3011
+			shouldFight = {{name="zubat"}, {name="paras"}}
+			oneHits = not withinOneKill(minExp)
+		end
 	end,
 
 	moon3Exp = function()
-		local expTotal = Pokemon.getExp()
-		minExp = 3798
-		if withinOneKill(minExp) then
-			shouldFight = {{name="zubat"}, {name="geodude",lvl={9}}, {name="paras"}} --TODO geodude?
-		else
-			shouldFight = nil
+		if Control.getMoonExp then
+			local expTotal = Pokemon.getExp()
+			minExp = 3798
+			if withinOneKill(minExp) then
+				shouldFight = {{name="zubat"}, {name="paras"}}
+			else
+				shouldFight = nil
+			end
 		end
 	end,
 

@@ -991,7 +991,7 @@ strategyFunctions.shopVermilionMart = function()
 		Strategies.setYolo("vermilion")
 	end
 	local buyArray, sellArray
-	if not Inventory.contains("pokeball") or (not Control.yolo and nidoAttack < 53) then
+	if not Inventory.contains("pokeball") or (not Control.yolo and stats.nidoran.attack < 53) then
 		sellArray = {{name="pokeball"}, {name="antidote"}, {name="tm34"}, {name="nugget"}}
 		buyArray = {{name="super_potion",index=1,amount=3}, {name="paralyze_heal",index=4,amount=2}, {name="repel",index=5,amount=3}}
 	else
@@ -2126,7 +2126,7 @@ strategyFunctions.blue = function()
 	if Battle.isActive() then
 		if not status.canProgress then
 			status.canProgress = true
-			if nidoSpecial >= 45 and Pokemon.index(0, "speed") >= 52 and Inventory.contains("x_special") then
+			if stats.nidoran.special >= 45 and stats.nidoran.speed >= 52 and Inventory.contains("x_special") then
 				status.tempDir = "x_special"
 			else
 				status.tempDir = "x_speed"
@@ -2228,11 +2228,30 @@ end
 function Strategies.initGame(midGame)
 	if not STREAMING_MODE then
 		-- Strategies.setYolo("bulbasaur")
-		nidoAttack = 55
-		nidoSpeed = 50
-		nidoSpecial = 45
+		stats.squirtle = {
+			attack = 11,
+			defense = 11,
+			speed = 11,
+			special = 11,
+		}
+		if Pokemon.inParty("nidoking") then
+			stats.nidoran = {
+				attack = 55,
+				defense = 45,
+				speed = 50,
+				special = 45,
+			}
+		else
+			stats.nidoran = {
+				attack = 16,
+				defense = 12,
+				speed = 15,
+				special = 13,
+				level4 = true,
+			}
+		end
 		riskGiovanni = true
-		print(nidoAttack.." x "..nidoSpeed.." "..nidoSpecial)
+		print(stats.nidoran.attack.." x "..stats.nidoran.speed.." "..stats.nidoran.special)
 	end
 end
 
@@ -2243,6 +2262,7 @@ end
 function Strategies.resetGame()
 	maxEtherSkip = false
 	status = Strategies.status
+	stats = Strategies.stats
 end
 
 return Strategies

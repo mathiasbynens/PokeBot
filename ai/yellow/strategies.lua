@@ -19,6 +19,9 @@ local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
 local status = Strategies.status
+local stats = Strategies.stats
+
+local strategyFunctions = Strategies.functions
 
 -- TIME CONSTRAINTS
 
@@ -33,6 +36,22 @@ local strategyFunctions = Strategies.functions
 function Strategies.initGame(midGame)
 	if not STREAMING_MODE then
 		-- Strategies.setYolo("")
+		if Pokemon.inParty("nidoking") then
+			stats.nidoran = {
+				attack = 55,
+				defense = 45,
+				speed = 50,
+				special = 45,
+			}
+		else
+			stats.nidoran = {
+				attack = 16,
+				defense = 12,
+				speed = 15,
+				special = 13,
+				level4 = true,
+			}
+		end
 	end
 end
 
@@ -42,6 +61,7 @@ end
 
 function Strategies.resetGame()
 	status = Strategies.status
+	stats = Strategies.stats
 end
 
 return Strategies

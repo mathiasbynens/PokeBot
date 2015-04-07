@@ -779,26 +779,28 @@ Strategies.functions = {
 		end
 	end,
 
-	startMtMoon = function()
-		Control.moonEncounters = 0
-		Control.canDie(false)
-		return true
-	end,
-
 	evolveNidoking = function(data)
 		if Battle.handleWild() then
+			local usedMoonStone = not Inventory.contains("moon_stone")
 			if Strategies.initialize() then
-				if data.paras and not Pokemon.inParty("paras") then
+				if usedMoonStone then
 					return true
 				end
-				if data.exp and Pokemon.getExp() > data.exp then
-					return true
-				end
-				if not Inventory.contains("moon_stone") then
-					return true
+				if data.early then
+					if not Control.getMoonExp then
+						return true
+					end
+					if data.poke then
+						if stats.nidoran.attack > 15 or not Pokemon.inParty(data.poke) then
+							return true
+						end
+					end
+					if data.exp and Pokemon.getExp() > data.exp then
+						return true
+					end
 				end
 			end
-			if not Inventory.contains("moon_stone") then
+			if usedMoonStone then
 				if not status.canProgress then
 					Bridge.caught("nidoking")
 					status.canProgress = true

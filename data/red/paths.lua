@@ -1,4 +1,5 @@
 local Paths = {
+
 	-- Red's room
 	{38, {3,6}, {5,6}, {5,1}, {7,1}},
 	-- Red's house
@@ -78,11 +79,11 @@ local Paths = {
 -- 4: ROUTE 3
 
 	-- Mt. Moon F1
-	{59, {14,35}, {s="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {35,31}, {35,23}, {s="interact",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
+	{59, {14,35}, {c="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {35,31}, {35,23}, {s="interact",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
 	-- Mt. Moon B2
 	{60, {5,5}, {5,17}, {21,17}},
 	-- Mt. Moon B3
-	{61, {21,17}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="evolveNidoking"}, {c="encounters",limit=nil}, {10,17}, {12,17}, {c="moon2Exp"}, {12,9}, {s="potion",hp=7}, {s="interact",dir="Up"}, {13,9}, {c="moon3Exp"}, {13,7}, {s="helix"}, {13,5}, {12,5}, {12,4}, {3,4}, {3,7}, {5,7}},
+	{61, {21,17}, {22,17}, {s="evolveNidoking",early=true,poke="paras"}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="evolveNidoking"}, {c="encounters",limit=nil}, {10,17}, {12,17}, {c="moon2Exp"}, {12,9}, {s="potion",hp=7}, {s="interact",dir="Up"}, {13,9}, {c="moon3Exp"}, {13,7}, {s="helix"}, {13,5}, {12,5}, {12,4}, {3,4}, {3,7}, {5,7}},
 	-- Mt. Moon escape
 	{60, {23,3}, {27,3}},
 
@@ -445,6 +446,7 @@ local Paths = {
 	{120, {4,3}, {c="a",a="Blue"}, {s="blue"}, {3,0}},
 	-- Champion
 	{118, {4,2}, {s="champion"}}
+
 }
 
 return Paths
