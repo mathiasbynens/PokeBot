@@ -20,6 +20,8 @@ local shouldCatch, attackIdx
 local extraEncounter, maxEncounters
 local battleYolo
 
+local yellow = YELLOW
+
 Control.areaName = "Unknown"
 Control.moonEncounters = nil
 Control.yolo = false
@@ -117,6 +119,22 @@ local controlFunctions = {
 		shouldCatch = {{name="oddish",alt="paras",hp=26}}
 	end,
 
+	-- YELLOW
+
+	catchNidoranYellow = function()
+		shouldCatch = {{name="nidoran",lvl={6}}}
+	end,
+
+	moonExpYellow = function()
+		minExp = 2704 --TODO
+		shouldFight = {{name="geodude"}, {name="clefairy",lvl={12,13}}}
+		oneHits = true
+	end,
+
+	catchSandshrew = function()
+		shouldCatch = {{name="sandshrew"}}
+	end,
+
 }
 
 -- COMBAT
@@ -166,7 +184,7 @@ function Control.canCatch(partySize)
 		partySize = Memory.value("player", "party_size")
 	end
 	local pokeballs = Inventory.count("pokeball")
-	local minimumCount = 4 - partySize
+	local minimumCount = (yellow and 3 or 4) - partySize
 	if pokeballs < minimumCount then
 		Strategies.reset("Not enough PokeBalls", pokeballs)
 		return false
