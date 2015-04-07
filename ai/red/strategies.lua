@@ -34,7 +34,7 @@ Strategies.timeRequirements = {
 	end,
 
 	nidoran = function()
-		local timeLimit = 6.33
+		local timeLimit = 6.4
 		if Pokemon.inParty("spearow") then
 			timeLimit = timeLimit + 0.67
 		end
@@ -42,11 +42,15 @@ Strategies.timeRequirements = {
 	end,
 
 	brock = function()
-		return 11
+		local timeLimit = 11
+		if Pokemon.inParty("spearow") then
+			timeLimit = timeLimit + 0.5
+		end
+		return timeLimit
 	end,
 
 	mt_moon = function()
-		local timeLimit = 27
+		local timeLimit = 26.75
 		if nidoAttack > 15 and nidoSpeed > 14 then
 			timeLimit = timeLimit + 0.25
 		end
@@ -294,7 +298,7 @@ strategyFunctions.catchNidoran = function()
 				Bridge.caught("nidoran")
 				status.canProgress = true
 				if not gotExperience then
-					Bridge.chat("Waiting in the grass for a suitable ecounter to get experience", Pokemon.getExp())
+					Bridge.chat("Waiting in the grass for a suitable encounter for experience", Pokemon.getExp())
 				end
 			end
 			if gotExperience then
@@ -379,7 +383,7 @@ strategyFunctions.grabForestPotion = function()
 				if Menu.pause() then
 					Inventory.use("potion", "squirtle")
 				end
-			else
+			elseif Menu.close() then
 				return true
 			end
 		elseif not status.tries then
@@ -535,6 +539,10 @@ strategyFunctions.fightBrock = function()
 								exclaim = "! Kreygasm"
 							else
 								superlative = " perfect"
+							end
+							local timeLimit = Strategies.getTimeRequirement("brock")
+							if not Strategies.overMinute(timeLimit) then
+								Strategies.tweetProgress("On pace after Brock with a great Nidoran")
 							end
 						elseif att == 16 and spd == 15 then
 							if statDiff == 1 then
