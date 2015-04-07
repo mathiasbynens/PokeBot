@@ -17,6 +17,7 @@ local Utils = require "util.utils"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
+local yellow = YELLOW
 local splitNumber, splitTime = 0, 0
 local resetting
 local strategyFunctions

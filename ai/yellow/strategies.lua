@@ -1,22 +1,22 @@
 local Strategies = require "ai.strategies"
 
-local combat = require "ai.combat"
-local control = require "ai.control"
+local Combat = require "ai.combat"
+local Control = require "ai.control"
 
-local battle = require "action.battle"
-local shop = require "action.shop"
-local textbox = require "action.textbox"
-local walk = require "action.walk"
+local Battle = require "action.battle"
+local Shop = require "action.shop"
+local Textbox = require "action.textbox"
+local Walk = require "action.walk"
 
-local bridge = require "util.bridge"
-local input = require "util.input"
-local memory = require "util.memory"
-local menu = require "util.menu"
-local player = require "util.player"
-local utils = require "util.utils"
+local Bridge = require "util.bridge"
+local Input = require "util.input"
+local Memory = require "util.memory"
+local Menu = require "util.menu"
+local Player = require "util.player"
+local Utils = require "util.utils"
 
-local inventory = require "storage.inventory"
-local pokemon = require "storage.pokemon"
+local Inventory = require "storage.inventory"
+local Pokemon = require "storage.pokemon"
 
 local status = Strategies.status
 

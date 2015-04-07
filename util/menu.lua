@@ -7,6 +7,8 @@ local yellow = GAME_NAME == "yellow"
 
 local sliding = false
 
+Menu.pokemon = yellow and 51 or 103
+
 -- Private functions
 
 local function getRow(menuType, scrolls)

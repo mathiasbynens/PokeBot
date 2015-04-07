@@ -102,7 +102,7 @@ function Inventory.teach(item, poke, replaceIdx, altPoke)
 		elseif column == 14 then
 			Menu.select(0, true)
 		end
-	elseif main == 103 then
+	elseif main == Menu.pokemon then
 		Input.press("B")
 	elseif main == 64 or main == 96 or main == 192 then
 		if column == 5 then
@@ -189,7 +189,7 @@ function Inventory.use(item, poke, midfight)
 		if column == 14 and Memory.value("battle", "menu") == 95 then
 			Input.press("B")
 		end
-	elseif main == 103 then
+	elseif main == Menu.pokemon then
 		Input.press("B")
 	else
 		return false

@@ -2,6 +2,8 @@ local Utils = {}
 
 local Memory = require "util.memory"
 
+local yellow = YELLOW
+
 -- GENERAL
 
 function Utils.dist(x1, y1, x2, y2)
@@ -61,6 +63,9 @@ function Utils.ingame()
 end
 
 function Utils.onPokemonSelect(battleMenu)
+	if yellow then
+		return battleMenu == 27
+	end
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
 end
 
