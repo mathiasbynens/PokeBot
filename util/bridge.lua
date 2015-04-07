@@ -51,9 +51,11 @@ function Bridge.init()
 	end
 end
 
-function Bridge.tweet(message) -- Two of the same tweet in a row will only send one
-	print("tweet::"..message)
-	return send("tweet", message)
+function Bridge.tweet(message)
+	if INTERNAL and STREAMING_MODE then
+		print("tweet::"..message)
+		return send("tweet", message)
+	end
 end
 
 function Bridge.pollForName()

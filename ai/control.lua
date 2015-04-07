@@ -24,6 +24,10 @@ Control.areaName = "Unknown"
 Control.moonEncounters = nil
 Control.yolo = false
 
+local function withinOneKill(forExp)
+	return Pokemon.getExp() + 80 > forExp
+end
+
 local controlFunctions = {
 
 	a = function(data)
@@ -84,11 +88,17 @@ local controlFunctions = {
 	moon2Exp = function()
 		minExp = 3011
 		shouldFight = {{name="zubat"}, {name="paras"}}
+		oneHits = not withinOneKill(minExp)
 	end,
 
 	moon3Exp = function()
+		local expTotal = Pokemon.getExp()
 		minExp = 3798
-		shouldFight = {{name="zubat"}, {name="geodude",lvl={9}}, {name="paras"}} --TODO geodude?
+		if withinOneKill(minExp) then
+			shouldFight = {{name="zubat"}, {name="geodude",lvl={9}}, {name="paras"}} --TODO geodude?
+		else
+			shouldFight = nil
+		end
 	end,
 
 	catchNidoran = function()

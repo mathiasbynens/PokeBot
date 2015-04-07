@@ -4,6 +4,7 @@ local Movelist = require "data.movelist"
 local Opponents = require "data.opponents"
 
 local Memory = require "util.memory"
+local Pokemon = require "storage.pokemon"
 
 local damageMultiplier = { -- http://bulbapedia.bulbagarden.net/wiki/Type_chart#Generation_I
 	normal   = {normal=1.0, fighting=1.0, flying=1.0, poison=1.0, ground=1.0, rock=0.5, bug=1.0, ghost=0.0, fire=1.0, water=1.0, grass=1.0, electric=1.0, psychic=1.0, ice=1.0, dragon=1.0, },
@@ -294,6 +295,20 @@ local function isConfused()
 	return Memory.raw(0x106B) > 0
 end
 Combat.isConfused = isConfused
+
+-- HP
+
+function Combat.hp()
+	return Pokemon.index(0, "hp")
+end
+
+function Combat.redHP()
+	return math.ceil(Pokemon.index(0, "max_hp") * 0.2)
+end
+
+function Combat.inRedBar()
+	return Combat.hp() <= Combat.redHP()
+end
 
 -- Combat AI
 

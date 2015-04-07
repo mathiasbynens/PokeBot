@@ -159,10 +159,6 @@ function Strategies.opponentDamaged(factor)
 	return Memory.double("battle", "opponent_hp") * factor < Memory.double("battle", "opponent_max_hp")
 end
 
-function Strategies.redHP()
-	return math.ceil(Pokemon.index(0, "max_hp") * 0.2)
-end
-
 function Strategies.buffTo(buff, defLevel)
 	if Battle.isActive() then
 		status.canProgress = true
@@ -710,6 +706,7 @@ function Strategies.softReset()
 	Strategies.status = status
 	splitNumber, splitTime = 0, 0
 	resetting = nil
+	Strategies.deepRun = false
 	Strategies.resetGame()
 end
 

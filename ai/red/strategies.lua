@@ -277,12 +277,8 @@ strategyFunctions.catchNidoran = function()
 			else
 				Input.cancel()
 			end
-		elseif not Control.shouldCatch() then
-			if Control.shouldFight() then
-				Battle.fight()
-			else
-				Battle.run()
-			end
+		else
+			Battle.handle()
 		end
 	else
 		local noDSum
@@ -368,11 +364,11 @@ strategyFunctions.grabForestPotion = function()
 	if Battle.handleWild() then
 		local potionCount = Inventory.count("potion")
 		if Strategies.initialize() then
-			status.tempDir = potionCount
+			status.tries = potionCount
 		end
 		if potionCount > 0 then
-			if status.tempDir and potionCount > status.tempDir then
-				status.tempDir = nil
+			if status.tries and potionCount > status.tries then
+				status.tries = nil
 			end
 			local healthNeeded = (Pokemon.info("spearow", "level") == 3) and 8 or 15
 			if Pokemon.info("squirtle", "hp") <= healthNeeded then
@@ -382,7 +378,7 @@ strategyFunctions.grabForestPotion = function()
 			else
 				return true
 			end
-		elseif not status.tempDir then
+		elseif not status.tries then
 			return true
 		elseif Menu.close() then
 			Player.interact("Up")
@@ -743,8 +739,8 @@ strategyFunctions.catchFlierBackup = function()
 			else
 				Input.press("A")
 			end
-		elseif not Control.shouldCatch() then
-			Battle.run()
+		else
+			Battle.handle()
 		end
 	else
 		local birdPath
@@ -941,7 +937,7 @@ strategyFunctions.redbarMankey = function()
 	if not Strategies.setYolo("mankey") then
 		return true
 	end
-	local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
+	local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
 	if curr_hp <= red_hp then
 		return true
 	end
@@ -1092,9 +1088,7 @@ strategyFunctions.catchOddish = function()
 			if status.tries == 0 and py == 31 then
 				status.tries = 1
 			end
-			if not Control.shouldCatch() then
-				Battle.run()
-			end
+			Battle.handle()
 		end
 	elseif status.tries == 1 and py == 31 then
 		Player.interact("Left")
@@ -1266,7 +1260,7 @@ strategyFunctions.fightSurge = function()
 			if not enemyTurns or enemyTurns > 2 then
 				forced = "bubblebeam"
 			elseif enemyTurns == 2 and not Strategies.opponentDamaged() then
-				local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
+				local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
 				local afterHit = curr_hp - 20
 				if afterHit > 5 and afterHit <= red_hp then
 					forced = "bubblebeam"
@@ -1329,7 +1323,7 @@ strategyFunctions.redbarCubone = function()
 		if Pokemon.isOpponent("cubone") then
 			local enemyMove, enemyTurns = Combat.enemyAttack()
 			if enemyTurns then
-				local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
+				local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
 				local clubDmg = enemyMove.damage
 				local afterHit = curr_hp - clubDmg
 				red_hp = red_hp - 2
@@ -1654,7 +1648,7 @@ strategyFunctions.silphRival = function()
 		local opponentName = Battle.opponent()
 		if opponentName == "gyarados" then
 			readyToAttack = true
-			local hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
+			local hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
 			if hp > gyaradosDamage * 0.98 and hp - gyaradosDamage * 0.975 < red_hp then --TODO
 				if Strategies.prepare("x_special") then
 					forced = "ice_beam"
@@ -1735,7 +1729,7 @@ end
 --	9: SILPH CO.
 
 strategyFunctions.potionBeforeHypno = function()
-	local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
+	local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
 	local healthUnderRedBar = red_hp - curr_hp
 	local yoloHP = Combat.healthFor("HypnoHeadbutt") * 0.9
 	local useRareCandy = Inventory.count("rare_candy") > 2
@@ -1858,7 +1852,7 @@ strategyFunctions.fightErika = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		local forced
-		local curr_hp, red_hp = Pokemon.index(0, "hp"), Strategies.redHP()
+		local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
 		local razorDamage = 34
 		if curr_hp > razorDamage and curr_hp - razorDamage < red_hp then
 			if Strategies.opponentDamaged() then
@@ -2176,7 +2170,7 @@ strategyFunctions.bruno = function()
 		local forced
 		if Pokemon.isOpponent("onix") then
 			forced = "ice_beam"
-			-- local curr_hp, red_hp = Pokemon.info("nidoking", "hp"), Strategies.redHP()
+			-- local curr_hp, red_hp = Pokemon.info("nidoking", "hp"), Combat.redHP()
 			-- if curr_hp > red_hp then
 			-- 	local enemyMove, enemyTurns = Combat.enemyAttack()
 			-- 	if enemyTurns and enemyTurns > 1 then

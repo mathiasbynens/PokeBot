@@ -125,7 +125,7 @@ function Battle.isTrainer()
 		return true
 	end
 	if battleType == 1 then
-		Battle.run()
+		Battle.handle()
 	else
 		Textbox.handle()
 	end
@@ -154,11 +154,21 @@ function Battle.run()
 	end
 end
 
+function Battle.handle()
+	if not Control.shouldCatch() then
+		if Control.shouldFight() then
+			Battle.fight()
+		else
+			Battle.run()
+		end
+	end
+end
+
 function Battle.handleWild()
 	if Memory.value("game", "battle") ~= 1 then
 		return true
 	end
-	Battle.run()
+	Battle.handle()
 end
 
 function Battle.fight(move, isNumber, skipBuffs)
