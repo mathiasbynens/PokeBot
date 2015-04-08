@@ -44,6 +44,9 @@ local memoryNames = {
 		frames = 0x1A45,
 		battle = 0x1057,
 		textbox = 0x0FC4,
+		time_hours = 0x1A41,
+		time_minutes = 0x1A43,
+		time_seconds = 0x1A44,
 	},
 	shop = {
 		transaction_amount = 0x0F96,
