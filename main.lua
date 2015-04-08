@@ -140,7 +140,7 @@ while true do
 						resetAll()
 					end
 				else
-					Settings.startNewAdventure()
+					Settings.startNewAdventure(START_WAIT)
 				end
 			else
 				if not running then
@@ -174,12 +174,12 @@ while true do
 			else
 				inBattle = false
 			end
-			local currentHP = Pokemon.index(0, "hp")
-			-- if currentHP ~= lastHP then
-			-- 	Bridge.hp(currentHP, Pokemon.index(0, "max_hp"))
-			-- 	lastHP = currentHP
+			local curr_hp = Pokemon.index(0, "hp")
+			-- if curr_hp ~= lastHP then
+			-- 	Bridge.hp(curr_hp, Pokemon.index(0, "max_hp"))
+			-- 	lastHP = curr_hp
 			-- end
-			if currentHP == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
+			if curr_hp == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
 				Strategies.death(currentMap)
 			elseif Walk.strategy then
 				if Strategies.execute(Walk.strategy) then

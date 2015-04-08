@@ -2,7 +2,7 @@ local Utils = {}
 
 local Memory = require "util.memory"
 
-local EMP = 2
+local EMP = 1
 
 local yellow = YELLOW
 

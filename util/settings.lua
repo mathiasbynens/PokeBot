@@ -2,8 +2,12 @@ local Settings = {}
 
 local Textbox = require "action.textbox"
 
+local Bridge = require "util.bridge"
+local Input = require "util.input"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
+
+local START_WAIT = 99
 
 local yellow = YELLOW
 
@@ -53,7 +57,7 @@ function Settings.set(...)
 	return Menu.cancel(settings_menu)
 end
 
-function Settings.startNewAdventure()
+function Settings.startNewAdventure(startWait)
 	local startMenu, withBattleStyle
 	if yellow then
 		startMenu = Memory.raw(0x0F95) == 0
@@ -65,7 +69,7 @@ function Settings.startNewAdventure()
 		if Settings.set("text_speed", "battle_animation", withBattleStyle) then
 			Menu.select(0)
 		end
-	elseif math.random(0, START_WAIT) == 0 then
+	elseif math.random(0, startWait) == 0 then
 		Input.press("Start")
 	end
 end

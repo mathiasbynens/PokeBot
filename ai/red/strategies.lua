@@ -334,7 +334,7 @@ strategyFunctions.catchNidoran = function()
 				Bridge.caught("nidoran")
 				status.canProgress = true
 				if not gotExperience then
-					Bridge.chat("Waiting in the grass for a suitable encounter for experience", Pokemon.getExp())
+					Bridge.chat("Waiting in the grass for a suitable encounter for experience.", Pokemon.getExp())
 				end
 			end
 			if gotExperience then
@@ -597,8 +597,7 @@ strategyFunctions.fightBrock = function()
 							superlative = " min stat"
 							exclaim = "."
 						end
-						nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3").."."
-						Bridge.chat(nStatus)
+						Bridge.chat("Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3")..".")
 						tweetBrock(statDiff)
 					else
 						status.tries = status.tries + 1
@@ -813,7 +812,7 @@ strategyFunctions.redbarMankey = function()
 	if not Strategies.setYolo("mankey") then
 		return true
 	end
-	local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
+	local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 	if curr_hp <= red_hp then
 		return true
 	end
@@ -839,7 +838,7 @@ strategyFunctions.redbarMankey = function()
 		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 3 then -- RISK
 			return true
 		end
-		Bridge.chat("Using Poison Sting to attempt to red-bar off Mankey")
+		Bridge.chat("Using Poison Sting to attempt to red-bar off Mankey...")
 	end
 end
 
@@ -870,7 +869,7 @@ end
 
 strategyFunctions.potionBeforeMisty = function()
 	local healAmount = 70
-	local hasEnoughAttack = stats.nidoran.attack >= (yolo and 52 or 53)
+	local hasEnoughAttack = stats.nidoran.attack >= (yolo and 53 or 54)
 	local canSpeedTie = stats.nidoran.speed > 50
 	if Control.yolo then
 		if hasEnoughAttack and hasEnoughSpeed then
@@ -890,9 +889,9 @@ strategyFunctions.potionBeforeMisty = function()
 		local potionCount = Inventory.count("potion")
 		local needsToHeal = healAmount - Pokemon.index(0, "hp")
 		if potionCount * 20 < needsToHeal then
-			message = "Ran too low on potions to heal enough before Misty"
+			message = "Ran too low on potions to heal enough before Misty D:"
 		elseif healAmount < 60 then
-			message = "Limiting heals to attempt to get closer to red-bar off Misty"
+			message = "Limiting heals to attempt to get closer to red-bar off Misty..."
 		end
 		if message then
 			Bridge.chat(message, potionCount)
@@ -1134,7 +1133,7 @@ strategyFunctions.potionBeforeSurge = function()
 		if Control.yolo then
 			local curr_hp = Combat.hp()
 			if curr_hp > yoloHp and curr_hp <= 21 then
-				Bridge.chat("Attempting to keep red-bar through Surge", curr_hp)
+				Bridge.chat("Attempting to keep red-bar through Surge.", curr_hp)
 				return true
 			end
 		end
@@ -1155,7 +1154,7 @@ strategyFunctions.fightSurge = function()
 			if not enemyTurns or enemyTurns > 2 then
 				forced = "bubblebeam"
 			elseif enemyTurns == 2 and not Strategies.opponentDamaged() then
-				local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
+				local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 				local afterHit = curr_hp - 20
 				if afterHit > 5 and afterHit <= red_hp then
 					forced = "bubblebeam"
@@ -1218,7 +1217,7 @@ strategyFunctions.redbarCubone = function()
 		if Pokemon.isOpponent("cubone") then
 			local enemyMove, enemyTurns = Combat.enemyAttack()
 			if enemyTurns then
-				local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
+				local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 				local clubDmg = enemyMove.damage
 				local afterHit = curr_hp - clubDmg
 				red_hp = red_hp - 2
@@ -1231,7 +1230,7 @@ strategyFunctions.redbarCubone = function()
 					end
 				end
 				if forced and Strategies.initialize() then
-					Bridge.chat("Using Thunderbolt to attempt to redbar off Cubone")
+					Bridge.chat("Using Thunderbolt to attempt to redbar off Cubone.")
 				end
 			end
 		end
@@ -1642,7 +1641,7 @@ end
 --	9: SILPH CO.
 
 strategyFunctions.potionBeforeHypno = function()
-	local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
+	local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 	local healthUnderRedBar = red_hp - curr_hp
 	local yoloHP = Combat.healthFor("HypnoHeadbutt") * 0.9
 	local useRareCandy = Inventory.count("rare_candy") > 2
@@ -1780,7 +1779,7 @@ strategyFunctions.fightErika = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		local forced
-		local curr_hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
+		local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 		local razorDamage = 34
 		if curr_hp > razorDamage and curr_hp - razorDamage < red_hp then
 			if Strategies.opponentDamaged() then
@@ -1950,7 +1949,7 @@ strategyFunctions.ether = function(data)
 				if maxEtherSkip then
 					return true
 				end
-				Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center")
+				Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center.")
 			end
 			status.item = Inventory.contains("ether", "max_ether")
 			if not status.item then
@@ -1965,7 +1964,8 @@ strategyFunctions.ether = function(data)
 				Input.cancel()
 			end
 		elseif Menu.pause() then
-			Inventory.use(status.tempDir, "nidoking")
+			Inventory.use(status.item, "nidoking")
+			status.menuOpened = true
 		end
 	end
 end
@@ -2254,6 +2254,11 @@ strategyFunctions.blue = function()
 				if Pokemon.isOpponent("alakazam") then
 					if status.xItem == "x_speed" then
 						forced = "earthquake"
+					else
+						local ours, enemy = activePokemon()
+						if ours.speed <= enemy.speed then
+							forced = "earthquake"
+						end
 					end
 				elseif Pokemon.isOpponent("rhydon") then
 					if status.xItem == "x_special" then
@@ -2273,7 +2278,7 @@ end
 strategyFunctions.champion = function()
 	if status.canProgress then
 		if status.tries > 2000 then
-			return Strategies.hardReset("Back to the grind! You can follow on Twitter to see when we're on our next good run https://twitter.com/thepokebot")
+			return Strategies.hardReset("Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
 		end
 		if status.tries == 0 then
 			Strategies.tweetProgress("Beat Pokemon Red in "..status.canProgress.."!", true)

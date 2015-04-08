@@ -16,11 +16,11 @@ function Paint.draw(currentMap)
 	drawText(0, 0, elapsedTime())
 
 	if Memory.value("battle", "our_id") > 0 then
-		local hp = Pokemon.index(0, "hp")
+		local curr_hp = Pokemon.index(0, "hp")
 		local hpStatus
-		if hp == 0 then
+		if curr_hp == 0 then
 			hpStatus = "DEAD"
-		elseif hp <= math.ceil(Pokemon.index(0, "max_hp") * 0.2) then
+		elseif curr_hp <= math.ceil(Pokemon.index(0, "max_hp") * 0.2) then
 			hpStatus = "RED"
 		end
 		if hpStatus then
