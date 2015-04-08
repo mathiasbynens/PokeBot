@@ -2,6 +2,7 @@ local Combat = {}
 
 local Movelist = require "data.movelist"
 local Opponents = require "data.opponents"
+local Utils = require "util.utils"
 
 local Memory = require "util.memory"
 local Pokemon = require "storage.pokemon"
@@ -241,7 +242,7 @@ local function getBestMove(ours, enemy, draw)
 		return
 	end
 	if draw and bm.midx then
-		gui.text(0, 35, ''..bm.midx.." "..bm.name)
+		Utils.drawText(0, 35, ''..bm.midx.." "..bm.name)
 	end
 	return bm, bestUs, bestEnemy
 end
@@ -337,8 +338,8 @@ function Combat.inKillRange(draw)
 		return false
 	end
 	if draw then
-		gui.text(0, 21, ours.speed.." "..enemy.speed)
-		gui.text(0, 28, turnsToDie.." "..ours.hp.." | "..turnsToKill.." "..enemy.hp)
+		Utils.drawText(0, 21, ours.speed.." "..enemy.speed)
+		Utils.drawText(0, 28, turnsToDie.." "..ours.hp.." | "..turnsToKill.." "..enemy.hp)
 	end
 	local hpReq = enemyAttack.damage
 	local isConfused = isConfused()
@@ -380,7 +381,7 @@ function Combat.nonKill()
 	for idx,move in ipairs(ours.moves) do
 		if not move.pp or move.pp > 0 then
 			local __, maxDmg = calcDamage(move, ours, enemy, true)
-			local threshold = maxDmg * 0.95
+			local threshold = maxDmg * 0.975
 			if threshold and threshold < enemy.hp and threshold > bestDmg then
 				ret = move
 				bestDmg = threshold

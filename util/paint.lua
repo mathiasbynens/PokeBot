@@ -8,11 +8,12 @@ local Pokemon = require "storage.pokemon"
 
 local encounters = 0
 local elapsedTime = Utils.elapsedTime
+local drawText = Utils.drawText
 
 function Paint.draw(currentMap)
 	local px, py = Player.position()
-	gui.text(0, 14, currentMap..": "..px.." "..py)
-	gui.text(0, 0, elapsedTime())
+	drawText(0, 14, currentMap..": "..px.." "..py)
+	drawText(0, 0, elapsedTime())
 
 	if Memory.value("battle", "our_id") > 0 then
 		local hp = Pokemon.index(0, "hp")
@@ -23,7 +24,7 @@ function Paint.draw(currentMap)
 			hpStatus = "RED"
 		end
 		if hpStatus then
-			gui.text(120, 7, hpStatus)
+			drawText(120, 7, hpStatus)
 		end
 	end
 
@@ -33,15 +34,15 @@ function Paint.draw(currentMap)
 		local def = Pokemon.index(nidx, "defense")
 		local spd = Pokemon.index(nidx, "speed")
 		local scl = Pokemon.index(nidx, "special")
-		gui.text(100, 0, att.." "..def.." "..spd.." "..scl)
+		drawText(100, 0, att.." "..def.." "..spd.." "..scl)
 	end
 	local enc = " encounter"
 	if encounters ~= 1 then
 		enc = enc.."s"
 	end
-	gui.text(0, 116, Memory.value("battle", "critical"))
-	gui.text(0, 125, Memory.value("player", "repel"))
-	gui.text(0, 134, encounters..enc)
+	drawText(0, 116, Memory.value("battle", "critical"))
+	drawText(0, 125, Memory.value("player", "repel"))
+	drawText(0, 134, encounters..enc)
 	return true
 end
 

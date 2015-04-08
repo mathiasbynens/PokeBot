@@ -2,6 +2,7 @@ local Input = {}
 
 local Bridge = require "util.bridge"
 local Memory = require "util.memory"
+local Utils = require "util.utils"
 
 local lastSend
 local currentButton, remainingFrames, setForFrame
@@ -19,7 +20,7 @@ local function sendButton(button, ab)
 	local inputTable = {[button] = true}
 	joypad.set(inputTable)
 	if debug then
-		gui.text(0, 7, button.." "..remainingFrames)
+		Utils.drawText(0, 7, button.." "..remainingFrames)
 	end
 	if ab then
 		buttonbutton = "A,B"

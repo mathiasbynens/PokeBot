@@ -2,6 +2,8 @@ local Utils = {}
 
 local Memory = require "util.memory"
 
+local EMP = 2
+
 local yellow = YELLOW
 
 -- GENERAL
@@ -45,7 +47,7 @@ function Utils.key(needle, haystack)
 end
 
 function Utils.capitalize(string)
-	return string:sub(1, 1):upper()..string:sub(1)
+	return string:sub(1, 1):upper()..string:sub(2)
 end
 
 -- GAME
@@ -71,6 +73,10 @@ function Utils.onPokemonSelect(battleMenu)
 		return battleMenu == 27 or battleMenu == 243
 	end
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
+end
+
+function Utils.drawText(x, y, message)
+	gui.text(x * EMP, y * EMP, message)
 end
 
 -- TIME

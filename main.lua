@@ -39,40 +39,26 @@ local previousPartySize = 0
 local lastHP
 local criticaled = false
 
-local function startNewAdventure()
-	local startMenu, withBattleStyle
-	if YELLOW then
-		startMenu = Memory.raw(0x0F95) == 0
-		withBattleStyle = "battle_style"
+-- GLOBAL
+
+function p(...)
+	local string
+	if #arg == 0 then
+		string = arg[0]
 	else
-		startMenu = Memory.value("player", "name") ~= 0
-	end
-	if startMenu and Menu.getCol() ~= 0 then
-		if Settings.set("text_speed", "battle_animation", withBattleStyle) then
-			Menu.select(0)
+		string = ""
+		for i,str in ipairs(arg) do
+			if str == true then
+				string = string.."\n"
+			else
+				string = string..str.." "
+			end
 		end
-	elseif math.random(0, START_WAIT) == 0 then
-		Input.press("Start")
 	end
+	print(string)
 end
 
-local function choosePlayerNames()
-	local name
-	if Memory.value("player", "name2") == 80 then
-		name = "E"
-	else
-		name = "B"
-	end
-	Textbox.name(name, true)
-end
-
-local function pollForResponse()
-	local response = Bridge.process()
-	if response then
-		Bridge.polling = false
-		Textbox.setName(tonumber(response))
-	end
-end
+-- HELPERS
 
 local function resetAll()
 	Strategies.softReset()
@@ -88,7 +74,7 @@ local function resetAll()
 
 	if CUSTOM_SEED then
 		Strategies.seed = CUSTOM_SEED
-		print("RUNNING WITH A FIXED SEED ("..Strategies.seed.."), every run will play out identically!")
+		p("RUNNING WITH A FIXED SEED ("..Strategies.seed.."), every run will play out identically!", true)
 	else
 		Strategies.seed = os.time()
 	end
@@ -97,9 +83,10 @@ end
 
 -- EXECUTE
 
+p("Welcome to PokeBot "..GAME_NAME.." version "..VERSION, true)
+
 Control.init()
 
-print("Welcome to PokeBot "..GAME_NAME.." version "..VERSION)
 STREAMING_MODE = not Walk.init()
 if INTERNAL and STREAMING_MODE then
 	RESET_FOR_TIME = true
@@ -114,7 +101,7 @@ end
 Strategies.init(hasAlreadyStartedPlaying)
 if RESET_FOR_TIME and hasAlreadyStartedPlaying then
 	RESET_FOR_TIME = false
-	print("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.")
+	p("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.", true)
 end
 if STREAMING_MODE then
 	Bridge.init()
@@ -136,10 +123,10 @@ while true do
 		if Memory.value("game", "battle") == 0 then
 			Strategies.frames = Strategies.frames + 1
 		end
-		gui.text(0, 80, Strategies.frames)
+		Utils.drawText(0, 80, Strategies.frames)
 	end
 	if Bridge.polling then
-		pollForResponse()
+		Settings.pollForResponse()
 	end
 
 	if not Input.update() then
@@ -153,14 +140,14 @@ while true do
 						resetAll()
 					end
 				else
-					startNewAdventure()
+					Settings.startNewAdventure()
 				end
 			else
 				if not running then
 					Bridge.liveSplit()
 					running = true
 				end
-				choosePlayerNames()
+				Settings.choosePlayerNames()
 			end
 		else
 			local battleState = Memory.value("game", "battle")
