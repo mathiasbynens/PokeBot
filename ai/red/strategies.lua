@@ -1691,11 +1691,20 @@ strategyFunctions.fightHypno = function()
 	end
 end
 
-strategyFunctions.fightKoga = function() --TODO x-accuracy?
+strategyFunctions.fightKoga = function()
 	if Battle.isActive() then
 		local forced
+		local opponent = Battle.opponent()
+		local curr_hp = Combat.hp()
 		if Pokemon.isOpponent("weezing") then
-			if Strategies.opponentDamaged(2) then
+			local drillHp = (Pokemon.index(0, "level") == 41) and 12 or 9
+			if curr_hp > 0 and curr_hp < drillHp then
+				forced = "horn_drill"
+				if not status.drilling then
+					status.drilling = true
+					Bridge.chat("Low enough HP to try Horn Drill on Weezing.")
+				end
+			elseif Strategies.opponentDamaged(2) then
 				Inventory.use("pokeflute", nil, true)
 				return false
 			end
@@ -1705,6 +1714,12 @@ strategyFunctions.fightKoga = function() --TODO x-accuracy?
 				forced = "thunderbolt"
 			end
 			Control.canDie(true)
+		else
+			if Strategies.isPrepared("x_accuracy") then
+				forced = "horn_drill"
+			elseif curr_hp > 9 and not Strategies.prepare("x_accuracy") then
+				return false
+			end
 		end
 		Battle.automate(forced)
 		status.canProgress = true
@@ -1822,7 +1837,6 @@ strategyFunctions.fightGiovanniMachoke = function()
 		if stats.nidoran.attack >= 55 then
 			local eqPpRequired = stats.nidoran.special >= 47 and 7 or 8
 			if Battle.pp("earthquake") >= eqPpRequired then
-				Bridge.chat("Using Earthquake strats on the Machokes")
 				return true
 			end
 		end
@@ -1835,10 +1849,8 @@ strategyFunctions.checkGiovanni = function()
 	if Strategies.initialize() then
 		local earthquakePP = Battle.pp("earthquake")
 		if earthquakePP >= 2 then
-			if riskGiovanni then
-				if earthquakePP >= 5 then
-					Bridge.chat("Saved enough Earthquake PP for safe strats on Giovanni")
-				elseif earthquakePP >= 3 and Battle.pp("horn_drill") >= 5 and (Control.yolo or Pokemon.info("nidoking", "hp") >= ryhornDamage) then -- RISK
+			if riskGiovanni and earthquakePP < 5 then
+				if earthquakePP >= 3 and Battle.pp("horn_drill") >= 5 and (Control.yolo or Pokemon.info("nidoking", "hp") >= ryhornDamage) then -- RISK
 					Bridge.chat("Using risky strats on Giovanni to skip the extra Max Ether...")
 				else
 					riskGiovanni = false
@@ -2112,14 +2124,20 @@ strategyFunctions.agatha = function() --TODO test without x acc
 		end
 		if Pokemon.isOpponent("gengar") then
 			local currentHP = Pokemon.info("nidoking", "hp")
-			if not Control.yolo and currentHP <= 56 and not Strategies.isPrepared("x_speed") then
+			local xItem1, xItem2
+			if not Control.yolo then
+				xItem1, xItem2 = "x_accuracy", "x_speed"
+			else
+				xItem1 = "x_speed"
+			end
+			if not Control.yolo and currentHP <= 56 and not Strategies.isPrepared(xItem1, xItem2) then
 				local toPotion = Inventory.contains("full_restore", "super_potion")
 				if toPotion then
 					Inventory.use(toPotion, nil, true)
 					return false
 				end
 			end
-			if not Strategies.prepare("x_speed") then
+			if not Strategies.prepare(xItem1, xItem2) then
 				return false
 			end
 		end
