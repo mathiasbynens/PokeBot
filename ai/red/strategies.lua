@@ -1971,25 +1971,21 @@ strategyFunctions.ether = function(data)
 end
 
 strategyFunctions.pickMaxEther = function()
-	if not status.canProgress then
-		if maxEtherSkip then
+	if Strategies.initialize() then
+		if maxEtherSkip or Inventory.isFull() then
 			return true
 		end
-		if Memory.value("player", "moving") == 0 then
-			if Player.isFacing("Right") then
-				status.canProgress = true
-			end
-			status.tempDir = not status.tempDir
-			if status.tempDir then
-				Input.press("Right", 1)
-			end
-		end
-		return false
 	end
 	if Inventory.contains("max_ether") then
 		return true
 	end
-	Player.interact("Right")
+	local px, py = Player.position()
+	if px > 7 then
+		return Strategies.reset("Accidentally walked on the island :(", px, true)
+	end
+	if Memory.value("player", "moving") == 0 then
+		Player.interact("Right")
+	end
 end
 
 -- push
