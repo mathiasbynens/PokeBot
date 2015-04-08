@@ -21,7 +21,7 @@ local yellow = YELLOW
 local splitNumber, splitTime = 0, 0
 local resetting
 
-local status = {tries = 0, tempDir = nil, canProgress = nil, initialized = false}
+local status = {tries = 0, canProgress = nil, initialized = false}
 local stats = {}
 Strategies.status = status
 Strategies.stats = stats
@@ -240,23 +240,24 @@ end
 
 function Strategies.completedMenuFor(data)
 	local count = Inventory.count(data.item)
-	if count == 0 or count + (data.amount or 1) <= status.tries then
+	if count == 0 or (status.startCount and count + (data.amount or 1) <= status.startCount) then
 		return true
 	end
 	return false
 end
 
 function Strategies.closeMenuFor(data)
-	if (not status.tempDir and not data.close) or data.chain or Menu.close() then
+	if (not status.menuOpened and not data.close) or data.chain then
 		return true
 	end
+	return Menu.close()
 end
 
 function Strategies.useItem(data)
 	local main = Memory.value("menu", "main")
-	if status.tries == 0 then
-		status.tries = Inventory.count(data.item)
-		if status.tries == 0 then
+	if not status.startCount then
+		status.startCount = Inventory.count(data.item)
+		if status.startCount == 0 then
 			if Strategies.closeMenuFor(data) then
 				return true
 			end
@@ -267,12 +268,9 @@ function Strategies.useItem(data)
 		if Strategies.closeMenuFor(data) then
 			return true
 		end
-	else
-		if Inventory.use(data.item, data.poke) then
-			status.tempDir = true
-		else
-			Menu.pause()
-		end
+	elseif Menu.pause() then
+		status.menuOpened = true
+		Inventory.use(data.item, data.poke)
 	end
 end
 
@@ -297,13 +295,13 @@ local function completedSkillFor(data)
 end
 
 function Strategies.isPrepared(...)
-	if status.tries == 0 then
-		status.tries = {}
+	if not status.preparing then
+		return false
 	end
 	for i,name in ipairs(arg) do
 		local currentCount = Inventory.count(name)
 		if currentCount > 0 then
-			local previousCount = status.tries[name]
+			local previousCount = status.preparing[name]
 			if previousCount == nil or currentCount == previousCount then
 				return false
 			end
@@ -313,16 +311,16 @@ function Strategies.isPrepared(...)
 end
 
 function Strategies.prepare(...)
-	if status.tries == 0 then
-		status.tries = {}
+	if not status.preparing then
+		status.preparing = {}
 	end
 	local item
 	for idx,name in ipairs(arg) do
 		local currentCount = Inventory.count(name)
 		local needsItem = currentCount > 0
-		local previousCount = status.tries[name]
+		local previousCount = status.preparing[name]
 		if previousCount == nil then
-			status.tries[name] = currentCount
+			status.preparing[name] = currentCount
 		elseif needsItem then
 			needsItem = currentCount == previousCount
 		end
@@ -460,7 +458,7 @@ Strategies.functions = {
 			if toPotion then
 				if Menu.pause() then
 					Inventory.use(toPotion)
-					status.tempDir = true
+					status.menuOpened = true
 				end
 				return false
 			end
@@ -504,7 +502,7 @@ Strategies.functions = {
 				replacement = 0
 			end
 			if Inventory.teach(itemName, data.poke, replacement, data.alt) then
-				status.tempDir = true
+				status.menuOpened = true
 			else
 				Menu.pause()
 			end
@@ -897,13 +895,14 @@ Strategies.functions = {
 			pos = data.x
 		end
 		local newP = Memory.raw(pos)
-		if status.tries == 0 then
-			status.tries = {start=newP}
-		elseif status.tries.start ~= newP then
+		if not status.startPosition then
+			status.startPosition = newP
+		elseif status.startPosition ~= newP then
 			return true
 		end
 		Input.press(data.dir, 0)
 	end,
+
 }
 
 strategyFunctions = Strategies.functions

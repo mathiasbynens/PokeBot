@@ -498,12 +498,12 @@ strategyFunctions.fightBrock = function()
 				local onixHP = Memory.double("battle", "opponent_hp")
 				if not status.canProgress then
 					status.canProgress = onixHP
-					status.tempDir = bideTurns
+					status.startBide = bideTurns
 				end
 				if turnsToKill then
 					local forced
-					if turnsToDie < 2 or turnsToKill < 2 or status.tempDir - bideTurns > 1 then
-					-- elseif turnsToKill < 3 and status.tempDir == bideTurns then
+					if turnsToDie < 2 or turnsToKill < 2 or status.startBide - bideTurns > 1 then
+					-- elseif turnsToKill < 3 and status.startBide == bideTurns then
 					elseif onixHP == status.canProgress then
 						forced = "tail_whip"
 					end
@@ -622,11 +622,10 @@ strategyFunctions.bugCatcher = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		local isWeedle = Pokemon.isOpponent("weedle")
-		if isWeedle and not status.tempDir then
-			status.tempDir = true
+		if isWeedle and not status.secondCaterpie then
+			status.secondCaterpie = true
 		end
-		secondCaterpie = status.tempDir
-		if not isWeedle and secondCaterpie then
+		if not isWeedle and status.secondCaterpie then
 			if stats.nidoran.level4 and stats.nidoran.speed >= 14 and Pokemon.index(0, "attack") >= 19 then
 				-- print("IA "..Pokemon.index(0, "attack"))
 				Battle.automate()
@@ -647,16 +646,16 @@ strategyFunctions.shortsKid = function()
 		local wrapping = Memory.value("battle", "turns") > 0
 		if wrapping then
 			local curr_hp = Memory.double("battle", "our_hp")
-			if not status.tempDir then
-				status.tempDir = curr_hp
+			if not status.wrappedAt then
+				status.wrappedAt = curr_hp
 			end
-			local wrapDamage = status.tempDir - curr_hp
+			local wrapDamage = status.wrappedAt - curr_hp
 			if wrapDamage > 0 and wrapDamage < 7 and curr_hp < 14 and not Strategies.opponentDamaged() then
 				Inventory.use("potion", nil, true)
 				return false
 			end
-		elseif status.tempDir then
-			status.tempDir = nil
+		else
+			status.wrappedAt = nil
 		end
 	end
 	Control.battlePotion(fightingEkans or Strategies.damaged(2))
@@ -882,15 +881,15 @@ strategyFunctions.fightMisty = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		if Battle.redeployNidoking() then
-			if status.tempDir == false then
-				status.tempDir = true
+			if status.swappedOut == false then
+				status.swappedOut = true
 			end
 			return false
 		end
-		local swappedOut = status.tempDir
-		if not swappedOut and Combat.isConfused() then
-			status.tempDir = false
-			if Battle.sacrifice("pidgey", "spearow", "paras") then
+		local forced
+		if not status.swappedOut and Combat.isConfused() then
+			status.swappedOut = false
+			if Battle.sacrifice("squirtle", "pidgey", "spearow", "paras") then
 				return false
 			end
 		end
@@ -950,9 +949,9 @@ strategyFunctions.catchOddish = function()
 	else
 		local path
 		if caught then
-			if not status.tempDir then
+			if not status.caught then
 				Bridge.caught(Pokemon.inParty("oddish"))
-				status.tempDir = true
+				status.caught = true
 			end
 			if py < 21 then
 				py = 21
@@ -1080,15 +1079,15 @@ strategyFunctions.trashcans = function()
 				Down = "Up",
 				Left = "Right"
 			}
-			Player.interact(inverse[status.tempDir])
+			Player.interact(inverse[status.direction])
 		else
 			local trashPath = {{2,11},{"Left"},{2,11}, {2,12},{4,12},{4,11},{"Right"},{4,11}, {4,9},{"Left"},{4,9}, {4,7},{"Right"},{4,7}, {4,6},{2,6},{2,7},{"Left"},{2,7}, {2,6},{4,6},{4,8},{9,8},{"Up"},{9,8}, {8,8},{8,9},{"Left"},{8,9}, {8,10},{9,10},{"Down"},{9,10},{8,10}}
-			if status.tempDir and type(status.tempDir) == "number" then
+			if status.direction and type(status.direction) == "number" then
 				local px, py = Player.position()
 				local dx, dy = px, py
 				if py < 12 then
 					dy = 12
-				elseif status.tempDir == 1 then
+				elseif status.direction == 1 then
 					dx = 2
 				else
 					dx = 8
@@ -1097,9 +1096,9 @@ strategyFunctions.trashcans = function()
 					Walk.step(dx, dy)
 					return
 				end
-				status.tempDir = nil
+				status.direction = nil
 			end
-			status.tempDir = Walk.custom(trashPath, status.canProgress)
+			status.direction = Walk.custom(trashPath, status.canProgress)
 			status.canProgress = false
 		end
 	end
@@ -1817,20 +1816,19 @@ end
 strategyFunctions.fightGiovanni = function()
 	if Battle.isActive() then
 		if Strategies.initialize() then
-			status.tempDir = Battle.pp("earthquake")
+			status.startEqPP = Battle.pp("earthquake")
 			status.canProgress = true
 		end
 		local forced, needsXSpecial
-		local startEqPP = status.tempDir
 		if riskGiovanni then
-			if startEqPP < 5 then
+			if status.startEqPP < 5 then
 				needsXSpecial = true
 			end
 			if needsXSpecial or Battle.pp("earthquake") < 4 then
 				forced = "ice_beam"
 			end
 		else
-			needsXSpecial = startEqPP < 2
+			needsXSpecial = status.startEqPP < 2
 			if Pokemon.isOpponent("rhydon") then
 				forced = "ice_beam"
 			end
@@ -1852,13 +1850,13 @@ strategyFunctions.viridianRival = function()
 	if Battle.isActive() then
 		if not status.canProgress then
 			if riskGiovanni or stats.nidoran.special < 45 or Pokemon.index(0, "speed") < 134 then
-				status.tempDir = "x_special"
+				status.xItem = "x_special"
 			else
 				print("Skip X Special strats!")
 			end
 			status.canProgress = true
 		end
-		if Strategies.prepare("x_accuracy", status.tempDir) then
+		if Strategies.prepare("x_accuracy", status.xItem) then
 			local forced
 			if Pokemon.isOpponent("pidgeot") then
 				forced = "thunderbolt"
@@ -1882,13 +1880,13 @@ end
 
 strategyFunctions.ether = function(data)
 	local main = Memory.value("menu", "main")
-	data.item = status.tempDir
-	if status.tempDir and Strategies.completedMenuFor(data) then
+	data.item = status.item
+	if status.item and Strategies.completedMenuFor(data) then
 		if Strategies.closeMenuFor(data) then
 			return true
 		end
 	else
-		if not status.tempDir then
+		if not status.item then
 			if data.max then
 				-- TODO don't skip center if not in redbar
 				maxEtherSkip = stats.nidoran.attack > 53 and Battle.pp("earthquake") > 0 and Battle.pp("horn_drill") > 3
@@ -1897,11 +1895,11 @@ strategyFunctions.ether = function(data)
 				end
 				Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center")
 			end
-			status.tempDir = Inventory.contains("ether", "max_ether")
-			if not status.tempDir then
+			status.item = Inventory.contains("ether", "max_ether")
+			if not status.item then
 				return true
 			end
-			status.tries = Inventory.count(status.tempDir) --TODO remove?
+			status.tries = Inventory.count(status.item) --TODO remove?
 		end
 		if Memory.value("menu", "main") == 144 and Menu.getCol() == 5 then
 			if Memory.value("battle", "menu") ~= 95 then
@@ -2134,23 +2132,23 @@ strategyFunctions.blue = function()
 		if not status.canProgress then
 			status.canProgress = true
 			if stats.nidoran.special >= 45 and stats.nidoran.speed >= 52 and Inventory.contains("x_special") then
-				status.tempDir = "x_special"
+				status.xItem = "x_special"
 			else
-				status.tempDir = "x_speed"
+				status.xItem = "x_speed"
 			end
 			if not STREAMING_MODE then
-				status.tempDir = "x_speed"
+				status.xItem = "x_speed"
 			end
 		end
 
 		local boostFirst = Pokemon.index(0, "hp") < 55
 		local firstItem, secondItem
 		if boostFirst then
-			firstItem = status.tempDir
+			firstItem = status.xItem
 			secondItem = "x_accuracy"
 		else
 			firstItem = "x_accuracy"
-			secondItem = status.tempDir
+			secondItem = status.xItem
 		end
 
 		local forced = "horn_drill"
@@ -2159,7 +2157,7 @@ strategyFunctions.blue = function()
 			local skyDamage = Combat.healthFor("BlueSky")
 			local healCutoff = skyDamage * 0.825
 			if Strategies.initialize() then
-				if not Strategies.isPrepared("x_accuracy", status.tempDir) then
+				if not Strategies.isPrepared("x_accuracy", status.xItem) then
 					local msg = "Uh oh... First-turn Sky Attack could end the run here, "
 					if Pokemon.index(0, "hp") > skyDamage then
 						msg = msg.."no criticals pls D:"
@@ -2184,18 +2182,18 @@ strategyFunctions.blue = function()
 						return false
 					end
 				end
-				if Strategies.prepare("x_accuracy", status.tempDir) then
+				if Strategies.prepare("x_accuracy", status.xItem) then
 					Battle.automate(forced)
 				end
 			end
 		else
 			if Strategies.prepare(firstItem, secondItem) then
 				if Pokemon.isOpponent("alakazam") then
-					if status.tempDir == "x_speed" then
+					if status.xItem == "x_speed" then
 						forced = "earthquake"
 					end
 				elseif Pokemon.isOpponent("rhydon") then
-					if status.tempDir == "x_special" then
+					if status.xItem == "x_special" then
 						forced = "ice_beam"
 					end
 				end
