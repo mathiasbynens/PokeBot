@@ -184,6 +184,30 @@ local function nidoranDSum(disabled)
 	Walk.step(sx, sy)
 end
 
+local function willRedBar(forDamage)
+	local curr_hp, red_hp = Combat.hp(), Combat.redHP()
+	return curr_hp > forDamage*0.975 and curr_hp - forDamage*0.925 < red_hp
+end
+
+local function potionForRedBar(damage)
+	local curr_hp, red_hp = Combat.hp(), Combat.redHP()
+	local max_hp = Pokemon.index(0, "max_hp")
+
+	local potions = {
+		{"potion", 20},
+		{"super_potion", 50},
+	}
+	for i,potion in ipairs(potions) do
+		if Inventory.contains(potion[1]) then
+			local healTo = math.min(curr_hp + potion[2], max_hp)
+			if healTo > damage and healTo - damage < red_hp then
+				return potion
+			end
+		end
+	end
+	return canPotion
+end
+
 -- STRATEGIES
 
 local strategyFunctions = Strategies.functions
@@ -1485,7 +1509,7 @@ end
 strategyFunctions.fightSilphMachoke = function()
 	if Battle.isActive() then
 		status.canProgress = true
-		if stats.nidoran.special > 44 then
+		if Control.yolo and stats.nidoran.special > 44 then
 			return Strategies.prepare("x_accuracy")
 		end
 		Battle.automate("thrash")
@@ -1506,46 +1530,68 @@ end
 strategyFunctions.silphRival = function()
 	if Battle.isActive() then
 		if Strategies.initialize() then
-			status.tempDir = Combat.healthFor("RivalGyarados")
+			status.gyaradosDamage = Combat.healthFor("RivalGyarados")
+			if Control.yolo then
+				Bridge.chat("Attempting to red-bar off Gyarados. Get ready to spaghetti!")
+			end
 			status.canProgress = true
 		end
-		local gyaradosDamage = status.tempDir
 
-		local forced
-		local readyToAttack = false
-		local opponentName = Battle.opponent()
-		if opponentName == "gyarados" then
-			readyToAttack = true
-			local hp, red_hp = Pokemon.index(0, "hp"), Combat.redHP()
-			if hp > gyaradosDamage * 0.98 and hp - gyaradosDamage * 0.975 < red_hp then --TODO
-				if Strategies.prepare("x_special") then
-					forced = "ice_beam"
+		if Strategies.prepare("x_accuracy", "x_speed") then
+			local forced
+			local opponentName = Battle.opponent()
+			local curr_hp, red_hp = Combat.hp(), Combat.redHP()
+			if opponentName == "gyarados" then
+				if Control.yolo then
+					if willRedBar(status.gyaradosDamage) then
+						if not Strategies.prepare("x_special") then
+							return false
+						end
+						if Battle.pp("earthquake") > 8 then
+							forced = "earthquake"
+						else
+							forced = "thunderbolt"
+						end
+					elseif Strategies.isPrepared("x_special") then
+						local canPotion = potionForRedBar(status.gyaradosDamage)
+						if canPotion then
+							Inventory.use(canPotion, nil, true)
+							return false
+						end
+						forced = "thunderbolt"
+					elseif curr_hp > status.gyaradosDamage * 0.95 then
+						if not Strategies.prepare("x_special") then
+							return false
+						end
+						forced = "thunderbolt"
+					end
+				end
+			elseif opponentName == "pidgeot" then
+				if Control.yolo then
+					if not willRedBar(status.gyaradosDamage) then
+						if curr_hp > status.gyaradosDamage * 0.95 then
+							if not Strategies.prepare("x_special") then
+								return false
+							end
+							forced = "ice_beam"
+						else
+							if Inventory.count("super_potion") > 2 and curr_hp + 50 > status.gyaradosDamage and curr_hp + 25 < Pokemon.index(0, "max_hp") then
+								Inventory.use("super_potion", nil, true)
+								return false
+							end
+							if not potionForRedBar(status.gyaradosDamage) then
+								forced = "ice_beam"
+							end
+						end
+					end
 				else
-					readyToAttack = false
-				end
-			elseif Strategies.isPrepared("x_special") then
-				local canPotion
-				if Inventory.contains("potion") and hp + 20 > gyaradosDamage and hp + 20 - gyaradosDamage < red_hp then
-					canPotion = "potion"
-				elseif Inventory.contains("super_potion") and hp + 50 > gyaradosDamage and hp + 50 - gyaradosDamage < red_hp then
-					canPotion = "super_potion"
-				end
-				if canPotion then
-					Inventory.use(canPotion, nil, true)
-					readyToAttack = false
-				end
-			end
-		elseif Strategies.prepare("x_accuracy", "x_speed") then
-			if opName == "pidgeot" then
-				if stats.nidoran.special < 45 or Strategies.hasHealthFor("KogaWeezing", 10) then --TODO remove for red bar
-					forced = "thunderbolt"
+					if Battle.pp("horn_drill") < 5 or Strategies.hasHealthFor("KogaWeezing", 5) then
+						forced = "ice_beam"
+					end
 				end
 			elseif opponentName == "alakazam" or opponentName == "growlithe" then
 				forced = "earthquake"
 			end
-			readyToAttack = true
-		end
-		if readyToAttack then
 			Battle.automate(forced)
 		end
 	elseif status.canProgress then
@@ -1555,19 +1601,18 @@ strategyFunctions.silphRival = function()
 	end
 end
 
-strategyFunctions.potionBeforeGiovanni = function()
-	-- TODO verify newly leveled
-	-- local curr_hp = Pokemon.index(0, "hp")
-	-- if curr_hp < 16 and Pokemon.index(0, "level") == 37 then
-	-- 	local rareCandyCount = Inventory.count("rare_candy")
-	-- 	if rareCandyCount > 2 then
-	-- 		if Menu.pause() then
-	-- 			Inventory.use("rare_candy", nil, false)
-	-- 		end
-	-- 		return false
-	-- 	end
-	-- end
-	return Strategies.functions.potion({hp=16, yolo=12, close=true})
+strategyFunctions.rareCandyGiovanni = function()
+	local curr_hp = Combat.hp()
+	if curr_hp >= 10 and curr_hp < 19 and Pokemon.index(0, "level") > 36 then
+		if Inventory.count("rare_candy") > 1 then
+			if Menu.pause() then
+				Inventory.use("rare_candy")
+				status.menuOpened = true
+			end
+			return false
+		end
+	end
+	return Strategies.closeMenuFor({})
 end
 
 strategyFunctions.fightSilphGiovanni = function()
