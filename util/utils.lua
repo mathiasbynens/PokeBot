@@ -67,9 +67,9 @@ end
 -- TIME
 
 function utils.igt()
-	local secs = memory.value("game", "time_seconds")
-	local mins = memory.value("game", "time_minutes")
-	local hours = memory.value("game", "time_hours")
+	local secs = memory.value("time", "seconds")
+	local mins = memory.value("time", "minutes")
+	local hours = memory.value("time", "hours")
 	return secs + mins * 60 + hours * 3600
 end
 
@@ -93,17 +93,18 @@ function utils.timeSince(prevTime)
 end
 
 function utils.elapsedTime()
-	local secs = memory.value("game", "time_seconds")
-	local mins = memory.value("game", "time_minutes")
-	local hours = memory.value("game", "time_hours")
+	local secs = memory.value("time", "seconds")
+	local mins = memory.value("time", "minutes")
+	local hours = memory.value("time", "hours")
 	return hours..":"..clockSegment(mins)..":"..clockSegment(secs)
 end
 
 function utils.frames()
-	local totalFrames = memory.value("game", "time_hours") * 60
-	totalFrames = (totalFrames + memory.value("game", "time_minutes")) * 60
-	totalFrames = (totalFrames + memory.value("game", "time_seconds")) * 60
-	return totalFrames + memory.value("game", "frames")
+	local totalFrames = memory.value("time", "hours") * 60
+	totalFrames = (totalFrames + memory.value("time", "minutes")) * 60
+	totalFrames = (totalFrames + memory.value("time", "seconds")) * 60
+	totalFrames = totalFrames + memory.value("time", "frames")
+	return totalFrames
 end
 
 return utils
