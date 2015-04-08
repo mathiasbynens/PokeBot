@@ -487,10 +487,10 @@ Strategies.functions = {
 				if data.chain then
 					return true
 				end
-			elseif main < 3 then
+				Input.press("B")
+			elseif Menu.close() then
 				return true
 			end
-			Input.press("B")
 		else
 			if Strategies.initialize() then
 				if not Inventory.contains(itemName) then
