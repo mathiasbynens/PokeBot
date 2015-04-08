@@ -846,7 +846,13 @@ strategyFunctions.thrashGeodude = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		if Pokemon.isOpponent("geodude") and Pokemon.isDeployed("nidoking") then
-			if Battle.sacrifice("squirtle") then
+			if Strategies.initialize() then
+				status.sacrificeSquirtle = not Control.yolo or Combat.inRedBar()
+				if not status.sacrificeSquirtle then
+					Bridge.chat("Attempting to hit through confusion to avoid swapping Squirtle.")
+				end
+			end
+			if status.sacrificeSquirtle and Battle.sacrifice("squirtle") then
 				return false
 			end
 		end
@@ -915,8 +921,10 @@ strategyFunctions.fightMisty = function()
 			if Battle.sacrifice("squirtle", "pidgey", "spearow", "paras") then
 				return false
 			end
+		elseif Pokemon.isDeployed("squirtle") then
+			forced = "tail_whip"
 		end
-		Battle.automate()
+		Battle.automate(forced)
 	elseif status.canProgress then
 		return true
 	else
