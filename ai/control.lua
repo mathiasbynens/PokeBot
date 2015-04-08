@@ -97,7 +97,8 @@ local controlFunctions = {
 	moon1Exp = function()
 		if Control.getMoonExp then
 			minExp = 2704
-			shouldFight = {{name="zubat",lvl={9,10}}}
+			local levels = Strategies.stats.nidoran.level4 and {9, 10} or {10}
+			shouldFight = {{name="zubat",lvl=levels}}
 			oneHits = true
 		end
 	end,
