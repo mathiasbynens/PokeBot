@@ -36,13 +36,14 @@ Strategies.timeRequirements = {
 		if Pokemon.inParty("spearow") then
 			timeLimit = timeLimit + 0.67
 		end
-		if stats.nidoran.attack == 16 and stats.nidoran.speed > 14 then
-
 		return timeLimit
 	end,
 
 	brock = function()
 		local timeLimit = 11
+		if stats.nidoran.attack == 16 and stats.nidoran.speed == 15 and stats.nidoran.special == 13 then
+			timeLimit = timeLimit + 0.5
+		end
 		if Pokemon.inParty("spearow") then
 			timeLimit = timeLimit + 0.5
 		end
@@ -188,6 +189,15 @@ end
 local strategyFunctions = Strategies.functions
 
 -- General
+
+local function tweetBrock(statDiff)
+	if statDiff < 3 then
+		local timeLimit = Strategies.getTimeRequirement("brock")
+		if not Strategies.overMinute(timeLimit) then
+			Strategies.tweetProgress("On pace after Brock with a great Nidoran")
+		end
+	end
+end
 
 strategyFunctions.tweetMisty = function()
 	if not Strategies.setYolo("misty") then
@@ -515,14 +525,14 @@ strategyFunctions.fightBrock = function()
 					local spd = Pokemon.index(nidx, "speed")
 					local scl = Pokemon.index(nidx, "special")
 					Bridge.stats(att.." "..def.." "..spd.." "..scl)
-					stats.nidoran = {
-						attack = att,
-						defense = def,
-						speed = spd,
-						special = scl,
-						level4 = stats.nidoran.level4
-					}
 					if status.tries > 300 then
+						stats.nidoran = {
+							attack = att,
+							defense = def,
+							speed = spd,
+							special = scl,
+							level4 = stats.nidoran.level4
+						}
 						local statDiff = (16 - att) + (15 - spd) + (13 - scl)
 						if not stats.nidoran.level4 then
 							statDiff = statDiff + 1
@@ -546,10 +556,6 @@ strategyFunctions.fightBrock = function()
 							else
 								superlative = " perfect"
 							end
-							local timeLimit = Strategies.getTimeRequirement("brock")
-							if not Strategies.overMinute(timeLimit) then
-								Strategies.tweetProgress("On pace after Brock with a great Nidoran")
-							end
 						elseif att == 16 and spd == 15 then
 							if statDiff == 1 then
 								superlative = " great"
@@ -569,6 +575,7 @@ strategyFunctions.fightBrock = function()
 						end
 						nStatus = "Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3").."."
 						Bridge.chat(nStatus)
+						tweetBrock(statDiff)
 					else
 						status.tries = status.tries + 1
 					end
@@ -787,12 +794,6 @@ strategyFunctions.redbarMankey = function()
 	if curr_hp <= red_hp then
 		return true
 	end
-	if Strategies.initialize() then
-		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 3 then -- RISK
-			return true
-		end
-		Bridge.chat("Using Poison Sting to attempt to red-bar off Mankey")
-	end
 	if Battle.isActive() then
 		status.canProgress = true
 		local enemyMove, enemyTurns = Combat.enemyAttack()
@@ -810,6 +811,12 @@ strategyFunctions.redbarMankey = function()
 		return true
 	else
 		Textbox.handle()
+	end
+	if Strategies.initialize() then
+		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 3 then -- RISK
+			return true
+		end
+		Bridge.chat("Using Poison Sting to attempt to red-bar off Mankey")
 	end
 end
 
@@ -2204,8 +2211,8 @@ end
 
 strategyFunctions.champion = function()
 	if status.canProgress then
-		if status.tries > 1500 then
-			return Strategies.hardReset("Beat the game in "..status.canProgress.." !")
+		if status.tries > 2000 then
+			return Strategies.hardReset("Back to the grind! You can follow on Twitter to see when we're on our next good run https://twitter.com/thepokebot")
 		end
 		if status.tries == 0 then
 			Strategies.tweetProgress("Beat Pokemon Red in "..status.canProgress.."!", true)
@@ -2213,6 +2220,8 @@ strategyFunctions.champion = function()
 				print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
 				print("Please save this seed number to share, if you would like proof of your run!")
 			end
+		elseif status.tries == 1000 then
+			Bridge.chat("Beat the game in "..status.canProgress.." !")
 		end
 		status.tries = status.tries + 1
 	elseif Memory.value("menu", "shop_current") == 252 then
