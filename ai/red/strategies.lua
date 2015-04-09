@@ -373,7 +373,7 @@ end
 
 strategyFunctions.grabTreePotion = function()
 	if Strategies.initialize() then
-		if Pokemon.info("squirtle", "hp") > 15 or Pokemon.info("spearow", "level") == 3 then
+		if Pokemon.info("squirtle", "hp") > 16 then
 			return true
 		end
 	end
@@ -394,13 +394,14 @@ strategyFunctions.grabAntidote = function()
 	if py < 11 then
 		return true
 	end
-	if Pokemon.info("spearow", "level") == 3 then
-		if px < 26 then
-			px = 26
-		else
-			py = 10
-		end
-	elseif Inventory.contains("antidote") then
+	-- if Pokemon.info("spearow", "level") == 3 then
+	-- 	if px < 26 then
+	-- 		px = 26
+	-- 	else
+	-- 		py = 10
+	-- 	end
+	-- else
+	if Inventory.contains("antidote") then
 		py = 10
 	else
 		Player.interact("Up")
@@ -418,8 +419,7 @@ strategyFunctions.grabForestPotion = function()
 			if status.tries and potionCount > status.tries then
 				status.tries = nil
 			end
-			local healthNeeded = (Pokemon.info("spearow", "level") == 3) and 8 or 15
-			if Pokemon.info("squirtle", "hp") <= healthNeeded then
+			if Pokemon.info("squirtle", "hp") <= 14 then
 				if Menu.pause() then
 					Inventory.use("potion", "squirtle")
 				end
@@ -437,38 +437,10 @@ end
 strategyFunctions.fightWeedle = function()
 	if Battle.isTrainer() then
 		status.canProgress = true
-		local squirtleOut = Pokemon.isDeployed("squirtle")
-		if squirtleOut and Memory.value("battle", "our_status") > 0 and not Inventory.contains("antidote") then
+		if Memory.value("battle", "our_status") > 0 and not Inventory.contains("antidote") then
 			return Strategies.reset("Poisoned, but we skipped the antidote")
 		end
-		local sidx = Pokemon.indexOf("spearow")
-		if sidx ~= -1 and Pokemon.index(sidx, "level") > 3 then
-			sidx = -1
-		end
-		if sidx == -1 then
-			return Strategies.buffTo("tail_whip", 5)
-		end
-		if Pokemon.index(sidx, "hp") < 1 then
-			local battleMenu = Memory.value("battle", "menu")
-			if Utils.onPokemonSelect(battleMenu) then
-				Menu.select(Pokemon.indexOf("squirtle"), true)
-			elseif battleMenu == 95 then
-				Input.press("A")
-			elseif squirtleOut then
-				Battle.automate()
-			else
-				Input.cancel()
-			end
-		elseif squirtleOut then
-			Battle.swap("spearow")
-		else
-			local peck = Combat.bestMove()
-			local forced
-			if peck and peck.damage and peck.damage + 1 >= Memory.double("battle", "opponent_hp") then
-				forced = "growl"
-			end
-			Battle.fight(forced)
-		end
+		return Strategies.buffTo("tail_whip", 5)
 	elseif status.canProgress then
 		return true
 	end
@@ -477,14 +449,7 @@ end
 strategyFunctions.equipForBrock = function(data)
 	if Strategies.initialize() then
 		if Pokemon.info("squirtle", "level") < 8 then
-			local message, wait
-			if Pokemon.info("spearow", "level") == 3 then
-				message = "Lost too much exp accidentally killing Weedle with Spearow"
-			else
-				message = "Did not reach level 8 before Brock"
-				wait = true
-			end
-			return Strategies.reset(message, Pokemon.getExp(), wait)
+			return Strategies.reset("Did not reach level 8 before Brock", Pokemon.getExp(), true)
 		end
 		if data.anti then
 			local poisoned = Pokemon.info("squirtle", "status") > 0
@@ -756,7 +721,9 @@ strategyFunctions.rivalSandAttack = function(data)
 		if opponent == "pidgeotto" then
 			Combat.disableThrash = true
 		elseif opponent == "raticate" then
-			Combat.disableThrash = Strategies.opponentDamaged() or (not Control.yolo and Pokemon.index(0, "hp") < 32) -- RISK
+			Combat.disableThrash = Strategies.opponentDamaged() or (not Control.yolo and Combat.hp() < 32) -- RISK
+		elseif opponent == "kadabra" then --TODO id
+			Combat.disableThrash = Combat.hp() < 10
 		elseif opponent == "ivysaur" then
 			if not Control.yolo and Strategies.damaged(5) and Inventory.contains("super_potion") then
 				Inventory.use("super_potion", nil, true)
@@ -1233,7 +1200,8 @@ strategyFunctions.redbarCubone = function()
 				local clubDmg = enemyMove.damage
 				local afterHit = curr_hp - clubDmg
 				red_hp = red_hp - 2
-				if afterHit > -2 and afterHit < red_hp then
+				local acceptableHealth = Control.yolo and -1 or 1
+				if afterHit >= acceptableHealth and afterHit < red_hp then
 					forced = "thunderbolt"
 				else
 					afterHit = afterHit - clubDmg
@@ -1668,7 +1636,7 @@ end
 strategyFunctions.potionBeforeHypno = function()
 	local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 	local healthUnderRedBar = red_hp - curr_hp
-	local yoloHP = Combat.healthFor("HypnoHeadbutt") * 0.9
+	local yoloHP = Combat.healthFor("HypnoHeadbutt") * 0.95
 	local useRareCandy = Inventory.count("rare_candy") > 2
 
 	local healTarget
