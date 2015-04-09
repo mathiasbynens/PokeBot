@@ -1648,8 +1648,7 @@ strategyFunctions.potionBeforeHypno = function()
 	else
 		healTarget = "HypnoConfusion"
 		if useRareCandy then
-			useRareCandy = false --TODO
-			-- useRareCandy = curr_hp < Combat.healthFor("KogaWeezing") * 0.85
+			useRareCandy = Control.yolo and curr_hp < Combat.healthFor("KogaWeezing") * 0.85
 		end
 	end
 	if useRareCandy then
@@ -1689,12 +1688,12 @@ strategyFunctions.fightKoga = function()
 		local opponent = Battle.opponent()
 		local curr_hp = Combat.hp()
 		if Pokemon.isOpponent("weezing") then
-			local drillHp = (Pokemon.index(0, "level") == 41) and 12 or 9
-			if curr_hp > 0 and curr_hp < drillHp then
-				forced = "horn_drill"
+			local drillHp = (Pokemon.index(0, "level") > 40) and 12 or 9
+			if curr_hp > 0 and curr_hp < drillHp + 10 and Battle.pp("horn_drill") > 0 then
+				forced = "horn_drill" --TODO allow force
 				if not status.drilling then
 					status.drilling = true
-					Bridge.chat("Low enough HP to try Horn Drill on Weezing.")
+					-- Bridge.chat("At low enough HP to try Horn Drill on Weezing.")
 				end
 			elseif Strategies.opponentDamaged(2) then
 				Inventory.use("pokeflute", nil, true)
