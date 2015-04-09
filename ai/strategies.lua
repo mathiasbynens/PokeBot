@@ -1159,7 +1159,7 @@ strategyFunctions = {
 								elseif statDiff == 2 then
 									superlative = " good"
 								else
-									superlative = " okay"
+									superlative = "n okay"
 								end
 							elseif statDiff == 1 then
 								superlative = " good"
