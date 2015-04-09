@@ -208,6 +208,10 @@ local function potionForRedBar(damage)
 	return canPotion
 end
 
+local function requiresE4Center()
+	return Battle.pp("horn_drill") < 6 --TODO
+end
+
 -- STRATEGIES
 
 local strategyFunctions = Strategies.functions
@@ -1900,6 +1904,20 @@ strategyFunctions.viridianRival = function()
 	end
 end
 
+strategyFunctions.checkEther = function()
+	-- TODO don't skip center if not in redbar
+	local hornPP = Battle.pp("horn_drill")
+	if hornPP >= 5 then
+		maxEtherSkip = true
+	elseif hornPP >= 4 then
+		maxEtherSkip = stats.nidoran.attack > 53 and Battle.pp("earthquake") > 0
+	end
+	if not maxEtherSkip then
+		Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center.")
+	end
+	return true
+end
+
 strategyFunctions.ether = function(data)
 	local main = Memory.value("menu", "main")
 	data.item = status.item
@@ -1909,19 +1927,19 @@ strategyFunctions.ether = function(data)
 		end
 	else
 		if not status.item then
-			if data.max then
-				-- TODO don't skip center if not in redbar
-				maxEtherSkip = stats.nidoran.attack > 53 and Battle.pp("earthquake") > 0 and Battle.pp("horn_drill") > 3
-				if maxEtherSkip then
-					return true
-				end
-				Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center.")
-			end
-			status.item = Inventory.contains("ether", "max_ether")
-			if not status.item then
+			if data.max and maxEtherSkip then
 				return true
 			end
-			status.tries = Inventory.count(status.item) --TODO remove?
+			status.item = Inventory.contains("ether", "max_ether", "elixer")
+			if not status.item then
+				if Strategies.closeMenuFor(data) then
+					return true
+				end
+				return false
+			end
+		end
+		if status.item == "elixer" then
+			return Strategies.useItem({item="elixer", poke="nidoking", chain=data.chain, close=data.close})
 		end
 		if Memory.value("menu", "main") == 144 and Menu.getCol() == 5 then
 			if Memory.value("battle", "menu") ~= 95 then
@@ -1936,7 +1954,7 @@ strategyFunctions.ether = function(data)
 	end
 end
 
-strategyFunctions.pickMaxEther = function()
+strategyFunctions.grabMaxEther = function()
 	if Strategies.initialize() then
 		if maxEtherSkip or Inventory.isFull() then
 			return true
@@ -1958,6 +1976,9 @@ end
 
 strategyFunctions.potionBeforeLorelei = function()
 	if Strategies.initialize() then
+		if requiresE4Center() then
+			return true
+		end
 		local canPotion
 		if Inventory.contains("potion") and Strategies.hasHealthFor("LoreleiDewgong", 20) then
 			canPotion = true
@@ -1974,7 +1995,7 @@ end
 
 strategyFunctions.depositPokemon = function()
 	local toSize
-	if Strategies.hasHealthFor("LoreleiDewgong") then
+	if Strategies.hasHealthFor("LoreleiDewgong") or requiresE4Center() then
 		toSize = 1
 	else
 		toSize = 2
@@ -2010,15 +2031,20 @@ strategyFunctions.depositPokemon = function()
 end
 
 strategyFunctions.centerSkip = function()
-	Strategies.setYolo("e4center")
-	local message = "Skipping the Center and attempting to red-bar "
-	if Strategies.hasHealthFor("LoreleiDewgong") then
-		message = message.."off Lorelei..."
-	else
-		message = message.."the Elite 4!"
+	if Strategies.initialize() then
+		Strategies.setYolo("e4center")
+		if not requiresE4Center() then
+			local message = "Skipping the Center and attempting to red-bar "
+			if Strategies.hasHealthFor("LoreleiDewgong") then
+				message = message.."off Lorelei..."
+			else
+				message = message.."the Elite 4!"
+			end
+			Bridge.chat(message)
+			return true
+		end
 	end
-	Bridge.chat(message)
-	return true
+	return strategyFunctions.confirm({dir="Up"})
 end
 
 strategyFunctions.lorelei = function()
@@ -2121,6 +2147,9 @@ strategyFunctions.prepareForLance = function()
 		enableFull = true
 	end
 	local min_recovery = Combat.healthFor("LanceGyarados")
+	if not Control.yolo then
+		min_recovery = min_recovery + 2
+	end
 	return Strategies.functions.potion({hp=min_recovery, full=enableFull, chain=true})
 end
 
