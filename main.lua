@@ -147,11 +147,7 @@ while true do
 			end
 		else
 			local battleState = Memory.value("game", "battle")
-			if battleState > 0 then
-				Control.encounter(battleState == 1)
-			else
-				Control.inBattle = false
-			end
+			Control.encounter(battleState)
 			local curr_hp = Pokemon.index(0, "hp")
 			-- if curr_hp ~= lastHP then
 			-- 	Bridge.hp(curr_hp, Pokemon.index(0, "max_hp"))

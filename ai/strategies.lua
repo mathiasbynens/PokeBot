@@ -75,7 +75,9 @@ end
 
 function Strategies.death(extra)
 	local reason
-	if Control.criticaled then
+	if Control.missed then
+		reason = "Missed"
+	elseif Control.criticaled then
 		reason = "Critical'd"
 	elseif Control.yolo then
 		reason = "Yolo strats"

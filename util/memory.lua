@@ -63,6 +63,9 @@ local memoryNames = {
 
 		opponent_move = 0x0FEE,
 		critical = 0x105E,
+		miss = 0x105F,
+		our_turn = 0x1FF1,
+		turns = 0x0CD5,
 
 		opponent_bide = 0x106F,
 		opponent_id = 0x0FE5,
