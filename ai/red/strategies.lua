@@ -620,7 +620,7 @@ end
 
 strategyFunctions.shopPewterMart = function()
 	return Shop.transaction{
-		buy = {{name="potion", index=1, amount=9}}
+		buy = {{name="potion", index=1, amount=10}}
 	}
 end
 
@@ -868,6 +868,36 @@ strategyFunctions.thrashGeodude = function()
 	end
 end
 
+strategyFunctions.hikerElixer = function()
+	if Strategies.initialize() then
+		if not Inventory.contains("antidote") and Inventory.indexOf("tm34") ~= 1 then
+			return true
+		end
+	end
+	local px, py = Player.position()
+	if Inventory.contains("elixer") then
+		if py == 4 then
+			return true
+		end
+		py = 4
+	elseif py > 2 then
+		py = 2
+	else
+		Player.interact("Up")
+		return false
+	end
+	Walk.step(px, py)
+end
+
+strategyFunctions.lassEther = function()
+	if Strategies.initialize() then
+		if Inventory.contains("antidote") and Inventory.contains("elixer") then
+			return true
+		end
+	end
+	return strategyFunctions.interact({dir="Up"})
+end
+
 strategyFunctions.potionBeforeGoldeen = function()
 	if Strategies.initialize() then
 		if Strategies.setYolo("goldeen") or Pokemon.index(0, "hp") > 7 then
@@ -1031,17 +1061,13 @@ strategyFunctions.shopVermilionMart = function()
 	if Strategies.initialize() then
 		Strategies.setYolo("vermilion")
 	end
-	local buyArray, sellArray
-	if not Inventory.contains("pokeball") or (not Control.yolo and stats.nidoran.attack < 53) then
-		sellArray = {{name="pokeball"}, {name="antidote"}, {name="tm34"}, {name="nugget"}}
-		buyArray = {{name="super_potion",index=1,amount=3}, {name="paralyze_heal",index=4,amount=2}, {name="repel",index=5,amount=3}}
-	else
-		sellArray = {{name="antidote"}, {name="tm34"}, {name="nugget"}}
-		buyArray = {{name="super_potion",index=1,amount=3}, {name="repel",index=5,amount=3}}
+	local sellArray = {{name="tm34"}, {name="nugget"}}
+	if not Inventory.contains("elixer") then
+		table.insert(sellArray, 1, {name="antidote"})
 	end
 	return Shop.transaction {
 		sell = sellArray,
-		buy = buyArray
+		buy = {{name="super_potion",index=1,amount=3}, {name="repel",index=5,amount=3}}
 	}
 end
 
@@ -1228,6 +1254,15 @@ strategyFunctions.redbarCubone = function()
 	end
 end
 
+strategyFunctions.undergroundElixer = function()
+	if Strategies.initialize() then
+		if Inventory.contains("elixer") and Inventory.contains("ether") then
+			return true
+		end
+	end
+	return strategyFunctions.interact({dir="Left"})
+end
+
 strategyFunctions.shopTM07 = function()
 	return Shop.transaction{
 		direction = "Up",
@@ -1240,6 +1275,26 @@ strategyFunctions.shopRepels = function()
 		direction = "Up",
 		buy = {{name="super_repel", index=3, amount=9}}
 	}
+end
+
+strategyFunctions.dodgeDepartment = function()
+	if Strategies.initialize() then
+		status.startPosition = Memory.raw(0x0242)
+	end
+	local px, py = Player.position()
+	local dx, dy = px, py
+	if status.startPosition > 7 then
+		dy = 2
+	else
+		dy = 5
+	end
+	if py == dy then
+		if px > 14 then
+			return true
+		end
+		dx = 15
+	end
+	Walk.step(dx, dy)
 end
 
 strategyFunctions.shopPokeDoll = function()

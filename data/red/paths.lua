@@ -90,7 +90,7 @@ local Paths = {
 -- 5: MT. MOON
 
 	-- To Cerulean
-	{15, {24,6}, {s="reportMtMoon"}, {s="split"}, {35,6}, {35,10}, {61,10}, {61,8}, {79,8}, {79,10}, {90,10}},
+	{15, {24,6}, {s="reportMtMoon"}, {s="split"}, {24,8}, {35,8}, {35,10}, {61,10}, {61,8}, {79,8}, {79,10}, {90,10}},
 	-- Enter Cerulean
 	{3, {0,18}, {c="a",a="Cerulean"}, {14,18}, {s="dodgeCerulean"}, {19,18}, {19,17}},
 	-- Cerulean Center
@@ -112,7 +112,7 @@ local Paths = {
 -- 6: NUGGET BRIDGE
 
 	-- To Bill's
-	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="interact",dir="Up"}, {s="thrashGeodude"}, {10,5}, {10,2}, {s="interact",dir="Up"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="interact",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="interact",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="interact",dir="Up"}, {45,4}, {45,3}},
+	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="interact",dir="Up"}, {s="thrashGeodude"}, {10,5}, {s="hikerElixer"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="interact",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="interact",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="lassEther"}, {45,4}, {45,3}},
 	-- Save Bill
 	{88, {2,7}, {2,5}, {5,5}, {s="confirm",dir="Right"}, {1,5}, {s="interact",dir="Up"}, {4,5}, {s="interact",dir="Up"}, {s="waitToTalk"}, {s="potionBeforeGoldeen"}, {s="item",item="escape_rope"}},
 	-- To Misty
@@ -198,7 +198,7 @@ local Paths = {
 	-- Underground entrance
 	{80, {3,7}, {3,6}, {4,6}, {4,4}},
 	-- Underground
-	{121, {47,2}, {s="bicycle"}, {47,5}, {22,5}, {s="interact",dir="Left"}, {2,5}},
+	{121, {47,2}, {s="bicycle"}, {47,5}, {22,5}, {s="undergroundElixer"}, {2,5}},
 	-- Underground exit
 	{77, {4,4}, {4,8}},
 	-- To Celadon
@@ -208,7 +208,7 @@ local Paths = {
 	-- F1: Department store
 	{122, {16,7}, {c="potion",b=true,yolo=true}, {c="pp",on=true}, {16,3}, {12,3}, {12,1}},
 	-- F2
-	{123, {12,2}, {8,2}, {8,5}, {6,5}, {s="shopTM07"}, {5,5}, {s="shopRepels"}, {9,5}, {9,2}, {16,2}, {16,1}},
+	{123, {12,2}, {8,2}, {8,5}, {6,5}, {s="shopTM07"}, {5,5}, {s="shopRepels"}, {9,5}, {s="dodgeDepartment"}, {15,2}, {16,2}, {16,1}},
 	-- F3
 	{124, {16,2}, {12,2}, {12,1}},
 	-- F4: Poke Doll
