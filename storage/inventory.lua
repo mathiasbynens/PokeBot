@@ -125,7 +125,7 @@ function Inventory.teach(item, poke, replaceIdx, altPoke)
 end
 
 function Inventory.isFull()
-	return Memory.raw(0x1345) > 0
+	return Memory.raw(0x131D) == 20
 end
 
 function Inventory.use(item, poke, midfight)

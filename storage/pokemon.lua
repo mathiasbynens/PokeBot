@@ -85,6 +85,8 @@ local data = {
 	special = {42, true},
 }
 
+local previousPartySize
+
 local function getAddress(index)
 	return 0x116B + index * 0x2C
 end

@@ -8,7 +8,6 @@ local PAINT_ON    = true -- Display contextual information while the bot runs
 -- START CODE (hard hats on)
 
 VERSION = "1.3"
-INTERNAL = false
 YELLOW = memory.getcurrentmemorydomainsize() > 30000
 GAME_NAME = YELLOW and "yellow" or "red"
 
@@ -33,11 +32,9 @@ local Settings = require "util.settings"
 local Pokemon = require "storage.pokemon"
 
 local hasAlreadyStartedPlaying = false
-local inBattle, oldSecs
+local oldSecs
 local running = true
-local previousPartySize = 0
 local lastHP
-local criticaled = false
 
 -- GLOBAL
 
@@ -69,7 +66,6 @@ local function resetAll()
 	Bridge.reset()
 	oldSecs = 0
 	running = false
-	previousPartySize = 0
 	-- client.speedmode = 200
 
 	if CUSTOM_SEED then
@@ -152,27 +148,9 @@ while true do
 		else
 			local battleState = Memory.value("game", "battle")
 			if battleState > 0 then
-				if battleState == 1 then
-					if not inBattle then
-						Control.wildEncounter()
-						inBattle = true
-					end
-				end
-				local isCritical
-				local battleMenu = Memory.value("battle", "menu")
-				if battleMenu == 94 then
-					isCritical = false
-				elseif Memory.double("battle", "our_hp") == 0 then
-					if Memory.value("battle", "critical") == 1 then
-						isCritical = true
-					end
-				end
-				if isCritical ~= nil and isCritical ~= criticaled then
-					criticaled = isCritical
-					Strategies.criticaled = criticaled
-				end
+				Control.encounter(battleState == 1)
 			else
-				inBattle = false
+				Control.inBattle = false
 			end
 			local curr_hp = Pokemon.index(0, "hp")
 			-- if curr_hp ~= lastHP then

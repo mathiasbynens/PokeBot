@@ -13,6 +13,8 @@ local Utils = require "util.utils"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
+-- HELPERS
+
 local function potionsForHit(potion, curr_hp, max_hp)
 	if not potion then
 		return
@@ -98,7 +100,16 @@ local function attack(attackIndex)
 	end
 end
 
--- Table functions
+function movePP(name)
+	local midx = Pokemon.battleMove(name)
+	if not midx then
+		return 0
+	end
+	return Memory.raw(0x102C + midx)
+end
+Battle.pp = movePP
+
+-- UTILS
 
 function Battle.swapMove(sidx, fidx)
 	if openBattleMenu() then
@@ -134,6 +145,8 @@ end
 function Battle.opponent()
 	return Pokemon.getName(Memory.value("battle", "opponent_id"))
 end
+
+-- HANDLE
 
 function Battle.run()
 	if Memory.double("battle", "opponent_hp") < 1 then
@@ -211,15 +224,6 @@ function Battle.swap(target)
 	end
 end
 
-function movePP(name)
-	local midx = Pokemon.battleMove(name)
-	if not midx then
-		return 0
-	end
-	return Memory.raw(0x102C + midx)
-end
-Battle.pp = movePP
-
 function Battle.automate(moveName, skipBuffs)
 	if not recover() then
 		local state = Memory.value("game", "battle")
@@ -241,6 +245,8 @@ function Battle.automate(moveName, skipBuffs)
 		end
 	end
 end
+
+-- SACRIFICE
 
 function Battle.sacrifice(...)
 	local sacrifice = Pokemon.getSacrifice(...)

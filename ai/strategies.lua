@@ -75,7 +75,7 @@ end
 
 function Strategies.death(extra)
 	local reason
-	if Strategies.criticaled then
+	if Control.criticaled then
 		reason = "Critical'd"
 	elseif Control.yolo then
 		reason = "Yolo strats"
@@ -837,13 +837,13 @@ Strategies.functions = {
 				if goodEncounters then
 					conjunction = "and"
 				end
-				parasStatus = "we found a "..capsName.."!"
+				parasStatus = "we caught a "..capsName.."!"
 			else
 				catchDescription = "no_"..catchPokemon
 				if not goodEncounters then
 					conjunction = "and"
 				end
-				parasStatus = "we didn't find a "..capsName.." :("
+				parasStatus = "we didn't catch a "..capsName.." :("
 			end
 			Bridge.caught(catchDescription)
 			Bridge.chat(Control.moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
@@ -934,7 +934,8 @@ end
 function Strategies.softReset()
 	status = {tries=0}
 	Strategies.status = status
-	Strategies.stats = {}
+	stats = {}
+	Strategies.stats = stats
 	splitNumber, splitTime = 0, 0
 	resetting = nil
 	Strategies.deepRun = false

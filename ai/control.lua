@@ -1,5 +1,6 @@
 local Control = {}
 
+local Battle
 local Combat = require "ai.combat"
 local Strategies
 
@@ -12,7 +13,6 @@ local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
 local potionInBattle = true
-local fightEncounter, caveFights = 0, 0
 local encounters = 0
 
 local canDie, shouldFight, minExp
@@ -171,8 +171,7 @@ function Control.canDie(enabled)
 end
 
 local function isNewFight()
-	if fightEncounter < encounters and Memory.double("battle", "opponent_hp") == Memory.double("battle", "opponent_max_hp") then
-		fightEncounter = encounters
+	if Memory.double("battle", "opponent_hp") == Memory.double("battle", "opponent_max_hp") then
 		return true
 	end
 end
@@ -274,12 +273,47 @@ function Control.encounters()
 	return encounters
 end
 
-function Control.wildEncounter()
-	encounters = encounters + 1
-	Paint.wildEncounters(encounters)
-	Bridge.encounter()
-	if Control.moonEncounters then
-		Control.moonEncounters = Control.moonEncounters + 1
+function Control.encounter(wildBattle)
+	local isCritical
+	local battleMenu = Memory.value("battle", "menu")
+	if battleMenu == 94 then
+		isCritical = false
+	elseif Memory.double("battle", "our_hp") == 0 then
+		if Memory.value("battle", "critical") == 1 then
+			isCritical = true
+		end
+	end
+	if isCritical ~= nil and isCritical ~= Control.criticaled then
+		Control.criticaled = isCritical
+	end
+	if wildBattle then
+		local opponentHP = Memory.double("battle", "opponent_hp")
+		if not Control.inBattle then
+			if opponentHP > 0 then
+				Control.killedCatch = false
+				Control.inBattle = true
+				encounters = encounters + 1
+				Paint.wildEncounters(encounters)
+				Bridge.encounter()
+				if Control.moonEncounters then
+					Control.moonEncounters = Control.moonEncounters + 1
+				end
+			end
+		else
+			if opponentHP == 0 and shouldCatch and not Control.killedCatch then
+				local gottaCatchEm = {"pidgey", "spearow", "paras", "oddish"}
+				local opponent = Battle.opponent()
+				for i,catch in ipairs(gottaCatchEm) do
+					if opponent == catch then
+						if not Pokemon.inParty(catch) then
+							Bridge.chat("Noo, we accidentally killed "..Utils.capitalize(catch).." with a "..(isCritical and "critical" or "high damage range").." :(")
+							Control.killedCatch = true
+						end
+						break
+					end
+				end
+			end
+		end
 	end
 end
 
@@ -291,14 +325,15 @@ function Control.reset()
 	extraEncounter = nil
 	potionInBattle = true
 	encounters = 0
-	fightEncounter = 0
-	caveFights = 0
 	battleYolo = false
-	Control.yolo = false
 	maxEncounters = nil
+
+	Control.yolo = false
+	Control.inBattle = false
 end
 
 function Control.init()
+	Battle = require("action.battle")
 	Strategies = require("ai."..GAME_NAME..".strategies")
 end
 
