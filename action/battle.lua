@@ -184,15 +184,16 @@ function Battle.handleWild()
 	Battle.handle()
 end
 
-function Battle.fight(move, isNumber, skipBuffs)
+function Battle.fight(move, skipBuffs)
 	if move then
-		if not isNumber then
+		if type(move) ~= "number" then
 			move = Pokemon.battleMove(move)
 		end
 		attack(move)
 	else
 		move = Combat.bestMove()
 		if move then
+			Battle.accurateAttack = move.accuracy == 100
 			attack(move.midx)
 		elseif Memory.value("menu", "text_length") == 127 then
 			Input.press("B")
@@ -235,12 +236,12 @@ function Battle.automate(moveName, skipBuffs)
 			end
 			if state == 1 then
 				if Control.shouldFight() then
-					Battle.fight(moveName, false, skipBuffs)
+					Battle.fight(moveName, skipBuffs)
 				else
 					Battle.run()
 				end
 			elseif state == 2 then
-				Battle.fight(moveName, false, skipBuffs)
+				Battle.fight(moveName, skipBuffs)
 			end
 		end
 	end
@@ -269,7 +270,11 @@ function Battle.redeployNidoking()
 	else
 		local __, turns = Combat.bestMove()
 		if turns == 1 then
-			forced = "sand_attack"
+			if Pokemon.isDeployed("spearow") then
+				forced = "growl"
+			else
+				forced = "sand_attack"
+			end
 		end
 		Battle.automate(forced)
 	end

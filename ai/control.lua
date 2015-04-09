@@ -241,7 +241,7 @@ function Control.shouldCatch(partySize)
 					penultimate = Combat.nonKill()
 				end
 				if penultimate then
-					require("action.battle").fight(penultimate.midx, true)
+					require("action.battle").fight(penultimate.midx)
 				else
 					Inventory.use("pokeball", nil, true)
 				end
