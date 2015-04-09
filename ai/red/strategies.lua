@@ -1192,32 +1192,6 @@ strategyFunctions.procureBicycle = function()
 	end
 end
 
-strategyFunctions.swapBicycle = function()
-	local bicycleIdx = Inventory.indexOf("bicycle")
-	if bicycleIdx < 3 then
-		return true
-	end
-	local main = Memory.value("menu", "main")
-	if main == 128 then
-		if Menu.getCol() ~= 5 then
-			Menu.select(2, true)
-		else
-			local selection = Memory.value("menu", "selection_mode")
-			if selection == 0 then
-				if Menu.select(0, "accelerate", true, nil, true) then
-					Input.press("Select")
-				end
-			else
-				if Menu.select(bicycleIdx, "accelerate", true, nil, true) then
-					Input.press("Select")
-				end
-			end
-		end
-	else
-		Menu.pause()
-	end
-end
-
 strategyFunctions.redbarCubone = function()
 	if Battle.isActive() then
 		local forced
@@ -1338,32 +1312,6 @@ strategyFunctions.deptElevator = function()
 	end
 end
 
-strategyFunctions.swapRepels = function()
-	local repelIdx = Inventory.indexOf("super_repel")
-	if repelIdx < 3 then
-		return true
-	end
-	local main = Memory.value("menu", "main")
-	if main == 128 then
-		if Menu.getCol() ~= 5 then
-			Menu.select(2, true)
-		else
-			local selection = Memory.value("menu", "selection_mode")
-			if selection == 0 then
-				if Menu.select(1, "accelerate", true, nil, true) then
-					Input.press("Select")
-				end
-			else
-				if Menu.select(repelIdx, "accelerate", true, nil, true) then
-					Input.press("Select")
-				end
-			end
-		end
-	else
-		Menu.pause()
-	end
-end
-
 -- 8: FLY
 
 strategyFunctions.lavenderRival = function()
@@ -1434,6 +1382,11 @@ strategyFunctions.thunderboltFirst = function()
 end
 
 -- 8: POKÉFLUTE
+
+strategyFunctions.swapXSpeeds = function()
+	local destination = Inventory.contains("ether") and 4 or 5
+	return strategyFunctions.swap({item="x_speed", dest=destination, chain=true})
+end
 
 -- playPokeflute
 
@@ -1532,6 +1485,11 @@ strategyFunctions.silphCarbos = function()
 		return true
 	end
 	return Strategies.functions.interact({dir="Left"})
+end
+
+strategyFunctions.swapXSpecials = function()
+	local destination = Inventory.contains("ether") and 5 or 6
+	return strategyFunctions.swap({item="x_special", dest=destination, chain=true})
 end
 
 strategyFunctions.silphRival = function()

@@ -563,6 +563,44 @@ Strategies.functions = {
 		end
 	end,
 
+	swap = function(data)
+		if Strategies.initialize() then
+			if not Inventory.contains(data.item) then
+				return true
+			end
+		end
+		local itemIndex = Inventory.indexOf(data.item)
+		local destIndex = data.dest
+		if type(destIndex) == "string" then
+			destIndex = Inventory.indexOf(destIndex)
+		end
+		if itemIndex == destIndex then
+			if Strategies.closeMenuFor(data) then
+				return true
+			end
+		else
+			local main = Memory.value("menu", "main")
+			if main == 128 then
+				if Menu.getCol() ~= 5 then
+					Menu.select(2, true)
+				else
+					local selection = Memory.value("menu", "selection_mode")
+					if selection == 0 then
+						if Menu.select(destIndex, "accelerate", true, nil, true) then
+							Input.press("Select")
+						end
+					else
+						if Menu.select(itemIndex, "accelerate", true, nil, true) then
+							Input.press("Select")
+						end
+					end
+				end
+			else
+				Menu.pause()
+			end
+		end
+	end,
+
 	wait = function()
 		print("Please save state")
 		Input.press("Start", 999999999)
