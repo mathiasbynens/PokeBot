@@ -128,7 +128,7 @@ Strategies.timeRequirements = {
 
 local function nidoranDSum(disabled)
 	local sx, sy = Player.position()
-	if not disabled and status.tries == nil and Control.escaped then
+	if not disabled and status.tries == nil then
 		local opponentName = Battle.opponent()
 		local opLevel = Memory.value("battle", "opponent_level")
 		if opponentName == "rattata" then
@@ -137,11 +137,11 @@ local function nidoranDSum(disabled)
 			elseif opLevel == 3 then
 				status.tries = {0, 14, 11}
 			else
-				-- status.tries = {0, 0, 10} -- TODO can't escape
+				status.tries = {0, 0, 10}
 			end
 		elseif opponentName == "spearow" then
 			if opLevel == 5 then
-				-- can't escape
+			else
 			end
 		elseif opponentName == "nidoran" then
 			status.tries = {0, 6, 12}
@@ -159,7 +159,7 @@ local function nidoranDSum(disabled)
 			status.tries = 0
 		end
 	end
-	if not disabled and status.tries ~= 0 and Control.escaped then
+	if not disabled and status.tries ~= 0 then
 		if status.tries[status.tries.idx] == 0 then
 			status.tries.idx = status.tries.idx + 1
 			if status.tries.idx > 3 then
@@ -387,7 +387,7 @@ strategyFunctions.catchNidoran = function()
 		if Strategies.resetTime(timeLimit, resetMessage) then
 			return true
 		end
-		if not noDSum and Strategies.overMinute(timeLimit - 0.25) then
+		if not noDSum and (not Control.escaped or Strategies.overMinute(timeLimit - 0.25)) then
 			noDSum = true
 		end
 		nidoranDSum(noDSum)

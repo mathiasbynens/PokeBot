@@ -303,7 +303,6 @@ function Control.encounter(battleState)
 		if wildBattle then
 			local opponentHP = Memory.double("battle", "opponent_hp")
 			if not Control.inBattle then
-				Control.escaped = false
 				if opponentHP > 0 then
 					Control.killedCatch = false
 					Control.inBattle = true
@@ -331,10 +330,8 @@ function Control.encounter(battleState)
 			end
 		end
 	elseif Control.inBattle then
-		if Memory.value("battle", "battle_turns") == 0 then
-			Control.escaped = true
-		end
 		Control.inBattle = false
+		Control.escaped = Memory.value("battle", "battle_turns") == 0
 	end
 end
 
