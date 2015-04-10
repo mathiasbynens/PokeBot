@@ -540,12 +540,10 @@ strategyFunctions.fightBrock = function()
 							defense = def,
 							speed = spd,
 							special = scl,
-							level4 = stats.nidoran.level4
+							level4 = stats.nidoran.level4,
+							rating = 0,
 						}
-						local statDiff = (16 - att) + (15 - spd) + (13 - scl)
-						if not stats.nidoran.level4 then
-							statDiff = statDiff + 1
-						end
+						p(Pokemon.getDVs("nidoran"))
 						local resets = att < 15 or spd < 14 or scl < 12 or (att == 15 and spd == 14)
 						local nStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 						if resets then
@@ -553,9 +551,15 @@ strategyFunctions.fightBrock = function()
 						end
 						status.tries = 9001
 
+						local statDiff = (16 - att) + (15 - spd) + (13 - scl)
 						if def < 12 then
 							statDiff = statDiff + 1
 						end
+						if not stats.nidoran.level4 then
+							statDiff = statDiff + 1
+						end
+						stats.nidoran.rating = statDiff
+
 						local superlative
 						local exclaim = "!"
 						if statDiff == 0 then
@@ -583,7 +587,6 @@ strategyFunctions.fightBrock = function()
 							exclaim = "."
 						end
 						Bridge.chat("Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3")..".")
-						tweetBrock(statDiff)
 					else
 						status.tries = status.tries + 1
 					end
@@ -772,13 +775,20 @@ strategyFunctions.teachThrash = function()
 			local spd = Pokemon.index(0, "speed")
 			local scl = Pokemon.index(0, "special")
 			local statDesc = att.." "..def.." "..spd.." "..scl
+			local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
 			stats.nidoran = {
 				attack = att,
 				defense = def,
 				speed = spd,
 				special = scl,
-				level4 = stats.nidoran.level4
+				level4 = stats.nidoran.level4,
+				rating = stats.nidoran.rating,
+				attackDV = attDv,
+				defenseDV = defDV,
+				speedDV = spdDv,
+				specialDV = sclDV,
 			}
+			p(Pokemon.getDVs(name))
 			Bridge.stats(statDesc)
 			print(statDesc)
 			return true
@@ -893,7 +903,7 @@ end
 strategyFunctions.potionBeforeMisty = function()
 	local healAmount = 70
 	local hasEnoughAttack = stats.nidoran.attack >= (yolo and 53 or 54)
-	local canSpeedTie = stats.nidoran.speed > 50
+	local canSpeedTie = stats.nidoran.speedDV >= 11
 	if Control.yolo then
 		if hasEnoughAttack and hasEnoughSpeed then
 			healAmount = 45
@@ -901,7 +911,7 @@ strategyFunctions.potionBeforeMisty = function()
 			healAmount = 65
 		end
 	else
-		if hasEnoughAttack and stats.nidoran.speed > 51 then
+		if hasEnoughAttack and stats.nidoran.speedDV >= 13 then
 			healAmount = 45
 		elseif hasEnoughAttack and canSpeedTie then
 			healAmount = 65
@@ -952,14 +962,10 @@ end
 -- 6: MISTY
 
 strategyFunctions.potionBeforeRocket = function()
-	local minAttack = 55 -- RISK
-	if Control.yolo then
-		minAttack = minAttack - 1
-	end
-	if stats.nidoran.attack >= minAttack then
+	if stats.nidoran.attackDV >= 12 then
 		return true
 	end
-	return Strategies.functions.potion({hp=10})
+	return Strategies.functions.potion({hp=13, yolo=11})
 end
 
 strategyFunctions.jingleSkip = function()
@@ -1459,8 +1465,7 @@ strategyFunctions.safariCarbos = function()
 	if Strategies.initialize() then
 		Strategies.setYolo("safari_carbos")
 	end
-	local minSpeed = 50
-	if stats.nidoran.speed >= minSpeed then
+	if stats.nidoran.speedDV >= 7 then
 		return true
 	end
 	if Inventory.contains("carbos") then
@@ -1524,7 +1529,7 @@ strategyFunctions.fightSilphMachoke = function()
 end
 
 strategyFunctions.silphCarbos = function()
-	if stats.nidoran.speed >= 51 then
+	if stats.nidoran.speedDV >= 8 then
 		return true
 	end
 	return Strategies.functions.interact({dir="Left"})
@@ -1764,11 +1769,7 @@ strategyFunctions.cinnabarCarbos = function()
 	if px == 21 then
 		return true
 	end
-	local minSpeed = 52
-	if Control.yolo then
-		minSpeed = minSpeed - 1
-	end
-	if stats.nidoran.speed >= minSpeed then
+	if stats.nidoran.speedDV >= 10 then
 		Walk.step(21, 20)
 	else
 		if py == 20 then
@@ -1841,8 +1842,8 @@ end
 
 strategyFunctions.fightGiovanniMachoke = function()
 	if Strategies.initialize() then
-		if stats.nidoran.attack >= 56 then
-			local eqPpRequired = stats.nidoran.special >= 47 and 7 or 8
+		if stats.nidoran.attackDV >= 13 then
+			local eqPpRequired = stats.nidoran.specialDV >= 11 and 7 or 8
 			if Battle.pp("earthquake") >= eqPpRequired then
 				status.skipSpecial = true
 			end
@@ -1966,7 +1967,7 @@ strategyFunctions.checkEther = function()
 	if hornPP >= 5 then
 		maxEtherSkip = true
 	elseif hornPP >= 4 then
-		maxEtherSkip = stats.nidoran.attack > 53 and Battle.pp("earthquake") > 0
+		maxEtherSkip = stats.nidoran.attackDV >= 11 and Battle.pp("earthquake") > 0
 	end
 	if not maxEtherSkip then
 		Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center.")
@@ -2244,7 +2245,7 @@ strategyFunctions.blue = function()
 	if Battle.isActive() then
 		if not status.canProgress then
 			status.canProgress = true
-			if stats.nidoran.special >= 45 and stats.nidoran.speed >= 52 and Inventory.contains("x_special") then
+			if stats.nidoran.specialDV >= 8 and stats.nidoran.speedDV >= 12 and Inventory.contains("x_special") then
 				status.xItem = "x_special"
 			else
 				status.xItem = "x_speed"
@@ -2360,11 +2361,18 @@ function Strategies.initGame(midGame)
 			special = 11,
 		}
 		if Pokemon.inParty("nidoking") then
+			local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
+			p(Pokemon.getDVs("nidoking"))
 			stats.nidoran = {
 				attack = 55,
 				defense = 45,
 				speed = 50,
 				special = 45,
+				rating = 1,
+				attackDV = attDv,
+				defenseDV = defDV,
+				speedDV = spdDv,
+				specialDV = sclDV,
 			}
 		else
 			stats.nidoran = {
@@ -2373,10 +2381,11 @@ function Strategies.initGame(midGame)
 				speed = 15,
 				special = 13,
 				level4 = true,
+				rating = 1,
 			}
 		end
 		riskGiovanni = true
-		print(stats.nidoran.attack.." x "..stats.nidoran.speed.." "..stats.nidoran.special)
+		p(stats.nidoran.attack, "x", stats.nidoran.speed, stats.nidoran.special)
 	end
 end
 

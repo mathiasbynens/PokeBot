@@ -291,4 +291,12 @@ function Pokemon.use(move)
 	return true
 end
 
+function Pokemon.getDVs(name)
+	local index = Pokemon.indexOf(name)
+	local baseAddress = getAddress(index)
+	local attackDefense = Memory.raw(baseAddress + 0x1B)
+	local speedSpecial = Memory.raw(baseAddress + 0x1C)
+	return bit.rshift(attackDefense, 4), bit.band(attackDefense, 15), bit.rshift(speedSpecial, 4), bit.band(speedSpecial, 15)
+end
+
 return Pokemon

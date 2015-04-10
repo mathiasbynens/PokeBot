@@ -60,11 +60,8 @@ local function calcDamage(move, attacker, defender, rng)
 		return 0, 0
 	end
 	if move.power > 9000 then
-		local oid = defender.id
-		if oid ~= 14 and oid ~= 147 and oid ~= 171 and (oidd ~= 151 or Memory.value("game", "map") == 120) then -- ???
-			if Memory.value("battle", "x_accuracy") == 1 and defender.speed < attacker.speed then
-				return 9001, 9001
-			end
+		if Memory.value("battle", "x_accuracy") == 1 and defender.speed < attacker.speed then
+			return 9001, 9001
 		end
 		return 0, 0
 	end
