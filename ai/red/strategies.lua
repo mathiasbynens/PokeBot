@@ -211,8 +211,21 @@ local function potionForRedBar(damage)
 	return canPotion
 end
 
+-- STATE
+
+local function canRiskGiovanni()
+	return stats.nidoran.attackDV >= 11 and stats.nidoran.specialDV >= 4
+end
+
 local function requiresE4Center()
-	return Battle.pp("horn_drill") < 6 --TODO
+	local hornDrillPP = Battle.pp("horn_drill")
+	if hornDrillPP >= 5 then
+		return false
+	end
+	if hornDrillPP == 4 then
+		return stats.nidoran.attackDV < 11 or Battle.pp("earthquake") == 0
+	end
+	return true
 end
 
 -- STRATEGIES
@@ -1238,6 +1251,7 @@ strategyFunctions.redbarCubone = function()
 					Bridge.chat("is using Thunderbolt to attempt to redbar off Cubone")
 				end
 			end
+			Control.ignoreMiss = forced ~= nil
 		end
 		Battle.automate(forced)
 	elseif status.canProgress then
@@ -1330,11 +1344,7 @@ end
 
 strategyFunctions.shopBuffs = function()
 	if Strategies.initialize() then
-		local minSpecial = 45
-		if Control.yolo then
-			minSpecial = minSpecial - 1
-		end
-		if stats.nidoran.attack >= 54 and stats.nidoran.special >= minSpecial then
+		if canRiskGiovanni() then
 			riskGiovanni = true
 			print("Giovanni skip strats!")
 		end
@@ -1563,7 +1573,9 @@ strategyFunctions.silphRival = function()
 						if not Strategies.prepare("x_special") then
 							return false
 						end
-						if Battle.pp("earthquake") > 8 then
+						local stallTurn = Battle.pp("earthquake") > 8
+						Control.ignoreMiss = stallTurn
+						if stallTurn then
 							forced = "earthquake"
 						else
 							forced = "thunderbolt"
@@ -1611,6 +1623,7 @@ strategyFunctions.silphRival = function()
 			Battle.automate(forced)
 		end
 	elseif status.canProgress then
+		Control.ignoreMiss = false
 		return true
 	else
 		Textbox.handle()
@@ -1714,21 +1727,23 @@ strategyFunctions.fightKoga = function()
 		if Pokemon.isOpponent("weezing") then
 			local drillHp = (Pokemon.index(0, "level") > 40) and 12 or 9
 			if curr_hp > 0 and curr_hp < drillHp + 10 and Battle.pp("horn_drill") > 0 then
-				forced = "horn_drill" --TODO allow force
+				forced = "horn_drill"
 				if not status.drilling then
 					status.drilling = true
-					-- Bridge.chat("is at low enough HP to try Horn Drill on Weezing.")
+					Bridge.chat("is at low enough HP to try Horn Drill on Weezing")
 				end
+				Control.ignoreMiss = true
 			elseif Strategies.opponentDamaged(2) then
 				Inventory.use("pokeflute", nil, true)
 				return false
-			end
-			if Combat.isDisabled(85) then
-				forced = "ice_beam"
 			else
-				forced = "thunderbolt"
+				if Combat.isDisabled(85) then
+					forced = "ice_beam"
+				else
+					forced = "thunderbolt"
+				end
+				Control.canDie(true)
 			end
-			Control.canDie(true)
 		else
 			if Strategies.isPrepared("x_accuracy") then
 				forced = "horn_drill"
@@ -1740,6 +1755,7 @@ strategyFunctions.fightKoga = function()
 		status.canProgress = true
 	elseif status.canProgress then
 		Strategies.deepRun = true
+		Control.ignoreMiss = false
 		return true
 	else
 		Textbox.handle()
@@ -1845,11 +1861,8 @@ end
 
 strategyFunctions.fightGiovanniMachoke = function()
 	if Strategies.initialize() then
-		if stats.nidoran.attackDV >= 13 then
-			local eqPpRequired = stats.nidoran.specialDV >= 11 and 7 or 8
-			if Battle.pp("earthquake") >= eqPpRequired then
-				status.skipSpecial = true
-			end
+		if stats.nidoran.attackDV >= 13 and Battle.pp("earthquake") >= 7 then
+			status.skipSpecial = true
 		end
 	end
 	if Battle.isActive() then
@@ -1876,16 +1889,14 @@ end
 strategyFunctions.checkGiovanni = function()
 	local ryhornDamage = math.floor(Combat.healthFor("GiovanniRhyhorn") * 0.95) --RISK
 	if Strategies.initialize() then
-		local earthquakePP = Battle.pp("earthquake")
-		if earthquakePP >= 2 then
-			if riskGiovanni and earthquakePP < 5 then
-				if earthquakePP >= 3 and Battle.pp("horn_drill") >= 5 and (Control.yolo or Pokemon.info("nidoking", "hp") >= ryhornDamage) then -- RISK
-					Bridge.chat("is using risky strats on Giovanni to skip the extra Max Ether...")
-				else
-					riskGiovanni = false
-				end
-			end
+		if Battle.pp("earthquake") > 4 then
 			return true
+		end
+		if riskGiovanni then
+			if Control.yolo or Pokemon.info("nidoking", "hp") >= ryhornDamage then
+				Bridge.chat("is using risky strats on Giovanni to skip the extra Max Ether...")
+				return true
+			end
 		end
 		local message = "ran out of Earthquake PP :( "
 		if Control.yolo then
@@ -1902,24 +1913,20 @@ end
 strategyFunctions.fightGiovanni = function()
 	if Battle.isActive() then
 		if Strategies.initialize() then
-			status.startEqPP = Battle.pp("earthquake")
+			status.needsXSpecial = Battle.pp("earthquake") <= (riskGiovanni and 4 or 2)
 			status.canProgress = true
 		end
-		local forced, needsXSpecial
+		local forced
 		if riskGiovanni then
-			if status.startEqPP < 5 then
-				needsXSpecial = true
-			end
-			if needsXSpecial or Battle.pp("earthquake") < 4 then
+			if status.needsXSpecial or Battle.pp("earthquake") < 4 then
 				forced = "ice_beam"
 			end
 		else
-			needsXSpecial = status.startEqPP < 2
 			if Pokemon.isOpponent("rhydon") then
 				forced = "ice_beam"
 			end
 		end
-		if needsXSpecial and not Strategies.prepare("x_special") then
+		if status.needsXSpecial and not Strategies.prepare("x_special") then
 			return false
 		end
 		Battle.automate(forced)
@@ -1959,12 +1966,7 @@ end
 
 strategyFunctions.checkEther = function()
 	-- TODO don't skip center if not in redbar
-	local hornPP = Battle.pp("horn_drill")
-	if hornPP >= 5 then
-		maxEtherSkip = true
-	elseif hornPP >= 4 then
-		maxEtherSkip = stats.nidoran.attackDV >= 11 and Battle.pp("earthquake") > 0
-	end
+	maxEtherSkip = not requiresE4Center()
 	if not maxEtherSkip then
 		Bridge.chat("is grabbing the Max Ether to skip the Elite 4 Center")
 	end
@@ -2365,6 +2367,7 @@ function Strategies.initGame(midGame)
 				speedDV = spdDv,
 				specialDV = sclDV,
 			}
+			riskGiovanni = canRiskGiovanni()
 		else
 			stats.nidoran = {
 				attack = 16,
@@ -2375,7 +2378,6 @@ function Strategies.initGame(midGame)
 				rating = 1,
 			}
 		end
-		riskGiovanni = true
 		p(stats.nidoran.attack, "x", stats.nidoran.speed, stats.nidoran.special)
 	end
 end
