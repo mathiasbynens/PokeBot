@@ -219,20 +219,20 @@ function Strategies.dodgeUp(npc, sx, sy, dodge, offset)
 	Walk.step(wx, wy)
 end
 
-local function dodgeH(options)
+local function dodgeSideways(options)
 	local left = 1
 	if options.left then
 		left = -1
 	end
 	local px, py = Player.position()
-	if px * left > options.sx * left + (options.dist or 1) * left then
+	if px * left > (options.sx + (options.dist or 1)) * left then
 		return true
 	end
 	local wx, wy = px, py
 	if px * left > options.sx * left then
 		wx = px + 1 * left
 	elseif py == options.sy or py == options.dodge then
-		if py - Memory.raw(options.npc) == options.offset then
+		if px + left == options.npcX and py - Memory.raw(options.npc) == options.offset then
 			if py == options.sy then
 				wy = options.dodge
 			else
@@ -899,24 +899,16 @@ Strategies.functions = {
 		return true
 	end,
 
-	dodgeCerulean = function()
-		return dodgeH{
+	dodgeCerulean = function(data)
+		local left = data.left
+		return dodgeSideways {
 			npc = 0x0242,
-			sx = 14, sy = 18,
-			dodge = 19,
+			npcX = 15,
+			sx = (left and 16 or 14), sy = 18,
+			dodge = (left and 17 or 19),
 			offset = 10,
-			dist = 4
-		}
-	end,
-
-	dodgeCeruleanLeft = function()
-		return dodgeH{
-			npc = 0x0242,
-			sx = 16, sy = 18,
-			dodge = 17,
-			offset = 10,
-			dist = -7,
-			left = true
+			dist = (left and -7 or 4),
+			left = left
 		}
 	end,
 

@@ -732,8 +732,6 @@ end
 
 -- dodgeCerulean
 
--- dodgeCeruleanLeft
-
 strategyFunctions.rivalSandAttack = function(data)
 	if Battle.isActive() then
 		if Battle.redeployNidoking() then

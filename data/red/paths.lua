@@ -96,7 +96,7 @@ local Paths = {
 	-- Cerulean Center
 	{64, {3,7}, {3,3}, {s="confirm",dir="Up"}, {3,8}},
 	-- To the house
-	{3, {19,18}, {16,18}, {s="dodgeCeruleanLeft"}, {8,16}, {8,12}, {9,12}, {9,11}},
+	{3, {19,18}, {16,18}, {s="dodgeCerulean",left=true}, {8,16}, {8,12}, {9,12}, {9,11}},
 	-- In the house
 	{230, {2,7}, {2,0}},
 	-- Outback
