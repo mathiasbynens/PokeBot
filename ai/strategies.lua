@@ -25,6 +25,7 @@ local status = {tries = 0, canProgress = nil, initialized = false}
 local stats = {}
 Strategies.status = status
 Strategies.stats = stats
+Strategies.updates = {}
 Strategies.deepRun = false
 
 local strategyFunctions
@@ -68,7 +69,7 @@ function Strategies.reset(reason, extra, wait)
 	end
 	resetMessage = resetMessage..separator.." "..reason
 	if status.tweeted then
-		Strategies.tweetProgress(resetMessage, true)
+		Strategies.tweetProgress(resetMessage)
 	end
 	return Strategies.hardReset(resetMessage, extra, wait)
 end
@@ -88,7 +89,10 @@ function Strategies.death(extra)
 end
 
 function Strategies.overMinute(min)
-	return Utils.igt() > min * 60
+	if type(min) == "string" then
+		min = Strategies.getTimeRequirement(min)
+	end
+	return Utils.igt() > (min * 60)
 end
 
 function Strategies.resetTime(timeLimit, reason, once)
@@ -125,9 +129,9 @@ end
 
 -- HELPERS
 
-function Strategies.tweetProgress(message, finished)
-	if not finished then
-		status.tweeted = true
+function Strategies.tweetProgress(message, progress)
+	if progress then
+		Strategies.updates[progress] = true
 		message = message.." http://www.twitch.tv/thepokebot"
 	end
 	Bridge.tweet(message)
@@ -890,8 +894,7 @@ Strategies.functions = {
 			Control.moonEncounters = nil
 		end
 
-		local timeLimit = Strategies.getTimeRequirement("mt_moon")
-		Strategies.resetTime(timeLimit, "complete Mt. Moon", true)
+		Strategies.resetTime("mt_moon", "complete Mt. Moon", true)
 		return true
 	end,
 
@@ -976,6 +979,8 @@ function Strategies.softReset()
 	Strategies.status = status
 	stats = {}
 	Strategies.stats = stats
+	Strategies.updates = {}
+
 	splitNumber, splitTime = 0, 0
 	resetting = nil
 	Strategies.deepRun = false

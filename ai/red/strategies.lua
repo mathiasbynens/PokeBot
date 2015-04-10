@@ -25,6 +25,21 @@ local stats = Strategies.stats
 
 -- TIME CONSTRAINTS
 
+local function timeForStats()
+	local timeBonus = (stats.nidoran.attack - 53) * 0.05
+	if stats.nidoran.attack >= 55 then
+		timeBonus = timeBonus + 0.05
+	end
+
+	local maxSpeed = math.min(stats.nidoran.speed, 52)
+	timeBonus = timeBonus + (maxSpeed - 49) * 0.125
+
+	if stats.nidoran.special >= 45 then
+		timeBonus = timeBonus + 0.1
+	end
+	return timeBonus
+end
+
 Strategies.timeRequirements = {
 
 	bulbasaur = function()
@@ -39,11 +54,9 @@ Strategies.timeRequirements = {
 		return timeLimit
 	end,
 
-	brock = function()
-		local timeLimit = 11
-		if stats.nidoran.attack == 16 and stats.nidoran.speed == 15 and stats.nidoran.special == 13 then
-			timeLimit = timeLimit + 0.5
-		end
+	shorts = function()
+		local timeLimit = 14
+		timeLimit = timeLimit + (3 - stats.nidoran.rating) * 0.2
 		if Pokemon.inParty("spearow") then
 			timeLimit = timeLimit + 0.5
 		end
@@ -53,7 +66,7 @@ Strategies.timeRequirements = {
 	mt_moon = function()
 		local timeLimit = 26.75
 		if stats.nidoran.attack > 15 and stats.nidoran.speed > 14 then
-			timeLimit = timeLimit + 0.25
+			timeLimit = timeLimit + 0.33
 		end
 		if Pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
@@ -70,7 +83,7 @@ Strategies.timeRequirements = {
 	end,
 
 	goldeen = function()
-		local timeLimit = 37.5
+		local timeLimit = 37 + timeForStats()
 		if Pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
@@ -78,7 +91,7 @@ Strategies.timeRequirements = {
 	end,
 
 	misty = function()
-		local timeLimit = 39.5
+		local timeLimit = 39 + timeForStats()
 		if Pokemon.inParty("paras") then
 			timeLimit = timeLimit + 0.75
 		end
@@ -86,25 +99,15 @@ Strategies.timeRequirements = {
 	end,
 
 	vermilion = function()
-		return 44
+		return 43.5 + timeForStats()
 	end,
 
 	trash = function()
-		local timeLimit = 47
-		if stats.nidoran.special > 44 then
-			timeLimit = timeLimit + 0.25
-		end
-		if stats.nidoran.attack > 53 then
-			timeLimit = timeLimit + 0.25
-		end
-		if stats.nidoran.attack >= 54 and stats.nidoran.special >= 45 then
-			timeLimit = timeLimit + 0.25
-		end
-		return timeLimit
+		return 47 + timeForStats()
 	end,
 
 	safari_carbos = function()
-		return 70.5
+		return 70 + timeForStats()
 	end,
 
 	victory_road = function()
@@ -218,26 +221,39 @@ local strategyFunctions = Strategies.functions
 
 -- General
 
-local function tweetBrock(statDiff)
-	if statDiff < 3 then
-		local timeLimit = Strategies.getTimeRequirement("brock")
-		if not Strategies.overMinute(timeLimit) then
-			Strategies.tweetProgress("On pace after Brock with a great Nidoran")
+strategyFunctions.tweetAfterBrock = function()
+	if stats.nidoran.rating < 2 then
+		if not Strategies.overMinute("shorts") then
+			Strategies.updates.brock = true
+			Strategies.tweetProgress("On pace after Brock with a great Nidoran", "brock")
 		end
 	end
+	return true
 end
 
 strategyFunctions.tweetMisty = function()
-	if not Strategies.setYolo("misty") then
+	if not Strategies.updates.brock and not Strategies.setYolo("misty") then
 		local timeLimit = Strategies.getTimeRequirement("misty")
-		if not Strategies.overMinute(timeLimit - 0.5) then
+		if not Strategies.overMinute(timeLimit - 0.25) then
 			local pbn = ""
 			if not Strategies.overMinute(timeLimit - 1) then
 				pbn = " (PB pace)"
 			end
 			local elt = Utils.elapsedTime()
-			Strategies.tweetProgress("Got a run going, just beat Misty "..elt.." in"..pbn)
+			Strategies.tweetProgress("Got a run going, just beat Misty "..elt.." in"..pbn, "misty")
 		end
+	end
+	return true
+end
+
+strategyFunctions.tweetSurge = function()
+	if not Strategies.updates.misty and not Control.yolo then
+		local elt = Utils.elapsedTime()
+		local pbn = ""
+		if not Strategies.overMinute("surge") then
+			pbn = " (PB pace)"
+		end
+		Strategies.tweetProgress("Got a run going, just beat Surge "..elt.." in"..pbn, "surge")
 	end
 	return true
 end
@@ -245,11 +261,11 @@ end
 strategyFunctions.tweetVictoryRoad = function()
 	local elt = Utils.elapsedTime()
 	local pbn = ""
-	if not Strategies.overMinute(Strategies.getTimeRequirement("victory_road")) then
+	if not Strategies.overMinute("victory_road") then
 		pbn = " (PB pace)"
 	end
 	local elt = Utils.elapsedTime()
-	Strategies.tweetProgress("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four")
+	Strategies.tweetProgress("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four", "victory")
 	return true
 end
 
@@ -286,7 +302,7 @@ strategyFunctions.fightBulbasaur = function()
 			status.tries = status.tries + 1
 		end
 	end
-	if Battle.isActive() and Memory.double("battle", "opponent_hp") > 0 and Strategies.resetTime(Strategies.getTimeRequirement("bulbasaur"), "kill Bulbasaur") then
+	if Battle.isActive() and Memory.double("battle", "opponent_hp") > 0 and Strategies.resetTime("bulbasaur", "kill Bulbasaur") then
 		return true
 	end
 	return Strategies.buffTo("tail_whip", 6)
@@ -2315,7 +2331,7 @@ strategyFunctions.champion = function()
 			return Strategies.hardReset("Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
 		end
 		if status.tries == 0 then
-			Strategies.tweetProgress("Beat Pokemon Red in "..status.canProgress.."!", true)
+			Strategies.tweetProgress("Beat Pokemon Red in "..status.canProgress.."!")
 			if Strategies.seed then
 				print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
 				print("Please save this seed number to share, if you would like proof of your run!")
