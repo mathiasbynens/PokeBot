@@ -354,7 +354,7 @@ strategyFunctions.catchNidoran = function()
 				Bridge.caught("nidoran")
 				status.canProgress = true
 				if not gotExperience then
-					Bridge.chat("Waiting in the grass for a suitable encounter for experience.", Pokemon.getExp())
+					Bridge.chat("is waiting in the grass for a suitable encounter for experience", Pokemon.getExp())
 				end
 			end
 			if gotExperience then
@@ -586,7 +586,7 @@ strategyFunctions.fightBrock = function()
 							superlative = " min stat"
 							exclaim = "."
 						end
-						Bridge.chat("Beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3")..".")
+						Bridge.chat("beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3")..".")
 					else
 						status.tries = status.tries + 1
 					end
@@ -835,7 +835,7 @@ strategyFunctions.redbarMankey = function()
 		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 3 then -- RISK
 			return true
 		end
-		Bridge.chat("Using Poison Sting to attempt to red-bar off Mankey...")
+		Bridge.chat("is using Poison Sting to attempt to red-bar off Mankey")
 	end
 end
 
@@ -846,7 +846,7 @@ strategyFunctions.thrashGeodude = function()
 			if Strategies.initialize() then
 				status.sacrificeSquirtle = not Control.yolo or Combat.inRedBar()
 				if not status.sacrificeSquirtle then
-					Bridge.chat("Attempting to hit through confusion to avoid swapping Squirtle.")
+					Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle")
 				end
 			end
 			if status.sacrificeSquirtle and Battle.sacrifice("squirtle") then
@@ -922,9 +922,9 @@ strategyFunctions.potionBeforeMisty = function()
 		local potionCount = Inventory.count("potion")
 		local needsToHeal = healAmount - Pokemon.index(0, "hp")
 		if potionCount * 20 < needsToHeal then
-			message = "Ran too low on potions to heal enough before Misty D:"
+			message = "ran too low on potions to adequately heal before Misty D:"
 		elseif healAmount < 60 then
-			message = "Limiting heals to attempt to get closer to red-bar off Misty..."
+			message = "is limiting heals to attempt to get closer to red-bar off Misty..."
 		end
 		if message then
 			Bridge.chat(message, potionCount)
@@ -1095,12 +1095,12 @@ strategyFunctions.trashcans = function()
 					prefix = "Good"
 				elseif status.tries < 24 then
 					prefix = "Ugh"
-					suffix = "."
+					suffix = ""
 				else -- TODO trashcans WR
 					prefix = "Reset me now"
 					suffix = " BibleThump"
 				end
-				Bridge.chat(prefix..", "..status.tries.." try Trashcans"..suffix, Utils.elapsedTime())
+				Bridge.chat(" "..prefix..", "..status.tries.." try Trashcans"..suffix, Utils.elapsedTime())
 				return true
 			end
 			local completePath = {
@@ -1160,7 +1160,7 @@ strategyFunctions.potionBeforeSurge = function()
 		if Control.yolo then
 			local curr_hp = Combat.hp()
 			if curr_hp > yoloHp and curr_hp <= 21 then
-				Bridge.chat("Attempting to keep red-bar through Surge.", curr_hp)
+				Bridge.chat("is attempting to keep red-bar through Surge", curr_hp)
 				return true
 			end
 		end
@@ -1232,7 +1232,7 @@ strategyFunctions.redbarCubone = function()
 					end
 				end
 				if forced and Strategies.initialize() then
-					Bridge.chat("Using Thunderbolt to attempt to redbar off Cubone.")
+					Bridge.chat("is using Thunderbolt to attempt to redbar off Cubone")
 				end
 			end
 		end
@@ -1489,7 +1489,7 @@ strategyFunctions.centerSkipFullRestore = function()
 		if Control.yolo or Inventory.contains("full_restore") then
 			return true
 		end
-		Bridge.chat("We need to grab the backup Full Restore here.")
+		Bridge.chat("needs to grab the backup Full Restore here")
 	end
 	local px, py = Player.position()
 	if px < 21 then
@@ -1545,7 +1545,7 @@ strategyFunctions.silphRival = function()
 		if Strategies.initialize() then
 			status.gyaradosDamage = Combat.healthFor("RivalGyarados")
 			if Control.yolo then
-				Bridge.chat("Attempting to red-bar off Gyarados. Get ready to spaghetti!")
+				Bridge.chat("is attempting to red-bar off Gyarados. Get ready to spaghetti!")
 			end
 			status.canProgress = true
 		end
@@ -1714,7 +1714,7 @@ strategyFunctions.fightKoga = function()
 				forced = "horn_drill" --TODO allow force
 				if not status.drilling then
 					status.drilling = true
-					-- Bridge.chat("At low enough HP to try Horn Drill on Weezing.")
+					-- Bridge.chat("is at low enough HP to try Horn Drill on Weezing.")
 				end
 			elseif Strategies.opponentDamaged(2) then
 				Inventory.use("pokeflute", nil, true)
@@ -1855,7 +1855,7 @@ strategyFunctions.fightGiovanniMachoke = function()
 			status.killedMachoke = true
 		elseif not status.killedMachoke then
 			if status.skipSpecial and Combat.hp() > 13 and Memory.value("battle", "opponent_last_move") == 116 then
-				Bridge.chat("Got Focus Energy - using an X Special to guarantee the last Machoke")
+				Bridge.chat("got Focus Energy - using an X Special to guarantee the last Machoke")
 				status.skipSpecial = false
 			end
 			if not status.skipSpecial and not Strategies.prepare("x_special") then
@@ -1877,14 +1877,14 @@ strategyFunctions.checkGiovanni = function()
 		if earthquakePP >= 2 then
 			if riskGiovanni and earthquakePP < 5 then
 				if earthquakePP >= 3 and Battle.pp("horn_drill") >= 5 and (Control.yolo or Pokemon.info("nidoking", "hp") >= ryhornDamage) then -- RISK
-					Bridge.chat("Using risky strats on Giovanni to skip the extra Max Ether...")
+					Bridge.chat("is using risky strats on Giovanni to skip the extra Max Ether...")
 				else
 					riskGiovanni = false
 				end
 			end
 			return true
 		end
-		local message = "Ran out of Earthquake PP :( "
+		local message = "ran out of Earthquake PP :( "
 		if Control.yolo then
 			message = message.."Risking on Giovanni."
 		else
@@ -1970,7 +1970,7 @@ strategyFunctions.checkEther = function()
 		maxEtherSkip = stats.nidoran.attackDV >= 11 and Battle.pp("earthquake") > 0
 	end
 	if not maxEtherSkip then
-		Bridge.chat("Grabbing the Max Ether to skip the Elite 4 Center.")
+		Bridge.chat("is grabbing the Max Ether to skip the Elite 4 Center")
 	end
 	return true
 end
@@ -2048,7 +2048,7 @@ strategyFunctions.potionBeforeLorelei = function()
 		if not canPotion then
 			return true
 		end
-		Bridge.chat("Healing before Lorelei to skip the Elite 4 Center...")
+		Bridge.chat("is healing before Lorelei to skip the Elite 4 Center...")
 	end
 	return Strategies.functions.potion({hp=Combat.healthFor("LoreleiDewgong")})
 end
@@ -2094,7 +2094,7 @@ strategyFunctions.centerSkip = function()
 	if Strategies.initialize() then
 		Strategies.setYolo("e4center")
 		if not requiresE4Center() then
-			local message = "Skipping the Center and attempting to red-bar "
+			local message = "is skipping the Center and attempting to red-bar "
 			if Strategies.hasHealthFor("LoreleiDewgong") then
 				message = message.."off Lorelei..."
 			else
@@ -2272,7 +2272,7 @@ strategyFunctions.blue = function()
 			local healCutoff = skyDamage * 0.825
 			if Strategies.initialize() then
 				if not Strategies.isPrepared("x_accuracy", status.xItem) then
-					local msg = "Uh oh... First-turn Sky Attack could end the run here, "
+					local msg = " Uh oh... First-turn Sky Attack could end the run here, "
 					if Pokemon.index(0, "hp") > skyDamage then
 						msg = msg.."no criticals pls D:"
 					elseif Strategies.canHealFor(healCutoff) then
@@ -2338,7 +2338,7 @@ strategyFunctions.champion = function()
 				print("Please save this seed number to share, if you would like proof of your run!")
 			end
 		elseif status.tries == 1000 then
-			Bridge.chat("Beat the game in "..status.canProgress.." !")
+			Bridge.chat("beat the game in "..status.canProgress.." !")
 		end
 		status.tries = status.tries + 1
 	elseif Memory.value("menu", "shop_current") == 252 then
