@@ -74,12 +74,12 @@ local Paths = {
 	-- PP up
 	{68, {3,7}, {3,3}, {s="confirm",dir="Up"}, {3,8}},
 	-- Enter Mt. Moon
-	{15, {11,6}, {c="a",a="Mt. Moon"}, {18,6}, {s="split"}, {18,5}},
+	{15, {11,6}, {18,6}, {s="split"}, {18,5}},
 
 -- 4: ROUTE 3
 
 	-- Mt. Moon F1
-	{59, {14,35}, {c="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {35,31}, {35,23}, {s="interact",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
+	{59, {14,35}, {c="a",a="Mt. Moon"}, {c="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {35,31}, {35,23}, {s="interact",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
 	-- Mt. Moon B2
 	{60, {5,5}, {5,17}, {21,17}},
 	-- Mt. Moon B3
@@ -114,7 +114,7 @@ local Paths = {
 	-- To Bill's
 	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="interact",dir="Up"}, {s="thrashGeodude"}, {10,5}, {s="hikerElixer"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="interact",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="interact",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="lassEther"}, {45,4}, {45,3}},
 	-- Save Bill
-	{88, {2,7}, {2,5}, {5,5}, {s="confirm",dir="Right"}, {1,5}, {s="interact",dir="Up"}, {4,5}, {s="interact",dir="Up"}, {s="waitToTalk"}, {s="potionBeforeGoldeen"}, {s="item",item="escape_rope"}},
+	{88, {2,7}, {2,5}, {5,5}, {s="confirm",dir="Right"}, {1,5}, {s="interact",dir="Up"}, {4,5}, {s="interact",dir="Up"}, {s="waitToTalk"}, {s="potionBeforeMisty",goldeen=true,chain=true}, {s="item",item="escape_rope"}},
 	-- To Misty
 	{3, {19,18}, {19,20}, {30,20}, {30,19}},
 	-- Misty

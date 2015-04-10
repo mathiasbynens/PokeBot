@@ -907,29 +907,31 @@ strategyFunctions.lassEther = function()
 	return strategyFunctions.interact({dir="Up"})
 end
 
-strategyFunctions.potionBeforeGoldeen = function()
+strategyFunctions.potionBeforeMisty = function(data)
 	if Strategies.initialize() then
-		if Strategies.setYolo("goldeen") or Pokemon.index(0, "hp") > 7 then
-			return true
+		if data.goldeen then
+			Strategies.setYolo("goldeen")
+			local curr_hp, red_hp = Combat.hp(), Combat.redHP()
+			if Control.yolo or curr_hp < red_hp + 6 then
+				if Pokemon.index(0, "hp") > 7 then
+					return true
+				end
+			end
 		end
 	end
-	return Strategies.functions.potion({hp=64, chain=true})
-end
-
-strategyFunctions.potionBeforeMisty = function()
-	local healAmount = 70
-	local hasEnoughAttack = stats.nidoran.attack >= (yolo and 53 or 54)
+	local healAmount = data.goldeen and 65 or 70
+	local canTwoHit = stats.nidoran.attackDV >= (Control.yolo and 6 or 8)
 	local canSpeedTie = stats.nidoran.speedDV >= 11
 	if Control.yolo then
-		if hasEnoughAttack and hasEnoughSpeed then
+		if canTwoHit and stats.nidoran.speedDV >= 13 then
 			healAmount = 45
-		elseif hasEnoughAttack or canSpeedTie then
+		elseif canTwoHit or canSpeedTie then
 			healAmount = 65
 		end
 	else
-		if hasEnoughAttack and stats.nidoran.speedDV >= 13 then
+		if canTwoHit and stats.nidoran.speedDV >= 13 then
 			healAmount = 45
-		elseif hasEnoughAttack and canSpeedTie then
+		elseif canTwoHit and canSpeedTie then
 			healAmount = 65
 		end
 	end
@@ -946,7 +948,7 @@ strategyFunctions.potionBeforeMisty = function()
 			Bridge.chat(message, potionCount)
 		end
 	end
-	return Strategies.functions.potion({hp=healAmount})
+	return Strategies.functions.potion({hp=healAmount, chain=data.chain})
 end
 
 strategyFunctions.fightMisty = function()
