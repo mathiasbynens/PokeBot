@@ -722,8 +722,8 @@ strategyFunctions.rivalSandAttack = function(data)
 			Combat.disableThrash = true
 		elseif opponent == "raticate" then
 			Combat.disableThrash = Strategies.opponentDamaged() or (not Control.yolo and Combat.hp() < 32) -- RISK
-		elseif opponent == "kadabra" then --TODO id
-			Combat.disableThrash = Combat.hp() < 10
+		elseif opponent == "kadabra" then
+			Combat.disableThrash = Combat.hp() < 11
 		elseif opponent == "ivysaur" then
 			if not Control.yolo and Strategies.damaged(5) and Inventory.contains("super_potion") then
 				Inventory.use("super_potion", nil, true)
@@ -1771,18 +1771,18 @@ strategyFunctions.fightErika = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		local forced
-		local curr_hp, red_hp = Combat.hp(), Combat.redHP()
-		local razorDamage = 34
-		if curr_hp > razorDamage and curr_hp - razorDamage < red_hp then
-			if Strategies.opponentDamaged() then
-				forced = "thunderbolt"
-			elseif stats.nidoran.special < 45 then
-				forced = "ice_beam"
-			else
-				forced = "thunderbolt"
+		if Control.yolo then
+			local curr_hp, red_hp = Combat.hp(), Combat.redHP()
+			local razorDamage = 34
+			if curr_hp > razorDamage and curr_hp - razorDamage < red_hp then
+				if Strategies.opponentDamaged() then
+					forced = "thunderbolt"
+				elseif stats.nidoran.special < 45 then
+					forced = "ice_beam"
+				else
+					forced = "thunderbolt"
+				end
 			end
-		elseif riskGiovanni then
-			forced = "ice_beam"
 		end
 		Battle.automate(forced)
 	elseif status.canProgress then

@@ -22,6 +22,7 @@ local pokeIDs = {
 	growlithe = 33,
 	onix = 34,
 	pidgey = 36,
+	kadabra = 38,
 	jinx = 72,
 	meowth = 77,
 	pikachu = 84,
