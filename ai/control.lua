@@ -290,8 +290,8 @@ function Control.encounter(battleState)
 			if turnMarker == 100 or turnMarker == 128 then
 				local isMiss = Memory.value("battle", "miss") == 1
 				if isMiss then
-					if Battle.accurateAttack and Memory.value("battle", "accuracy") == 7 then
-						Bridge.chat("Gen 1 missed! (1 in 256 chance.)")
+					if not Control.ignoreMiss and Battle.accurateAttack and Memory.value("battle", "accuracy") == 7 then
+						Bridge.chat("gen 1 missed :( (1 in 256 chance)")
 					end
 					Control.missed = true
 				end
@@ -321,7 +321,7 @@ function Control.encounter(battleState)
 					for i,catch in ipairs(gottaCatchEm) do
 						if opponent == catch then
 							if not Pokemon.inParty(catch) then
-								Bridge.chat("Noo, we accidentally killed "..Utils.capitalize(catch).." with a "..(isCritical and "critical" or "high damage range").." :(")
+								Bridge.chat("accidentally killed "..Utils.capitalize(catch).." with a "..(isCritical and "critical" or "high damage range").." :(")
 								Control.killedCatch = true
 							end
 							break

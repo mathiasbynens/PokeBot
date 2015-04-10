@@ -804,9 +804,10 @@ strategyFunctions.teachThrash = function()
 				speedDV = spdDv,
 				specialDV = sclDV,
 			}
-			p(Pokemon.getDVs(name))
-			Bridge.stats(statDesc)
+
+			p(attDv, defDV, spdDv, sclDV)
 			print(statDesc)
+			Bridge.stats(statDesc)
 			return true
 		end
 	end
@@ -1902,7 +1903,7 @@ strategyFunctions.checkGiovanni = function()
 		if Control.yolo then
 			message = message.."Risking on Giovanni."
 		else
-			message = message.."Time for standard strats."
+			message = message.."Reverting to standard strats."
 		end
 		Bridge.chat(message)
 		riskGiovanni = false
@@ -2118,7 +2119,7 @@ strategyFunctions.lorelei = function()
 				return false
 			end
 		elseif opponentName == "jinx" then
-			if Battle.pp("horn_drill") < 2 then
+			if Battle.pp("horn_drill") <= 1 then
 				forced = "earthquake"
 			end
 		end
@@ -2248,9 +2249,6 @@ strategyFunctions.blue = function()
 			else
 				status.xItem = "x_speed"
 			end
-			if not STREAMING_MODE then
-				status.xItem = "x_speed"
-			end
 		end
 
 		local boostFirst = Pokemon.index(0, "hp") < 55
@@ -2301,7 +2299,7 @@ strategyFunctions.blue = function()
 		else
 			if Strategies.prepare(firstItem, secondItem) then
 				if Pokemon.isOpponent("alakazam") then
-					if status.xItem == "x_special" then
+					if status.xItem == "x_speed" then
 						forced = "earthquake"
 					end
 				elseif Pokemon.isOpponent("rhydon") then
@@ -2355,7 +2353,7 @@ function Strategies.initGame(midGame)
 		}
 		if Pokemon.inParty("nidoking") then
 			local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
-			p(Pokemon.getDVs("nidoking"))
+			p(attDv, defDV, spdDv, sclDV)
 			stats.nidoran = {
 				attack = 55,
 				defense = 45,

@@ -161,7 +161,8 @@ function Strategies.hasHealthFor(opponent, extra)
 	if not extra then
 		extra = 0
 	end
-	return Pokemon.index(0, "hp") + extra > Combat.healthFor(opponent)
+	local afterHealth = math.min(Pokemon.index(0, "hp") + extra, Pokemon.index(0, "max_hp"))
+	return afterHealth > Combat.healthFor(opponent)
 end
 
 function Strategies.damaged(factor)
