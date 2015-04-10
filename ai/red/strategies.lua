@@ -1825,14 +1825,32 @@ end
 
 strategyFunctions.fightGiovanniMachoke = function()
 	if Strategies.initialize() then
-		if stats.nidoran.attack >= 55 then
+		if stats.nidoran.attack >= 56 then
 			local eqPpRequired = stats.nidoran.special >= 47 and 7 or 8
 			if Battle.pp("earthquake") >= eqPpRequired then
-				return true
+				status.skipSpecial = true
 			end
 		end
 	end
-	return Strategies.prepare("x_special")
+	if Battle.isActive() then
+		status.canProgress = true
+		if Pokemon.isOpponent("machop") then
+			status.killedMachoke = true
+		elseif not status.killedMachoke then
+			if status.skipSpecial and Combat.hp() > 13 and Memory.value("battle", "opponent_last_move") == 116 then
+				Bridge.chat("Got Focus Energy - using an X Special to guarantee the last Machoke")
+				status.skipSpecial = false
+			end
+			if not status.skipSpecial and not Strategies.prepare("x_special") then
+				return false
+			end
+		end
+		Battle.automate()
+	elseif status.canProgress then
+		return true
+	else
+		Textbox.handle()
+	end
 end
 
 strategyFunctions.checkGiovanni = function()
@@ -1978,12 +1996,15 @@ end
 
 strategyFunctions.grabMaxEther = function()
 	if Strategies.initialize() then
-		if maxEtherSkip or Inventory.isFull() then
+		if maxEtherSkip and Inventory.count("ether") + Inventory.count("elixer") >= 2 then
 			return true
 		end
 	end
 	if Inventory.contains("max_ether") then
 		return true
+	end
+	if Inventory.isFull() then
+		return true --TODO toss
 	end
 	local px, py = Player.position()
 	if px > 7 then
@@ -2268,7 +2289,7 @@ strategyFunctions.blue = function()
 					if status.xItem == "x_speed" then
 						forced = "earthquake"
 					else
-						local ours, enemy = activePokemon()
+						local ours, enemy = Combat.activePokemon()
 						if ours.speed <= enemy.speed then
 							forced = "earthquake"
 						end

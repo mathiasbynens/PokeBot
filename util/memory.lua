@@ -61,7 +61,9 @@ local memoryNames = {
 		disabled = 0x0CEE,
 		paralyzed = 0x1018,
 
-		opponent_move = 0x0FEE,
+		opponent_next_move = 0x0CDD,
+		opponent_last_move = 0x0FCC,
+
 		critical = 0x105E,
 		miss = 0x105F,
 		our_turn = 0x1FF1,
