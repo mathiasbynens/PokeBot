@@ -32,7 +32,7 @@ local Settings = require "util.settings"
 local Pokemon = require "storage.pokemon"
 
 local hasAlreadyStartedPlaying = false
-local oldSecs
+local oldSeconds
 local running = true
 local lastHP
 
@@ -64,7 +64,7 @@ local function resetAll()
 	Walk.reset()
 	Paint.reset()
 	Bridge.reset()
-	oldSecs = 0
+	oldSeconds = 0
 	running = false
 	-- client.speedmode = 200
 
@@ -73,6 +73,7 @@ local function resetAll()
 		p("RUNNING WITH A FIXED SEED ("..Strategies.seed.."), every run will play out identically!", true)
 	else
 		Strategies.seed = os.time()
+		print("PokeBot v"..VERSION..": starting a new run with seed "..Strategies.seed)
 	end
 	math.randomseed(Strategies.seed)
 end
@@ -170,10 +171,10 @@ while true do
 	end
 
 	if STREAMING_MODE then
-		local newSecs = Memory.raw(0x1A44)
-		if newSecs ~= oldSecs and (newSecs > 0 or Memory.raw(0x1A45) > 0) then
+		local newSeconds = Memory.value("time", "seconds")
+		if newSeconds ~= oldSeconds and (newSeconds > 0 or Memory.value("time", "frames") > 0) then
 			Bridge.time(Utils.elapsedTime())
-			oldSecs = newSecs
+			oldSeconds = newSeconds
 		end
 	elseif PAINT_ON then
 		Paint.draw(currentMap)

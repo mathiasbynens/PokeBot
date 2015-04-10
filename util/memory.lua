@@ -37,9 +37,14 @@ local memoryNames = {
 	},
 	game = {
 		map = 0x135E,
-		frames = 0x1A45,
 		battle = 0x1057,
 		textbox = 0x0FC4,
+	},
+	time = {
+		hours = 0x1A41,
+		minutes = 0x1A43,
+		seconds = 0x1A44,
+		frames = 0x1A45,
 	},
 	shop = {
 		transaction_amount = 0x0F96,

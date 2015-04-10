@@ -82,10 +82,10 @@ end
 -- TIME
 
 function Utils.igt()
-	local secs = Memory.raw(0x1A44)
-	local mins = Memory.raw(0x1A43)
-	local hours = Memory.raw(0x1A41)
-	return secs + mins * 60 + hours * 3600
+	local hours = Memory.value("time", "hours")
+	local mins = Memory.value("time", "minutes")
+	local secs = Memory.value("time", "seconds")
+	return (hours * 60 + mins) * 60 + secs
 end
 
 local function clockSegment(unit)
@@ -108,22 +108,18 @@ function Utils.timeSince(prevTime)
 end
 
 function Utils.elapsedTime()
-	local secs = Memory.raw(0x1A44)
-	if secs < 10 then
-		secs = "0"..secs
-	end
-	local mins = Memory.raw(0x1A43)
-	if mins < 10 then
-		mins = "0"..mins
-	end
-	return Memory.raw(0x1A41)..":"..mins..":"..secs
+	local secs = Memory.value("time", "seconds")
+	local mins = Memory.value("time", "minutes")
+	local hours = Memory.value("time", "hours")
+	return hours..":"..clockSegment(mins)..":"..clockSegment(secs)
 end
 
 function Utils.frames()
-	local totalFrames = Memory.raw(0x1A41) * 60
-	totalFrames = (totalFrames + Memory.raw(0x1A43)) * 60
-	totalFrames = (totalFrames + Memory.raw(0x1A44)) * 60
-	return totalFrames + Memory.raw(0x1A45)
+	local totalFrames = Memory.value("time", "hours") * 60
+	totalFrames = (totalFrames + Memory.value("time", "minutes")) * 60
+	totalFrames = (totalFrames + Memory.value("time", "seconds")) * 60
+	totalFrames = totalFrames + Memory.value("time", "frames")
+	return totalFrames
 end
 
 return Utils
