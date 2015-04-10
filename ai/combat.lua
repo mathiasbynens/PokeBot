@@ -344,11 +344,11 @@ function Combat.inKillRange(draw)
 		hpReq = hpReq + math.floor(ours.hp * 0.2)
 	end
 	if ours.hp <= hpReq then
-		local outspeed = enemyAttack.outspeed
-		if outspeed and outspeed ~= true then
-			outspeed = Memory.value("battle", "turns") > 0
+		local outsped = enemyAttack.outspeed
+		if outsped and outsped ~= true then
+			outsped = Memory.value("battle", "attack_turns") > 0
 		end
-		if outspeed or isConfused or turnsToKill > 1 or ours.speed <= enemy.speed or isSleeping() then
+		if outsped or isConfused or turnsToKill > 1 or ours.speed <= enemy.speed or isSleeping() then
 			return ours, hpReq
 		end
 	end

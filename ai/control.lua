@@ -331,7 +331,7 @@ function Control.encounter(battleState)
 			end
 		end
 	elseif Control.inBattle then
-		if Memory.value("battle", "turns") == 0 then
+		if Memory.value("battle", "battle_turns") == 0 then
 			Control.escaped = true
 		end
 		Control.inBattle = false

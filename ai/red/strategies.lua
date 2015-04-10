@@ -670,7 +670,7 @@ end
 strategyFunctions.shortsKid = function()
 	local fightingEkans = Pokemon.isOpponent("ekans")
 	if fightingEkans then
-		local wrapping = Memory.value("battle", "turns") > 0
+		local wrapping = Memory.value("battle", "attack_turns") > 0
 		if wrapping then
 			local curr_hp = Memory.double("battle", "our_hp")
 			if not status.wrappedAt then
@@ -2263,7 +2263,7 @@ strategyFunctions.blue = function()
 
 		local forced = "horn_drill"
 
-		if Memory.value("battle", "turns") > 0 then
+		if Memory.value("battle", "attack_turns") > 0 then
 			local skyDamage = Combat.healthFor("BlueSky")
 			local healCutoff = skyDamage * 0.825
 			if Strategies.initialize() then
