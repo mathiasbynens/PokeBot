@@ -56,11 +56,11 @@ end
 
 function Strategies.reset(reason, extra, wait)
 	local time = Utils.elapsedTime()
-	local resetMessage = "Reset"
+	local resetMessage = "reset"
 	if time then
 		resetMessage = resetMessage.." after "..time
 	end
-	resetMessage = " "..resetMessage.." at "..Control.areaName
+	resetMessage = resetMessage.." at "..Control.areaName
 	local separator
 	if Strategies.deepRun and not Control.yolo then
 		separator = " BibleThump"
