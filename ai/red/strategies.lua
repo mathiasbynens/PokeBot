@@ -126,52 +126,52 @@ Strategies.timeRequirements = {
 
 -- HELPERS
 
-local function nidoranDSum(disabled)
+local function nidoranDSum(enabled)
 	local sx, sy = Player.position()
-	if not disabled and status.tries == nil then
+	if enabled and status.path == nil then
 		local opponentName = Battle.opponent()
-		local opLevel = Memory.value("battle", "opponent_level")
+		local opponentLevel = Memory.value("battle", "opponent_level")
 		if opponentName == "rattata" then
-			if opLevel == 2 then
-				status.tries = {0, 4, 12}
-			elseif opLevel == 3 then
-				status.tries = {0, 14, 11}
+			if opponentLevel == 2 then
+				status.path = {0, 4, 12}
+			elseif opponentLevel == 3 then
+				status.path = {0, 14, 11}
 			else
-				status.tries = {0, 0, 10}
+				status.path = {0, 0, 10}
 			end
 		elseif opponentName == "spearow" then
-			if opLevel == 5 then
+			if opponentLevel == 5 then --TODO
 			else
 			end
 		elseif opponentName == "nidoran" then
-			status.tries = {0, 6, 12}
+			status.path = {0, 6, 12}
 		elseif opponentName == "nidoranf" then
-			if opLevel == 3 then
-				status.tries = {4, 6, 12}
+			if opponentLevel == 3 then
+				status.path = {4, 6, 12}
 			else
-				status.tries = {5, 6, 12}
+				status.path = {5, 6, 12}
 			end
 		end
-		if status.tries then
-			status.tries.idx = 1
-			status.tries.x, status.tries.y = sx, sy
+		if status.path then
+			status.pathIndex = 1
+			status.pathX, status.pathY = sx, sy
 		else
-			status.tries = 0
+			status.path = 0
 		end
 	end
-	if not disabled and status.tries ~= 0 then
-		if status.tries[status.tries.idx] == 0 then
-			status.tries.idx = status.tries.idx + 1
-			if status.tries.idx > 3 then
-				status.tries = 0
+	if enabled and status.path ~= 0 then
+		if status.path[status.pathIndex] == 0 then
+			status.pathIndex = status.pathIndex + 1
+			if status.pathIndex > 3 then
+				status.path = 0
 			end
 			return nidoranDSum()
 		end
-		if status.tries.x ~= sx or status.tries.y ~= sy then
-			status.tries[status.tries.idx] = status.tries[status.tries.idx] - 1
-			status.tries.x, status.tries.y = sx, sy
+		if status.pathX ~= sx or status.pathY ~= sy then
+			status.path[status.pathIndex] = status.path[status.pathIndex] - 1
+			status.pathX, status.pathY = sx, sy
 		end
-		if status.tries.idx == 2 then
+		if status.pathIndex == 2 then
 			sy = 11
 		else
 			sy = 12
@@ -330,6 +330,9 @@ strategyFunctions.shopViridianPokeballs = function()
 end
 
 strategyFunctions.catchNidoran = function()
+	if Strategies.initialize() then
+		status.path = 0
+	end
 	if not Control.canCatch() then
 		return true
 	end
@@ -345,7 +348,7 @@ strategyFunctions.catchNidoran = function()
 				Bridge.pollForName()
 			end
 		end
-		status.tries = nil
+		status.path = nil
 		if Memory.value("menu", "text_input") == 240 then
 			Textbox.name()
 		elseif Memory.value("battle", "menu") == 95 then
@@ -358,7 +361,7 @@ strategyFunctions.catchNidoran = function()
 			Battle.handle()
 		end
 	else
-		local noDSum
+		local enableDSum = true
 		Pokemon.updateParty()
 		local hasNidoran = Pokemon.inParty("nidoran")
 		if hasNidoran then
@@ -374,23 +377,23 @@ strategyFunctions.catchNidoran = function()
 				stats.nidoran = {level4=(Pokemon.info("nidoran", "level") == 4)}
 				return true
 			end
-			noDSum = true
+			enableDSum = false
 		end
 
-		local timeLimit = Strategies.getTimeRequirement("nidoran")
 		local resetMessage
 		if hasNidoran then
 			resetMessage = "get an experience kill before Brock"
 		else
 			resetMessage = "find a suitable Nidoran"
 		end
-		if Strategies.resetTime(timeLimit, resetMessage) then
+		local resetLimit = Strategies.getTimeRequirement("nidoran")
+		if Strategies.resetTime(resetLimit, resetMessage) then
 			return true
 		end
-		if not noDSum and (not Control.escaped or Strategies.overMinute(timeLimit - 0.25)) then
-			noDSum = true
+		if enableDSum then
+			enableDSum = Control.escaped and not Strategies.overMinute(resetLimit - 0.25)
 		end
-		nidoranDSum(noDSum)
+		nidoranDSum(enableDSum)
 	end
 end
 
