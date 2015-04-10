@@ -210,8 +210,8 @@ while true do
 	end
 
 	if STREAMING_MODE then
-		local newSecs = memory.raw(0x1A44)
-		if newSecs ~= oldSecs and (newSecs > 0 or memory.raw(0x1A45) > 0) then
+		local newSecs = memory.value("time", "seconds")
+		if newSecs ~= oldSecs and (newSecs > 0 or memory.value("time", "frames") > 0) then
 			bridge.time(utils.elapsedTime())
 			oldSecs = newSecs
 		end
