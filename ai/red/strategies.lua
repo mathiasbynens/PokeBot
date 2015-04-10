@@ -1476,6 +1476,19 @@ strategyFunctions.drivebyRareCandy = function()
 	end
 end
 
+strategyFunctions.tossAntidote = function()
+	if Inventory.count() <= (Inventory.contains("full_restore") and 18 or 17) then
+		return true
+	end
+	local tossItem = Inventory.contains("antidote", "pokeball")
+	if Strategies.initialize() then
+		p("Tossing "..tossItem.." to make space", Inventory.count())
+	end
+	if not Inventory.useItemOption(tossItem, nil, 1) then
+		Input.press("A")
+	end
+end
+
 strategyFunctions.safariCarbos = function()
 	if Strategies.initialize() then
 		Strategies.setYolo("safari_carbos")

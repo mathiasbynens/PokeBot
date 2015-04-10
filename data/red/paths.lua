@@ -288,7 +288,7 @@ local Paths = {
 	-- Safari 1
 	{220, {15,25}, {s="bicycle"}, {15,16}, {28,16}, {28,11}, {30,11}},
 	-- Safari 2
-	{217, {0,23}, {4,23}, {4,24}, {20,24}, {20,20}, {s="safariCarbos"}, {12,20}, {12,22}, {11,22}, {10,22}, {s="item",item="super_repel",chain=true}, {s="item",item="carbos",poke="nidoking",close=true}, {9,22}, {9,8}, {12,8}, {12,6}, {17,6}, {17,8}, {20,8}, {s="centerSkipFullRestore"}, {20,3}, {7,3}, {7,5}, {-1,5}},
+	{217, {0,23}, {4,23}, {4,24}, {20,24}, {20,20}, {s="safariCarbos"}, {12,20}, {12,22}, {11,22}, {10,22}, {s="item",item="super_repel",chain=true}, {s="tossAntidote"}, {s="item",item="carbos",poke="nidoking",close=true}, {9,22}, {9,8}, {12,8}, {12,6}, {17,6}, {17,8}, {20,8}, {s="centerSkipFullRestore"}, {20,3}, {7,3}, {7,5}, {-1,5}},
 	-- Safari 3
 	{218, {39,31}, {22,31}, {22,22}, {16,22}, {16,28}, {13,28}, {13,9}, {28,9}, {28,3}, {3,3}, {3,36}},
 	-- Safari 4
