@@ -250,7 +250,8 @@ strategyFunctions.tweetSurge = function()
 	if not Strategies.updates.misty and not Control.yolo then
 		local elt = Utils.elapsedTime()
 		local pbn = ""
-		if not Strategies.overMinute("surge") then
+		local pbPace = Strategies.getTimeRequirement("trash") + 1
+		if not Strategies.overMinute(pbPace) then
 			pbn = " (PB pace)"
 		end
 		Strategies.tweetProgress("Got a run going, just beat Surge "..elt.." in"..pbn, "surge")
@@ -358,7 +359,7 @@ strategyFunctions.catchNidoran = function()
 				end
 			end
 			if gotExperience then
-				stats.nidoran = {level4 = (Pokemon.info("nidoran", "level") == 4)}
+				stats.nidoran = {level4=(Pokemon.info("nidoran", "level") == 4)}
 				return true
 			end
 			noDSum = true
@@ -429,11 +430,11 @@ strategyFunctions.grabForestPotion = function()
 	if Battle.handleWild() then
 		local potionCount = Inventory.count("potion")
 		if Strategies.initialize() then
-			status.tries = potionCount
+			status.startPotions = potionCount
 		end
 		if potionCount > 0 then
-			if status.tries and potionCount > status.tries then
-				status.tries = nil
+			if status.startPotions and potionCount > status.startPotions then
+				status.startPotions = nil
 			end
 			if Pokemon.info("squirtle", "hp") <= 14 then
 				if Menu.pause() then
@@ -442,8 +443,10 @@ strategyFunctions.grabForestPotion = function()
 			elseif Menu.close() then
 				return true
 			end
-		elseif not status.tries then
-			return true
+		elseif not status.startPotions then
+			if Menu.close() then
+				return true
+			end
 		elseif Menu.close() then
 			Player.interact("Up")
 		end
@@ -832,7 +835,7 @@ strategyFunctions.redbarMankey = function()
 		Textbox.handle()
 	end
 	if Strategies.initialize() then
-		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 3 then -- RISK
+		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 4 then -- RISK
 			return true
 		end
 		Bridge.chat("is using Poison Sting to attempt to red-bar off Mankey")
@@ -1931,15 +1934,8 @@ end
 
 strategyFunctions.viridianRival = function()
 	if Battle.isActive() then
-		if not status.canProgress then
-			if riskGiovanni or stats.nidoran.special < 45 or Pokemon.index(0, "speed") < 134 then
-				status.xItem = "x_special"
-			else
-				print("Skip X Special strats!")
-			end
-			status.canProgress = true
-		end
-		if Strategies.prepare("x_accuracy", status.xItem) then
+		status.canProgress = true
+		if Strategies.prepare("x_accuracy", "x_special") then
 			local forced
 			if Pokemon.isOpponent("pidgeot") then
 				forced = "thunderbolt"
@@ -2303,13 +2299,8 @@ strategyFunctions.blue = function()
 		else
 			if Strategies.prepare(firstItem, secondItem) then
 				if Pokemon.isOpponent("alakazam") then
-					if status.xItem == "x_speed" then
+					if status.xItem == "x_special" then
 						forced = "earthquake"
-					else
-						local ours, enemy = Combat.activePokemon()
-						if ours.speed <= enemy.speed then
-							forced = "earthquake"
-						end
 					end
 				elseif Pokemon.isOpponent("rhydon") then
 					if status.xItem == "x_special" then
