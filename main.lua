@@ -91,6 +91,7 @@ local function resetAll()
 		print("RUNNING WITH A FIXED SEED ("..strategies.seed.."), every run will play out identically!")
 	else
 		strategies.seed = os.time()
+		print("PokeBot version "..VERSION.." starting new run with seed "..strategies.seed..".")
 	end
 	math.randomseed(strategies.seed)
 end
