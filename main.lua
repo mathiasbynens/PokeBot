@@ -51,6 +51,7 @@ local function resetAll()
 
 	if CUSTOM_SEED then
 		Strategies.seed = CUSTOM_SEED
+		Strategies.replay = true
 		p("RUNNING WITH A FIXED SEED ("..Strategies.seed.."), every run will play out identically!", true)
 	else
 		Strategies.seed = os.time()

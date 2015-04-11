@@ -408,7 +408,7 @@ Strategies.functions = {
 
 	split = function(data)
 		Bridge.split(data and data.finished)
-		if not INTERNAL then
+		if Strategies.replay then
 			splitNumber = splitNumber + 1
 
 			local timeDiff
