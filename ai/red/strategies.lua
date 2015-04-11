@@ -315,7 +315,7 @@ strategyFunctions.fightBulbasaur = function()
 			status.tries = status.tries + 1
 		end
 	end
-	if Battle.isActive() and Memory.double("battle", "opponent_hp") > 0 and Strategies.resetTime("bulbasaur", "kill Bulbasaur") then
+	if Battle.isActive() and Memory.double("battle", "opponent_hp") > 0 and Strategies.resetTime("bulbasaur", "beat Bulbasaur") then
 		return true
 	end
 	return Strategies.buffTo("tail_whip", 6)
@@ -382,7 +382,7 @@ strategyFunctions.catchNidoran = function()
 
 		local resetMessage
 		if hasNidoran then
-			resetMessage = "get an experience kill before Brock"
+			resetMessage = "get an encounter for experience before Brock"
 		else
 			resetMessage = "find a suitable Nidoran"
 		end
@@ -934,8 +934,12 @@ strategyFunctions.fightMisty = function()
 		end
 		local forced
 		if not status.swappedOut and Combat.isConfused() then
+			if status.swappedOut == nil and Control.yolo then
+				status.swappedOut = true
+				return false
+			end
 			status.swappedOut = false
-			if Battle.sacrifice("pidgey", "spearow", "paras", "squirtle") then
+			if Battle.sacrifice("pidgey", "spearow", "squirtle", "paras") then
 				return false
 			end
 		end
@@ -1526,7 +1530,7 @@ strategyFunctions.silphRival = function()
 		if Strategies.initialize() then
 			status.gyaradosDamage = Combat.healthFor("RivalGyarados")
 			if Control.yolo then
-				Bridge.chat("is attempting to red-bar off Gyarados. Get ready to spaghetti!")
+				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!")
 			end
 			status.canProgress = true
 		end

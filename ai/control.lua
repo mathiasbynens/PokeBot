@@ -205,7 +205,7 @@ function Control.canCatch(partySize)
 	local pokeballs = Inventory.count("pokeball")
 	local minimumCount = (yellow and 3 or 4) - partySize
 	if pokeballs < minimumCount then
-		if yellow and Pokemon.inParty("nidoran") and Pokemon.inParty("pidgey", "spearow") then
+		if yellow and Pokemon.inParty("nidoran", "nidorino", "nidoking") and Pokemon.inParty("pidgey", "spearow") then
 			return false
 		end
 		Strategies.reset("Not enough PokeBalls", pokeballs)
@@ -313,7 +313,7 @@ function Control.encounter(battleState)
 					Paint.wildEncounters(encounters)
 					Bridge.encounter()
 					if Control.moonEncounters then
-						if Pokemon.isOpponent("zubat") then
+						if INTERNAL and Pokemon.isOpponent("zubat") then
 							Bridge.chat("NightBat")
 						end
 						Control.moonEncounters = Control.moonEncounters + 1
