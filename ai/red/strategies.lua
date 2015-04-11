@@ -905,6 +905,8 @@ strategyFunctions.potionBeforeMisty = function(data)
 			healAmount = 65
 		end
 	end
+	healAmount = healAmount - (stats.nidoran.special - 43)
+
 	if Strategies.initialize() then
 		local message
 		local potionCount = Inventory.count("potion")
@@ -933,11 +935,9 @@ strategyFunctions.fightMisty = function()
 		local forced
 		if not status.swappedOut and Combat.isConfused() then
 			status.swappedOut = false
-			if Battle.sacrifice("squirtle", "pidgey", "spearow", "paras") then
+			if Battle.sacrifice("pidgey", "spearow", "paras", "squirtle") then
 				return false
 			end
-		elseif Pokemon.isDeployed("squirtle") then
-			forced = "tail_whip"
 		end
 		Battle.automate(forced)
 	elseif status.canProgress then

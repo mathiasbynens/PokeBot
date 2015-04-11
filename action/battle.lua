@@ -272,6 +272,8 @@ function Battle.redeployNidoking()
 		if turns == 1 then
 			if Pokemon.isDeployed("spearow") then
 				forced = "growl"
+			elseif Pokemon.isDeployed("squirtle") then
+				forced = "tail_whip"
 			else
 				forced = "sand_attack"
 			end
