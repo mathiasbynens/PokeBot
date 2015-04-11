@@ -778,40 +778,9 @@ strategyFunctions.rivalSandAttack = function(data)
 	end
 end
 
-strategyFunctions.teachThrash = function()
-	if Strategies.initialize() then
-		if Pokemon.hasMove("thrash") or Pokemon.info("nidoking", "level") < 21 then
-			return true
-		end
-	end
-	if Strategies.functions.teach({move="thrash",item="rare_candy",replace="leer"}) then
-		if Menu.close() then
-			local att = Pokemon.index(0, "attack")
-			local def = Pokemon.index(0, "defense")
-			local spd = Pokemon.index(0, "speed")
-			local scl = Pokemon.index(0, "special")
-			local statDesc = att.." "..def.." "..spd.." "..scl
-			local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
-			stats.nidoran = {
-				attack = att,
-				defense = def,
-				speed = spd,
-				special = scl,
-				level4 = stats.nidoran.level4,
-				rating = stats.nidoran.rating,
-				attackDV = attDv,
-				defenseDV = defDV,
-				speedDV = spdDv,
-				specialDV = sclDV,
-			}
+-- rareCandyEarly
 
-			p(attDv, defDV, spdDv, sclDV)
-			print(statDesc)
-			Bridge.stats(statDesc)
-			return true
-		end
-	end
-end
+-- teachThrash
 
 strategyFunctions.potionForMankey = function()
 	if Strategies.initialize() then
@@ -987,18 +956,7 @@ strategyFunctions.potionBeforeRocket = function()
 	return Strategies.functions.potion({hp=13, yolo=11})
 end
 
-strategyFunctions.jingleSkip = function()
-	if status.canProgress then
-		local px, py = Player.position()
-		if px < 4 then
-			return true
-		end
-		Input.press("Left", 0)
-	else
-		Input.press("A", 0)
-		status.canProgress = true
-	end
-end
+-- jingleSkip
 
 strategyFunctions.catchOddish = function()
 	if not Control.canCatch() then

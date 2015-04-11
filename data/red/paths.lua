@@ -107,7 +107,7 @@ local Paths = {
 	{3, {9,12}, {c="a",a="Cerulean Rival"}, {21,12}, {21,6}, {s="rivalSandAttack"}, {21,-1}},
 	-- Nugget bridge
 	--TODO RC early strat
-	{35, {11,35}, {c="a",a="Nugget Bridge"}, {11,32}, {s="interact",dir="Up"}, {10,32}, {10,29}, {s="interact",dir="Up"}, {11,29}, {11,27}, {s="potion",hp=4}, {11,26}, {s="interact",dir="Up"}, {10,26}, {10,24}, {s="teachThrash"}, {s="potion",hp=4}, {10,23}, {s="interact",dir="Up"}, {11,23}, {11,21}, {s="teachThrash"}, {s="potionForMankey"}, {11,20}, {s="interact",dir="Up"}, {s="redbarMankey"}, {10,20}, {10,19}, {s="teachThrash"}, {10,15}, {s="waitToFight"}, {s="teachThrash"}, {s="split"}, {10,8}, {20,8}},
+	{35, {11,35}, {c="a",a="Nugget Bridge"}, {11,32}, {s="interact",dir="Up"}, {10,32}, {10,29}, {s="potion",hp=12,yolo=10}, {s="interact",dir="Up"}, {11,29}, {11,27}, {s="rareCandyEarly",close=true}, {s="potion",hp=10,yolo=8,close=true}, {11,26}, {s="interact",dir="Up"}, {10,26}, {10,24}, {s="teachThrash"}, {s="potion",hp=4}, {10,23}, {s="interact",dir="Up"}, {11,23}, {11,21}, {s="teachThrash"}, {s="potionForMankey"}, {11,20}, {s="interact",dir="Up"}, {s="redbarMankey"}, {10,20}, {10,19}, {s="teachThrash"}, {10,15}, {s="learnThrash"}, {s="teachThrash"}, {s="split"}, {10,8}, {20,8}},
 
 -- 6: NUGGET BRIDGE
 

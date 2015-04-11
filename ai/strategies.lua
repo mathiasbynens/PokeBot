@@ -346,6 +346,31 @@ function Strategies.prepare(...)
 	end
 end
 
+local function nidokingStats()
+	local att = Pokemon.index(0, "attack")
+	local def = Pokemon.index(0, "defense")
+	local spd = Pokemon.index(0, "speed")
+	local scl = Pokemon.index(0, "special")
+	local statDesc = att.." "..def.." "..spd.." "..scl
+	local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
+	stats.nidoran = {
+		attack = att,
+		defense = def,
+		speed = spd,
+		special = scl,
+		level4 = stats.nidoran.level4,
+		rating = stats.nidoran.rating,
+		attackDV = attDv,
+		defenseDV = defDV,
+		speedDV = spdDv,
+		specialDV = sclDV,
+	}
+
+	p(attDv, defDV, spdDv, sclDV)
+	print(statDesc)
+	Bridge.stats(statDesc)
+end
+
 -- GENERALIZED STRATEGIES
 
 Strategies.functions = {
@@ -910,6 +935,82 @@ Strategies.functions = {
 			dist = (left and -7 or 4),
 			left = left
 		}
+	end,
+
+	rareCandyEarly = function(data)
+		if Strategies.initialize() then
+			p("RCE", Pokemon.getExp())
+			if yellow then
+				if Pokemon.getExp() > 5500 then --TODO
+					return true
+				end
+			else
+				if Pokemon.info("nidoking", "level") ~= 20 or Pokemon.getExp() > 5550 then
+					return true
+				end
+			end
+		end
+		return strategyFunctions.item({item="rare_candy", amount=2, poke="nidoking", chain=data.chain, close=data.close})
+	end,
+
+	teachThrash = function()
+		if Strategies.initialize() then
+			if Pokemon.hasMove("thrash") or Pokemon.info("nidoking", "level") < 21 or not Inventory.contains("rare_candy") then
+				return true
+			end
+		end
+		local replacementMove = yellow and "tackle" or "leer"
+		if strategyFunctions.teach({move="thrash",item="rare_candy",replace=replacementMove}) then
+			if Menu.close() then
+				nidokingStats()
+				return true
+			end
+		end
+	end,
+
+	learnThrash = function()
+		if Battle.isActive() then
+			status.canProgress = true
+			local settingsRow = Memory.value("menu", "settings_row")
+			if settingsRow == 8 then
+				local column = Memory.value("menu", "column")
+				if column == 15 then
+					Input.press("A")
+				elseif column == 5 then
+					local replacementMove = yellow and "tackle" or "leer"
+					local replaceIndex = Pokemon.moveIndex(replacementMove, "nidoking")
+					if replaceIndex then
+						Menu.select(replaceIndex - 1, true)
+						status.learned = true
+					else
+						Input.cancel()
+					end
+				end
+			else
+				Battle.automate()
+			end
+		elseif status.canProgress then
+			if status.learned then
+				print("learn'd")
+				nidokingStats()
+			end
+			return true
+		else
+			Battle.automate()
+		end
+	end,
+
+	jingleSkip = function()
+		if status.canProgress then
+			local px, py = Player.position()
+			if px < 4 then
+				return true
+			end
+			Input.press("Left", 0)
+		else
+			Input.press("A", 0)
+			status.canProgress = true
+		end
 	end,
 
 	playPokeflute = function()
