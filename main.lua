@@ -7,7 +7,7 @@ local PAINT_ON    = true -- Display contextual information while the bot runs
 
 -- START CODE (hard hats on)
 
-VERSION = "1.4"
+VERSION = "1.4.1"
 YELLOW = memory.getcurrentmemorydomainsize() > 30000
 GAME_NAME = YELLOW and "yellow" or "red"
 
