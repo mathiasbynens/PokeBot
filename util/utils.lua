@@ -6,6 +6,25 @@ local EMP = 1
 
 local yellow = YELLOW
 
+-- GLOBAL
+
+function p(...)
+	local string
+	if #arg == 0 then
+		string = arg[0]
+	else
+		string = ""
+		for i,str in ipairs(arg) do
+			if str == true then
+				string = string.."\n"
+			else
+				string = string..str.." "
+			end
+		end
+	end
+	print(string)
+end
+
 -- GENERAL
 
 function Utils.dist(x1, y1, x2, y2)

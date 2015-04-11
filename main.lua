@@ -36,25 +36,6 @@ local oldSeconds
 local running = true
 local lastHP
 
--- GLOBAL
-
-function p(...)
-	local string
-	if #arg == 0 then
-		string = arg[0]
-	else
-		string = ""
-		for i,str in ipairs(arg) do
-			if str == true then
-				string = string.."\n"
-			else
-				string = string..str.." "
-			end
-		end
-	end
-	print(string)
-end
-
 -- HELPERS
 
 local function resetAll()
