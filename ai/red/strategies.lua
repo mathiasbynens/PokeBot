@@ -344,7 +344,7 @@ strategyFunctions.catchNidoran = function()
 	if Battle.isActive() then
 		local isNidoran = Pokemon.isOpponent("nidoran")
 		if isNidoran and Memory.value("battle", "opponent_level") > 2 then
-			if Strategies.initialize() then
+			if not Bridge.polling then
 				Bridge.pollForName()
 			end
 		end

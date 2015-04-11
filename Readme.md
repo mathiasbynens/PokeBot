@@ -15,21 +15,21 @@ Running the PokéBot on your own machine is easy. You will need a Windows enviro
 
 
 ##About BizHawk##
-BizHawk 1.6.1 (Windows only) is the only version known to work.  Later versions, like 1.7.2a do not seem to work, due to differences with reading bytes from memory.
+BizHawk 1.6.1 (Windows only) is the only version known to work. Later versions, like 1.7.2a do not seem to work, due to differences with reading bytes from memory.
 
 Run the [prereq installer](http://sourceforge.net/projects/bizhawk/files/Prerequisites/bizhawk_prereqs_v1.1.zip/download), which should update a C++ distributable needed by BizHawk
 
 You can unextract BizHawk-1.6.1.zip anywhere.
 
 ##Setting up and verifying the ROM##
-The ROM file should `Pokemon Red.gb`.  The file name doesn't matter, but upload it to http://www.fileformat.info/tool/hash.htm to verify it's the US version.  The linked website will spit out lots of hashes, make sure the two below match:
+The ROM file should `Pokemon Red.gb`. The file name doesn't matter, but upload it to http://www.fileformat.info/tool/hash.htm to verify it's the US version. The linked website will spit out lots of hashes, make sure the two below match:
 ```
 MD5: 3d45c1ee9abd5738df46d2bdda8b57dc
 SHA-1: ea9bcae617fdf159b045185467ae58b2e4a48b9a
 ```
 
 Open the ROM file with BizHawk (Drag the .gb file onto EmuHawk), and Pokémon Red should start up.
-The colors may look weird.  To fix this, go to GB>Palette Editor, and then find the POKEMON RED.pal file which should be under Gameboy>Palettes in the directory where BizHawk was unextracted.
+The colors may look weird. To fix this, go to GB>Palette Editor, and then find the POKEMON RED.pal file which should be under Gameboy>Palettes in the directory where BizHawk was unextracted.
 
 
 ##Running the bot##
