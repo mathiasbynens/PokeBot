@@ -179,6 +179,24 @@ function Strategies.opponentDamaged(factor)
 	return Memory.double("battle", "opponent_hp") * factor < Memory.double("battle", "opponent_max_hp")
 end
 
+local function interact(direction)
+	if Battle.handleWild() then
+		if Battle.isActive() then
+			return true
+		end
+		if Textbox.isActive() then
+			if status.interacted then
+				return true
+			end
+			Input.cancel()
+		else
+			if Player.interact(direction) then
+				status.interacted = true
+			end
+		end
+	end
+end
+
 function Strategies.buffTo(buff, defLevel)
 	if Battle.isActive() then
 		status.canProgress = true
@@ -421,32 +439,27 @@ Strategies.functions = {
 	end,
 
 	interact = function(data)
-		if Battle.handleWild() then
-			if Battle.isActive() then
-				return true
-			end
-			if Textbox.isActive() then
-				if status.tries > 0 then
-					return true
-				end
-				status.tries = status.tries - 1
-				Input.cancel()
-			elseif Player.interact(data.dir) then
-				status.tries = status.tries + 1
-			end
-		end
+		return interact(data.dir, false)
+	end,
+
+	talk = function(data)
+		return interact(data.dir, true)
+	end,
+
+	take = function(data)
+		return interact(data.dir, false)
 	end,
 
 	confirm = function(data)
 		if Battle.handleWild() then
 			if Textbox.isActive() then
-				status.tries = status.tries + 1
+				status.talked = true
 				Input.cancel(data.type or "A")
 			else
-				if status.tries > 0 then
+				if status.talked then
 					return true
 				end
-				Player.interact(data.dir)
+				Player.interact(data.dir, false)
 			end
 		end
 	end,
@@ -696,7 +709,7 @@ Strategies.functions = {
 			return true
 		elseif Textbox.handle() then
 			if data.dir then
-				Player.interact(data.dir)
+				Player.interact(data.dir, false)
 			else
 				Input.cancel()
 			end
@@ -903,7 +916,7 @@ Strategies.functions = {
 			if Inventory.contains("helix_fossil") then
 				return true
 			end
-			Player.interact("Up")
+			Player.interact("Up", false)
 		end
 	end,
 

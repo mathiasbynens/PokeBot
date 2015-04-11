@@ -7,6 +7,7 @@ local Memory = require "util.memory"
 
 local yellow = YELLOW
 local facingDirections = {Up=8, Right=1, Left=2, Down=4}
+local fast = false
 
 function Player.isFacing(direction)
 	return Memory.value("player", "facing") == facingDirections[direction]
@@ -21,11 +22,17 @@ function Player.face(direction)
 	end
 end
 
-function Player.interact(direction)
+function Player.interact(direction, instant)
 	if Player.face(direction) then
-		Input.press("A", yellow and 3 or 2)
+		local speed = 2
+		if yellow and instant then
+			fast = not fast
+			speed = fast and 1 or 2
+		end
+		Input.press("A", speed)
 		return true
 	end
+	fast = false
 end
 
 function Player.isMoving()

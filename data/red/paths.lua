@@ -26,7 +26,7 @@ local Paths = {
 	-- To Oak's lab
 	{0, {10,0}, {10,7}, {9,7}, {9,12}, {12,12}, {12,11}},
 	-- Parcel delivery
-	{40, {5,11}, {5,3}, {4,3}, {4,1}, {5,1}, {s="interact",dir="Down"}, {4,1}, {4,12}},
+	{40, {5,11}, {5,3}, {4,3}, {4,1}, {5,1}, {s="talk",dir="Down"}, {4,1}, {4,12}},
 	-- Leaving home
 	{0, {12,12}, {c="viridianBackupExp"}, {9,12}, {9,2}, {10,2}, {10,-1}},
 	-- The grass again!?
@@ -57,7 +57,7 @@ local Paths = {
 	-- Pewter City
 	{2, {18,35}, {18,22}, {19,22}, {19,13}, {10,13}, {10,18}, {16,18}, {16,17}},
 	-- Brock
-	{54, {4,13}, {c="a",a="Brock's Gym"}, {4,8}, {1,8}, {1,4}, {4,4}, {4,2}, {s="interact",dir="Up"}, {s="fightBrock"}, {s="split"}, {s="emuSpeed",percent=100}, {4,14}},
+	{54, {4,13}, {c="a",a="Brock's Gym"}, {4,8}, {1,8}, {1,4}, {4,4}, {4,2}, {s="talk",dir="Up"}, {s="fightBrock"}, {s="split"}, {s="emuSpeed",percent=100}, {4,14}},
 
 -- 3: BROCK
 
@@ -68,7 +68,7 @@ local Paths = {
 	-- Leaving Pewter City
 	{2, {23,18}, {40,18}},
 	-- Route 3
-	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {s="potion",hp=19}, {13,4}, {s="interact",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {s="potionBeforeCocoons"}, {18,5}, {s="interact",dir="Right"}, {s="swapHornAttack"}, {18,6}, {22,6}, {22,5}, {s="potion",hp=4}, {24,5}, {s="interact",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
+	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {s="potion",hp=19}, {13,4}, {s="talk",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {s="potionBeforeCocoons"}, {18,5}, {s="talk",dir="Right"}, {s="swapHornAttack"}, {18,6}, {22,6}, {22,5}, {s="potion",hp=4}, {24,5}, {s="talk",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
 	-- To the Center
 	{15, {9,16}, {c="pp",on=false}, {12,16}, {12,6}, {11,6}, {11,5}},
 	-- PP up
@@ -79,11 +79,11 @@ local Paths = {
 -- 4: ROUTE 3
 
 	-- Mt. Moon F1
-	{59, {14,35}, {c="a",a="Mt. Moon"}, {c="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="interact",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="interact",dir="Right"}, {35,31}, {35,23}, {s="interact",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="interact",dir="Up"}, {5,3}, {5,5}},
+	{59, {14,35}, {c="a",a="Mt. Moon"}, {c="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="talk",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="take",dir="Right"}, {35,31}, {35,23}, {s="take",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="take",dir="Up"}, {5,3}, {5,5}},
 	-- Mt. Moon B2
 	{60, {5,5}, {5,17}, {21,17}},
 	-- Mt. Moon B3
-	{61, {21,17}, {22,17}, {s="evolveNidoking",early=true,poke="paras"}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="evolveNidoking"}, {c="encounters",limit=nil}, {10,17}, {12,17}, {c="moon2Exp"}, {12,9}, {s="potion",hp=7}, {s="interact",dir="Up"}, {13,9}, {c="moon3Exp"}, {13,7}, {s="helix"}, {13,5}, {12,5}, {12,4}, {3,4}, {3,7}, {5,7}},
+	{61, {21,17}, {22,17}, {s="evolveNidoking",early=true,poke="paras"}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="evolveNidoking"}, {c="encounters",limit=nil}, {10,17}, {12,17}, {c="moon2Exp"}, {12,9}, {s="potion",hp=7}, {s="talk",dir="Up"}, {13,9}, {c="moon3Exp"}, {13,7}, {s="confirm",dir="Up"}, {13,5}, {12,5}, {12,4}, {3,4}, {3,7}, {5,7}},
 	-- Mt. Moon escape
 	{60, {23,3}, {27,3}},
 
@@ -100,25 +100,24 @@ local Paths = {
 	-- In the house
 	{230, {2,7}, {2,0}},
 	-- Outback
-	{3, {9,9}, {9,8}, {14,8}, {s="interact",dir="Right"}, {9,8}, {9,10}},
+	{3, {9,9}, {9,8}, {14,8}, {s="take",dir="Right"}, {9,8}, {9,10}},
 	-- Out the house
 	{230, {2,1}, {2,8}},
 	-- Rival 2
 	{3, {9,12}, {c="a",a="Cerulean Rival"}, {21,12}, {21,6}, {s="rivalSandAttack"}, {21,-1}},
 	-- Nugget bridge
-	--TODO RC early strat
-	{35, {11,35}, {c="a",a="Nugget Bridge"}, {11,32}, {s="interact",dir="Up"}, {10,32}, {10,29}, {s="potion",hp=12,yolo=10}, {s="interact",dir="Up"}, {11,29}, {11,27}, {s="rareCandyEarly",close=true}, {s="potion",hp=10,yolo=8,close=true}, {11,26}, {s="interact",dir="Up"}, {10,26}, {10,24}, {s="teachThrash"}, {s="potion",hp=4}, {10,23}, {s="interact",dir="Up"}, {11,23}, {11,21}, {s="teachThrash"}, {s="potionForMankey"}, {11,20}, {s="interact",dir="Up"}, {s="redbarMankey"}, {10,20}, {10,19}, {s="teachThrash"}, {10,15}, {s="learnThrash"}, {s="teachThrash"}, {s="split"}, {10,8}, {20,8}},
+	{35, {11,35}, {c="a",a="Nugget Bridge"}, {11,32}, {s="talk",dir="Up"}, {10,32}, {10,29}, {s="potion",hp=12,yolo=10}, {s="talk",dir="Up"}, {11,29}, {11,27}, {s="rareCandyEarly",close=true}, {s="potion",hp=10,yolo=8,close=true}, {11,26}, {s="talk",dir="Up"}, {10,26}, {10,24}, {s="teachThrash"}, {s="potion",hp=4}, {10,23}, {s="talk",dir="Up"}, {11,23}, {11,21}, {s="teachThrash"}, {s="potionForMankey"}, {11,20}, {s="talk",dir="Up"}, {s="redbarMankey"}, {10,20}, {10,19}, {s="teachThrash"}, {10,15}, {s="learnThrash"}, {s="teachThrash"}, {s="split"}, {10,8}, {20,8}},
 
 -- 6: NUGGET BRIDGE
 
 	-- To Bill's
-	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="interact",dir="Up"}, {s="thrashGeodude"}, {10,5}, {s="hikerElixer"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="interact",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="interact",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="lassEther"}, {45,4}, {45,3}},
+	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="talk",dir="Up"}, {s="thrashGeodude"}, {10,5}, {s="hikerElixer"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="talk",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="talk",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="lassEther"}, {45,4}, {45,3}},
 	-- Save Bill
-	{88, {2,7}, {2,5}, {5,5}, {s="confirm",dir="Right"}, {1,5}, {s="interact",dir="Up"}, {4,5}, {s="interact",dir="Up"}, {s="waitToTalk"}, {s="potionBeforeMisty",goldeen=true,chain=true}, {s="item",item="escape_rope"}},
+	{88, {2,7}, {2,5}, {5,5}, {s="confirm",dir="Right"}, {1,5}, {s="interact",dir="Up"}, {4,5}, {s="talk",dir="Up"}, {s="waitToTalk"}, {s="potionBeforeMisty",goldeen=true,chain=true}, {s="item",item="escape_rope"}},
 	-- To Misty
 	{3, {19,18}, {19,20}, {30,20}, {30,19}},
 	-- Misty
-	{65, {4,13}, {c="a",a="Misty's Gym"}, {c="potion",b=false}, {4,8}, {2,8}, {2,5}, {7,5}, {7,3}, {6,3}, {5,3}, {s="waitToFight"}, {s="potionBeforeMisty"}, {5,2}, {s="interact",dir="Left"}, {s="fightMisty"}, {s="split"}, {s="tweetMisty"}, {5,3}, {7,3}, {7,5}, {5,5}, {5,14}},
+	{65, {4,13}, {c="a",a="Misty's Gym"}, {c="potion",b=false}, {4,8}, {2,8}, {2,5}, {7,5}, {7,3}, {6,3}, {5,3}, {s="waitToFight"}, {s="potionBeforeMisty"}, {5,2}, {s="talk",dir="Left"}, {s="fightMisty"}, {s="split"}, {s="tweetMisty"}, {5,3}, {7,3}, {7,5}, {5,5}, {5,14}},
 
 -- 7: MISTY
 
@@ -151,7 +150,7 @@ local Paths = {
 	-- Rival 3
 	{96, {2,4}, {2,11}, {3,11}, {3,12}, {37,12}, {37,9}, {s="swap",item="potion",dest=2,chain=true}, {s="potion",hp=23,yolo=16,chain=true}, {s="teach",move="bubblebeam",replace="tackle",close=true}, {37,8}, {s="rivalSandAttack"}, {37,5}, {36,5}, {36,4}},
 	-- Old man Cut
-	{101, {0,7}, {0,4}, {4,4}, {4,3}, {s="interact",dir="Up"}, {4,5}, {0,5}, {0,7}},
+	{101, {0,7}, {0,4}, {4,4}, {4,3}, {s="talk",dir="Up"}, {4,5}, {0,5}, {0,7}},
 	-- Second deck out
 	{96, {36,4}, {36,12}, {3,12}, {3,11}, {2,11}, {2,4}},
 	-- First deck out
@@ -161,7 +160,7 @@ local Paths = {
 	-- To Surge
 	{5, {18,29}, {18,26}, {30,26}, {30,14}, {15,14}, {15,17}, {s="potionBeforeSurge"}, {s="swap",item="repel",dest=0,chain=true}, {s="teach",move="cut",poke="oddish",alt="paras",chain=true}, {s="teach",move="dig",poke="paras",alt="squirtle",chain=true}, {s="skill",move="cut",done=0x0D4D}, {15,20}, {12,20}, {12,19}},
 	-- Trashcans
-	{92, {4,17}, {c="a",a="Surge's Gym"}, {4,16}, {2,16}, {2,11}, {s="trashcans"}, {4,6}, {4,3}, {5,3}, {5,2}, {s="interact",dir="Up"}, {s="fightSurge"}, {s="split"}, {s="tweetSurge"}, {4,2}, {4,13}, {5,13}, {5,18}},
+	{92, {4,17}, {c="a",a="Surge's Gym"}, {4,16}, {2,16}, {2,11}, {s="trashcans"}, {4,6}, {4,3}, {5,3}, {5,2}, {s="talk",dir="Up"}, {s="fightSurge"}, {s="split"}, {s="tweetSurge"}, {4,2}, {4,13}, {5,13}, {5,18}},
 
 -- 8: SURGE
 
@@ -176,25 +175,25 @@ local Paths = {
 	-- Bicycle out of Cerulean
 	{3, {13,26}, {s="swap",item="bicycle",dest=1,chain=true}, {s="teach",move="thunderbolt",replace="horn_attack",chain=true}, {s="bicycle"}, {19,26}, {19,27}, {s="skill",move="cut",done=0x0D4D}, {19,29}, {36,29}, {36,16}, {40,16}},
 	-- TPP's Bane
-	{20, {0,8}, {c="a",a="Route 9"}, {4,8}, {s="skill",move="cut",done=0x0C17,val=2}, {13,8}, {13,9}, {s="interact",dir="Down"}, {12,9}, {12,12}, {23,12}, {23,11}, {29,11}, {29,12}, {41,12}, {41,10}, {40,10}, {40,9}, {s="interact",dir="Up"}, {41,9}, {41,6}, {39,6}, {39,4}, {45,4}, {45,3}, {51,3}, {51,8}, {60,8}},
+	{20, {0,8}, {c="a",a="Route 9"}, {4,8}, {s="skill",move="cut",done=0x0C17,val=2}, {13,8}, {13,9}, {s="talk",dir="Down"}, {12,9}, {12,12}, {23,12}, {23,11}, {29,11}, {29,12}, {41,12}, {41,10}, {40,10}, {40,9}, {s="talk",dir="Up"}, {41,9}, {41,6}, {39,6}, {39,4}, {45,4}, {45,3}, {51,3}, {51,8}, {60,8}},
 	-- To the cave
 	{21, {0,8}, {3,8}, {3,10}, {13,10}, {13,15}, {14,15}, {14,26}, {3,26}, {3,18}, {7,18}, {s="item",item="repel"}, {8,18}, {8,17}},
 	-- Rock tunnel
-	{82, {15,3}, {c="a",a="Rock Tunnel"}, {c="potion",b=false}, {15,6}, {23,6}, {23,7}, {s="interact",dir="Down"}, {s="redbarCubone"}, {22,7}, {22,10}, {37,10}, {37,3}},
+	{82, {15,3}, {c="a",a="Rock Tunnel"}, {c="potion",b=false}, {15,6}, {23,6}, {23,7}, {s="talk",dir="Down"}, {s="redbarCubone"}, {22,7}, {22,10}, {37,10}, {37,3}},
 	-- B1
-	{232, {33,25}, {33,30}, {27,30}, {s="interact",dir="Left"}, {27,31}, {14,31}, {14,29}, {s="interact",dir="Up"}, {17,29}, {17,24}, {25,24}, {25,16}, {37,16}, {37,11}, {s="item",item="repel"}, {37,3}, {27,3}},
+	{232, {33,25}, {33,30}, {27,30}, {s="talk",dir="Left"}, {27,31}, {14,31}, {14,29}, {s="talk",dir="Up"}, {17,29}, {17,24}, {25,24}, {25,16}, {37,16}, {37,11}, {s="item",item="repel"}, {37,3}, {27,3}},
 	-- B2
 	{82, {5,3}, {5,9}, {11,9}, {11,14}, {17,14}, {17,11}},
 	-- B1
-	{232, {23,11}, {14,11}, {14,17}, {8,17}, {8,10}, {7,10}, {s="interact",dir="Left"}, {7,11}, {5,11}, {s="item",item="repel"}, {5,3}, {3,3}},
+	{232, {23,11}, {14,11}, {14,17}, {8,17}, {8,10}, {7,10}, {s="talk",dir="Left"}, {7,11}, {5,11}, {s="item",item="repel"}, {5,3}, {3,3}},
 	-- Out of the Tunnel
-	{82, {37,17}, {32,17}, {32,23}, {37,23}, {37,28}, {28,28}, {26,24}, {23,24}, {s="interact",dir="Left"}, {23,27}, {15,27}, {15,33}},
+	{82, {37,17}, {32,17}, {32,23}, {37,23}, {37,28}, {28,28}, {26,24}, {23,24}, {s="talk",dir="Left"}, {23,27}, {15,27}, {15,33}},
 	-- To Lavender Town
 	{21, {8,54}, {c="a",a="Lavender Town"}, {15,54}, {15,65}, {11,65}, {11,69}, {6,69}, {6,72}},
 	-- Through Lavender
 	{4, {6,0}, {6,6}, {0,6}, {0,8}, {-1,8}},
 	-- Leave Lavender
-	{19, {59,8}, {52,8}, {52,13}, {47,13}, {s="interact",dir="Left"}, {47,14}, {42,14}, {42,7}, {40,7}, {40,6}, {29,6}, {29,7}, {23,7}, {23,12}, {14,12}, {14,4}, {13,4}, {13,3}},
+	{19, {59,8}, {52,8}, {52,13}, {47,13}, {s="talk",dir="Left"}, {47,14}, {42,14}, {42,7}, {40,7}, {40,6}, {29,6}, {29,7}, {23,7}, {23,12}, {14,12}, {14,4}, {13,4}, {13,3}},
 	-- Underground entrance
 	{80, {3,7}, {3,6}, {4,6}, {4,4}},
 	-- Underground
@@ -232,7 +231,7 @@ local Paths = {
 	-- To the Fly house
 	{27, {17,4}, {c="a",a="HM02 Fly"}, {10,4}, {10,6}, {7,6}, {7,5}},
 	-- Fly house
-	{188, {2,7}, {2,4}, {s="interact",dir="Up"}, {2,5}, {s="split"}, {2,8}},
+	{188, {2,7}, {2,4}, {s="talk",dir="Up"}, {2,5}, {s="split"}, {2,8}},
 
 -- 9: FLY
 
@@ -247,7 +246,7 @@ local Paths = {
 	-- F3
 	{144, {3,9}, {3,10}, {6,10}, {6,13}, {8,13}, {8,6}, {17,6}, {17,9}, {18,9}},
 	-- F4
-	{145, {18,9}, {s="allowDeath",on=true}, {c="potion",b=false}, {18,7}, {16,7}, {s="interact",dir="Left"}, {s="digFight"}, {16,9}, {c="potion",b=true,yolo=true}, {14,9}, {14,10}, {13,10}, {s="interact",dir="Left"}, {14,10}, {14,8}, {11,8}, {11,9}, {10,9}, {10,12}, {7,12}, {7,11}, {4,11}, {4,10}, {3,10}, {3,9}},
+	{145, {18,9}, {s="allowDeath",on=true}, {c="potion",b=false}, {18,7}, {16,7}, {s="talk",dir="Left"}, {s="digFight"}, {16,9}, {c="potion",b=true,yolo=true}, {14,9}, {14,10}, {13,10}, {s="interact",dir="Left"}, {14,10}, {14,8}, {11,8}, {11,9}, {10,9}, {10,12}, {7,12}, {7,11}, {4,11}, {4,10}, {3,10}, {3,9}},
 	-- F5
 	{146, {3,9}, {4,9}, {4,11}, {s="interact",dir="Down"}, {4,6}, {13,6}, {13,9}, {9,9}, {9,12}, {14,12}, {14,10}, {18,10}, {s="allowDeath",on=false}, {18,9}},
 	-- F6
@@ -255,7 +254,7 @@ local Paths = {
 	-- F7: Top
 	{148, {9,16}, {10,16}, {10,9}, {s="fightXAccuracy"}, {c="thrash",disable=false}, {10,7}, {s="thunderboltFirst"}, {10,4}, {s="interact",dir="Up"}},
 	-- Old man's house
-	{149, {3,7}, {3,6}, {2,6}, {2,1}, {s="interact",dir="Right"}, {2,8}},
+	{149, {3,7}, {3,6}, {2,6}, {2,1}, {s="talk",dir="Right"}, {2,8}},
 
 -- 10: POKéFLUTE
 
@@ -294,7 +293,7 @@ local Paths = {
 	-- Safari 4
 	{219, {21,0}, {21,5}, {19,5}, {19,6}, {s="interact",dir="Down"}, {19,5}, {7,5}, {7,6}, {3,6}, {3,3}},
 	-- Warden
-	{222, {2,7}, {2,6}, {3,6}, {3,4}, {s="interact",dir="Up"}, {3,8}},
+	{222, {2,7}, {2,6}, {3,6}, {3,4}, {s="confirm",dir="Up"}, {3,8}},
 	-- Safari Warp
 	{219, {3,4}, {s="skill",move="dig",map=219}},
 	-- Celadon again
@@ -316,7 +315,7 @@ local Paths = {
 	-- F9
 	{233, {14,1}, {14,3}, {24,3}, {24,16}, {17,16}, {17,15}},
 	-- Warped
-	{210, {9,15}, {9,16}, {20,16}, {s="interact",dir="Right"}, {9,16}, {9,15}},
+	{210, {9,15}, {9,16}, {20,16}, {s="take",dir="Right"}, {9,16}, {9,15}},
 	-- Warp back
 	{233, {17,15}, {17,14}, {17,15}},
 	-- First card
@@ -326,7 +325,7 @@ local Paths = {
 	-- Rival 5
 	{212, {5,3}, {c="a",a="Silph Rival"}, {4,3}, {4,2}, {3,2}, {c="potion",b=false}, {s="silphRival"}, {3,7}, {c="potion",b=true,yolo=true}, {5,7}},
 	-- Giovanni
-	{235, {3,2}, {c="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,15}, {s="rareCandyGiovanni"}, {2,16}, {s="interact",dir="Right"}, {2,15}, {5,15}, {s="potion",hp=17,yolo=12}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightXAccuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPause"}, {s="skill",move="dig",map=235}},
+	{235, {3,2}, {c="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,15}, {s="rareCandyGiovanni"}, {2,16}, {s="talk",dir="Right"}, {2,15}, {5,15}, {s="potion",hp=17,yolo=12}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightXAccuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPause"}, {s="skill",move="dig",map=235}},
 
 -- 11: SILPH CO.
 
@@ -335,14 +334,14 @@ local Paths = {
 	-- To Koga
 	{7, {19,28}, {c="a",a="Koga's Gym"}, {5,28}, {5,27}},
 	-- Koga
-	{157, {4,17}, {9,17}, {9,9}, {7,9}, {s="interact",dir="Up"}, {9,9}, {9,1}, {1,1}, {1,2}, {s="earthquakeElixer",min=2,chain=true}, {s="potionBeforeHypno"}, {1,3}, {2,3}, {2,5}, {1,5}, {c="potion",b=false}, {1,7}, {s="fightHypno"}, {1,9}, {2,9}, {s="earthquakeElixer",min=4}, {4,9}, {s="interact",dir="Down"}, {s="fightKoga"}, {s="split"}, {1,9}, {1,5}, {2,5}, {2,3}, {1,3}, {1,1}, {9,1}, {9,16}, {5,16}, {5,18}},
+	{157, {4,17}, {9,17}, {9,9}, {7,9}, {s="talk",dir="Up"}, {9,9}, {9,1}, {1,1}, {1,2}, {s="earthquakeElixer",min=2,chain=true}, {s="potionBeforeHypno"}, {1,3}, {2,3}, {2,5}, {1,5}, {c="potion",b=false}, {1,7}, {s="fightHypno"}, {1,9}, {2,9}, {s="earthquakeElixer",min=4}, {4,9}, {s="talk",dir="Down"}, {s="fightKoga"}, {s="split"}, {1,9}, {1,5}, {2,5}, {2,3}, {1,3}, {1,1}, {9,1}, {9,16}, {5,16}, {5,18}},
 
 -- 12: KOGA
 
 	-- To the Warden
 	{7, {5,28}, {s="bicycle"}, {6,28}, {6,30}, {24,30}, {30,30}, {30,28}, {27,28}, {27,27}},
 	-- HM04 Strength
-	{155, {4,7}, {4,6}, {2,6}, {2,4}, {s="interact",dir="Up"}, {4,4}, {4,8}},
+	{155, {4,7}, {4,6}, {2,6}, {2,4}, {s="talk",dir="Up"}, {4,4}, {4,8}},
 	-- Fly home
 	{7, {27,28}, {s="fly",dest="pallet",map=0}},
 	-- Pallet to Cinnabar
@@ -361,11 +360,11 @@ local Paths = {
 	{165, {16,14}, {16,15}, {13,15}, {13,20}, {s="cinnabarCarbos"}, {21,23}},
 	-- B1
 	--TODO menu cancel for RC
-	{216, {23,22}, {23,15}, {21,15}, {s="item",item="super_repel",chain=true}, {s="item",item="carbos",poke="nidoking",close=true}, {17,15}, {17,19}, {18,19}, {18,23}, {17,23}, {17,26}, {18,26}, {s="confirm",dir="Up"}, {14,26}, {14,22}, {12,22}, {12,15}, {24,15}, {24,18}, {26,18}, {26,6}, {24,6}, {24,4}, {20,4}, {s="confirm",dir="Up"}, {24,4}, {24,6}, {12,6}, {12,2}, {11,2}, {s="interact",dir="Left"}, {12,2}, {12,7}, {4,7}, {4,9}, {2,9}, {s="interact",dir="Left"}, {5,9}, {5,10}, {s="teach",move="strength",poke="squirtle",replace="tackle",chain=true}, {s="item",item="rare_candy",amount=2,poke="nidoking",close=true}, {5,12}, {s="interact",dir="Down"}, {5,12}, {s="skill",move="dig",map=216}},
+	{216, {23,22}, {23,15}, {21,15}, {s="item",item="super_repel",chain=true}, {s="item",item="carbos",poke="nidoking",close=true}, {17,15}, {17,19}, {18,19}, {18,23}, {17,23}, {17,26}, {18,26}, {s="confirm",dir="Up"}, {14,26}, {14,22}, {12,22}, {12,15}, {24,15}, {24,18}, {26,18}, {26,6}, {24,6}, {24,4}, {20,4}, {s="confirm",dir="Up"}, {24,4}, {24,6}, {12,6}, {12,2}, {11,2}, {s="take",dir="Left"}, {12,2}, {12,7}, {4,7}, {4,9}, {2,9}, {s="take",dir="Left"}, {5,9}, {5,10}, {s="teach",move="strength",poke="squirtle",replace="tackle",chain=true}, {s="item",item="rare_candy",amount=2,poke="nidoking",close=true}, {5,12}, {s="take",dir="Down"}, {5,12}, {s="skill",move="dig",map=216}},
 	-- Celadon once again
 	{6, {41,10}, {s="bicycle"}, {41,13}, {36,13}, {36,23}, {25,23}, {25,30}, {35,30}, {35,31}, {s="skill",move="cut",dir="Down",done=0x0D4D}, {35,34}, {5,34}, {5,29}, {12,29}, {12,27}},
 	-- Erika
-	{134, {4,17}, {c="a",a="Erika's Gym"}, {4,16}, {1,16}, {1,9}, {0,9}, {0,4}, {1,4}, {s="skill",move="cut",done=0x0D4D}, {4,4}, {s="interact",dir="Up"}, {s="fightErika"}, {s="split"}, {4,5}, {5,5}, {5,6}, {s="skill",move="cut",dir="Down",done=0x0D4D}, {5,18}},
+	{134, {4,17}, {c="a",a="Erika's Gym"}, {4,16}, {1,16}, {1,9}, {0,9}, {0,4}, {1,4}, {s="skill",move="cut",done=0x0D4D}, {4,4}, {s="talk",dir="Up"}, {s="fightErika"}, {s="split"}, {4,5}, {5,5}, {5,6}, {s="skill",move="cut",dir="Down",done=0x0D4D}, {5,18}},
 
 -- 13: ERIKA
 
@@ -402,7 +401,7 @@ local Paths = {
 	-- Reset Gym
 	{1, {32,8}, {32,7}},
 	-- Giovanni
-	{45, {16,17}, {c="potion",b=false}, {16,16}, {14,16}, {14,9}, {13,9}, {13,7}, {15,7}, {15,4}, {12,4}, {12,5}, {10,5}, {10,2}, {7,2}, {7,4}, {2,4}, {s="checkGiovanni"}, {2,2}, {s="interact",dir="Up"}, {s="fightGiovanni"}, {s="split"}, {2,4}, {7,4}, {7,2}, {10,2}, {10,5}, {12,5}, {12,4}, {15,4}, {15,7}, {13,7}, {13,11}, {14,11}, {14,16}, {16,16}, {16,18}},
+	{45, {16,17}, {c="potion",b=false}, {16,16}, {14,16}, {14,9}, {13,9}, {13,7}, {15,7}, {15,4}, {12,4}, {12,5}, {10,5}, {10,2}, {7,2}, {7,4}, {2,4}, {s="checkGiovanni"}, {2,2}, {s="talk",dir="Up"}, {s="fightGiovanni"}, {s="split"}, {2,4}, {7,4}, {7,2}, {10,2}, {10,5}, {12,5}, {12,4}, {15,4}, {15,7}, {13,7}, {13,11}, {14,11}, {14,16}, {16,16}, {16,18}},
 
 -- 16: GIOVANNI
 
@@ -436,11 +435,11 @@ local Paths = {
 -- 17: LORELEI
 
 	-- Lorelei
-	{245, {4,5}, {c="a",a="Lorelei"}, {c="potion",b=false}, {4,2}, {s="interact",dir="Right"}, {s="lorelei"}, {s="split"}, {4,0}},
+	{245, {4,5}, {c="a",a="Lorelei"}, {c="potion",b=false}, {4,2}, {s="talk",dir="Right"}, {s="lorelei"}, {s="split"}, {4,0}},
 	-- Bruno
-	{246, {4,5}, {c="a",a="Bruno"}, {s="item",item="elixer",poke="nidoking"}, {4,2}, {s="interact",dir="Right"}, {s="bruno"}, {s="split"}, {4,0}},
+	{246, {4,5}, {c="a",a="Bruno"}, {s="item",item="elixer",poke="nidoking"}, {4,2}, {s="talk",dir="Right"}, {s="bruno"}, {s="split"}, {4,0}},
 	-- Agatha
-	{247, {4,5}, {c="a",a="Agatha"}, {s="potion",hp=113,full=true}, {4,2}, {s="interact",dir="Right"}, {s="agatha"}, {s="split"}, {4,1}, {s="prepareForLance"}, {s="ether",close=true}, {4,0}},
+	{247, {4,5}, {c="a",a="Agatha"}, {s="potion",hp=113,full=true}, {4,2}, {s="talk",dir="Right"}, {s="agatha"}, {s="split"}, {4,1}, {s="prepareForLance"}, {s="ether",close=true}, {4,0}},
 	-- Lance
 	{113, {6,11}, {c="a",a="Lance"}, {6,2}, {s="lance"}, {s="split"}, {5,2}, {5,1}, {s="prepareForBlue"}, {5,-1}},
 	-- Blue
