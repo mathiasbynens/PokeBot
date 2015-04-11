@@ -243,7 +243,7 @@ local Paths = {
 	-- Pokemon Tower
 	{142, {10,17}, {10,10}, {18,10}, {18,9}},
 	-- F2: Rival
-	{143, {18,9}, {c="setThrash",disable=true}, {18,7}, {16,7}, {16,5}, {15,5}, {s="lavenderRival"}, {5,5}, {5,8}, {3,8}, {3,9}},
+	{143, {18,9}, {c="thrash",disable=true}, {18,7}, {16,7}, {16,5}, {15,5}, {s="lavenderRival"}, {5,5}, {5,8}, {3,8}, {3,9}},
 	-- F3
 	{144, {3,9}, {3,10}, {6,10}, {6,13}, {8,13}, {8,6}, {17,6}, {17,9}, {18,9}},
 	-- F4
@@ -253,7 +253,7 @@ local Paths = {
 	-- F6
  	{147, {18,9}, {18,7}, {15,7}, {15,3}, {11,3}, {11,5}, {10,5}, {s="interact",dir="Left"}, {10,6}, {6,6}, {6,7}, {s="interact",dir="Down"}, {6,14}, {10,14}, {10,16}, {s="pokeDoll"}, {9,16}},
 	-- F7: Top
-	{148, {9,16}, {10,16}, {10,9}, {s="fightXAccuracy"}, {c="setThrash",disable=false}, {10,7}, {s="thunderboltFirst"}, {10,4}, {s="interact",dir="Up"}},
+	{148, {9,16}, {10,16}, {10,9}, {s="fightXAccuracy"}, {c="thrash",disable=false}, {10,7}, {s="thunderboltFirst"}, {10,4}, {s="interact",dir="Up"}},
 	-- Old man's house
 	{149, {3,7}, {3,6}, {2,6}, {2,1}, {s="interact",dir="Right"}, {2,8}},
 

@@ -56,7 +56,7 @@ local controlFunctions = {
 		Combat.factorPP(data.on)
 	end,
 
-	setThrash = function(data)
+	thrash = function(data)
 		Combat.disableThrash = data.disable
 	end,
 
