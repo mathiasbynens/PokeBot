@@ -1435,17 +1435,11 @@ strategyFunctions.drivebyRareCandy = function()
 	end
 end
 
-strategyFunctions.tossAntidote = function()
+strategyFunctions.tossInSafari = function()
 	if Inventory.count() <= (Inventory.contains("full_restore") and 18 or 17) then
 		return true
 	end
-	local tossItem = Inventory.contains("antidote", "pokeball")
-	if Strategies.initialize() then
-		p("Tossing "..tossItem.." to make space", Inventory.count())
-	end
-	if not Inventory.useItemOption(tossItem, nil, 1) then
-		Input.press("A")
-	end
+	return Strategies.tossItem("antidote", "pokeball")
 end
 
 strategyFunctions.safariCarbos = function()
@@ -1964,6 +1958,7 @@ strategyFunctions.ether = function(data)
 				if Strategies.closeMenuFor(data) then
 					return true
 				end
+				print("No Ether - "..Control.areaName)
 				return false
 			end
 		end
@@ -1983,17 +1978,29 @@ strategyFunctions.ether = function(data)
 	end
 end
 
+strategyFunctions.tossInVictoryRoad = function()
+	if Strategies.initialize() then
+		if maxEtherSkip then
+			return true
+		end
+		if Inventory.count("ether") + Inventory.count("elixer") >= 2 then
+			return true
+		end
+	end
+	return Strategies.tossItem("antidote", "pokeball")
+end
+
 strategyFunctions.grabMaxEther = function()
 	if Strategies.initialize() then
-		if maxEtherSkip and Inventory.count("ether") + Inventory.count("elixer") >= 2 then
+		if maxEtherSkip and (Inventory.count("ether") + Inventory.count("elixer") >= 2) then
+			return true
+		end
+		if Inventory.isFull() then
 			return true
 		end
 	end
 	if Inventory.contains("max_ether") then
 		return true
-	end
-	if Inventory.isFull() then
-		return true --TODO toss
 	end
 	local px, py = Player.position()
 	if px > 7 then

@@ -281,6 +281,22 @@ function Strategies.useItem(data)
 	end
 end
 
+function Strategies.tossItem(...)
+	if not Inventory.isFull() then
+		return true
+	end
+	local tossItem = Inventory.contains(...)
+	if tossItem ~= status.toss then
+		status.toss = tossItem
+		p("Tossing "..tossItem.." to make space", Inventory.count())
+	end
+	if not Inventory.useItemOption(tossItem, nil, 1) then
+		if Menu.pause() then
+			Input.press("A")
+		end
+	end
+end
+
 local function completedSkillFor(data)
 	if data.map then
 		if data.map ~= Memory.value("game", "map") then
