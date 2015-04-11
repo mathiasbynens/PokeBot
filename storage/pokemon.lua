@@ -45,6 +45,7 @@ local pokeIDs = {
 	raticate = 166,
 	nidorino = 167,
 	geodude = 169,
+	charmander = 176,
 	squirtle = 177,
 	oddish = 185,
 }

@@ -310,6 +310,54 @@ end
 
 -- reportMtMoon
 
+strategyFunctions.acquireCharmander = function()
+	if Strategies.initialize() then
+		if Pokemon.inParty("sandshrew", "paras") then
+			return true
+		end
+	end
+	local acquiredCharmander = Pokemon.inParty("charmander")
+	if Textbox.isActive() then
+		if Menu.getCol() == 15 then
+			local accept = Memory.raw(0x0C3A) == 239
+			Input.press(accept and "A" or "B")
+		else
+			Input.cancel()
+		end
+		return false
+	end
+	local px, py = Player.position()
+	if acquiredCharmander then
+		if py ~= 8 then
+			py = 8
+		else
+			return true
+		end
+	else
+		if px ~= 6 then
+			px = 6
+		elseif py > 6 then
+			py = 6
+		else
+			Player.interact("Up")
+			return false
+		end
+	end
+	Walk.step(px, py)
+end
+
+-- jingleSkip
+
+strategyFunctions.shopVermilionMart = function()
+	if Strategies.initialize() then
+		Strategies.setYolo("vermilion")
+	end
+	return Shop.transaction {
+		sell = sellArray,
+		buy = {{name="super_potion",index=1,amount=8}, {name="repel",index=5,amount=3}}
+	}
+end
+
 -- PROCESS
 
 function Strategies.initGame(midGame)
