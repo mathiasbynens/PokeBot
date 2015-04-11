@@ -291,21 +291,23 @@ strategyFunctions.centerMoon = function()
 	return takeCenter(5, 15, 11, 5, 12)
 end
 
-strategyFunctions.centerCerulean = function()
-	local currentMap = Memory.value("game", "map")
-	local ppRequired = 15
-	if currentMap == 3 then
-		if Pokemon.pp(0, "horn_attack") > ppRequired then
-			local px, py = Player.position()
-			if py > 8 then
-				return strategyFunctions.dodgeCerulean({left=true})
+strategyFunctions.centerCerulean = function(data)
+	local ppRequired = 150
+	if data.first then
+		local currentMap = Memory.value("game", "map")
+		if currentMap == 3 then
+			if Pokemon.pp(0, "horn_attack") > ppRequired then
+				local px, py = Player.position()
+				if py > 8 then
+					return strategyFunctions.dodgeCerulean({left=true})
+				end
+			end
+			if not strategyFunctions.dodgeCerulean({}) then
+				return false
 			end
 		end
-		if not strategyFunctions.dodgeCerulean({}) then
-			return false
-		end
 	end
-	takeCenter(ppRequired, 3, 19, 17, 16)
+	takeCenter(ppRequired, 3, 19, 17, 19)
 end
 
 -- reportMtMoon
@@ -364,11 +366,18 @@ function Strategies.initGame(midGame)
 	if not STREAMING_MODE then
 		-- Strategies.setYolo("")
 		if Pokemon.inParty("nidoking") then
+			local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
+			p(attDv, defDV, spdDv, sclDV)
 			stats.nidoran = {
 				attack = 55,
 				defense = 45,
 				speed = 50,
 				special = 45,
+				level4 = true,
+				attackDV = attDv,
+				defenseDV = defDV,
+				speedDV = spdDv,
+				specialDV = sclDV,
 			}
 		else
 			stats.nidoran = {
