@@ -354,7 +354,8 @@ strategyFunctions.catchNidoran = function()
 	if Battle.isActive() then
 		local isNidoran = Pokemon.isOpponent("nidoran")
 		if isNidoran and Memory.value("battle", "opponent_level") > 2 then
-			if not Bridge.polling then
+			if not status.polled then
+				status.polled = true
 				Bridge.pollForName()
 			end
 		end
@@ -977,6 +978,15 @@ strategyFunctions.catchOddish = function()
 		return true
 	end
 	local caught = Pokemon.inParty("oddish", "paras")
+	if Strategies.initialize() then
+		if caught then
+			if Pokemon.inParty("oddish") then
+				Bridge.chat("found an Oddish without having to search in the grass Kreygasm")
+			end
+		else
+			Bridge.chat("is searching for an Oddish in the grass, to teach it Cut")
+		end
+	end
 	local battleValue = Memory.value("game", "battle")
 	local px, py = Player.position()
 	if battleValue > 0 then

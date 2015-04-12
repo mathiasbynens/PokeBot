@@ -726,6 +726,12 @@ Strategies.functions = {
 	end,
 
 	waitToPause = function()
+		if Menu.pause() then
+			return true
+		end
+	end,
+
+	waitToPauseFromBattle = function()
 		local main = Memory.value("menu", "main")
 		if main == 128 then
 			if status.canProgress then
@@ -1081,6 +1087,11 @@ Strategies.functions = {
 			Input.press("A", 0)
 			status.canProgress = true
 		end
+	end,
+
+	announceFourTurn = function()
+		Bridge.chat("needs a 4-turn thrash (1 in 2 chance) to beat this dangerous trainer...")
+		return true
 	end,
 
 	playPokeflute = function()

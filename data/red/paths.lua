@@ -175,7 +175,7 @@ local Paths = {
 	-- Bicycle out of Cerulean
 	{3, {13,26}, {s="swap",item="bicycle",dest=1,chain=true}, {s="teach",move="thunderbolt",replace="horn_attack",chain=true}, {s="bicycle"}, {19,26}, {19,27}, {s="skill",move="cut",done=0x0D4D}, {19,29}, {36,29}, {36,16}, {40,16}},
 	-- TPP's Bane
-	{20, {0,8}, {c="a",a="Route 9"}, {4,8}, {s="skill",move="cut",done=0x0C17,val=2}, {13,8}, {13,9}, {s="talk",dir="Down"}, {12,9}, {12,12}, {23,12}, {23,11}, {29,11}, {29,12}, {41,12}, {41,10}, {40,10}, {40,9}, {s="talk",dir="Up"}, {41,9}, {41,6}, {39,6}, {39,4}, {45,4}, {45,3}, {51,3}, {51,8}, {60,8}},
+	{20, {0,8}, {c="a",a="Route 9"}, {4,8}, {s="skill",move="cut",done=0x0C17,val=2}, {13,8}, {13,9}, {s="talk",dir="Down"}, {s="announceFourTurn"}, {12,9}, {12,12}, {23,12}, {23,11}, {29,11}, {29,12}, {41,12}, {41,10}, {40,10}, {40,9}, {s="talk",dir="Up"}, {41,9}, {41,6}, {39,6}, {39,4}, {45,4}, {45,3}, {51,3}, {51,8}, {60,8}},
 	-- To the cave
 	{21, {0,8}, {3,8}, {3,10}, {13,10}, {13,15}, {14,15}, {14,26}, {3,26}, {3,18}, {7,18}, {s="item",item="repel"}, {8,18}, {8,17}},
 	-- Rock tunnel
@@ -325,7 +325,7 @@ local Paths = {
 	-- Rival 5
 	{212, {5,3}, {c="a",a="Silph Rival"}, {4,3}, {4,2}, {3,2}, {c="potion",b=false}, {s="silphRival"}, {3,7}, {c="potion",b=true,yolo=true}, {5,7}},
 	-- Giovanni
-	{235, {3,2}, {c="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,15}, {s="rareCandyGiovanni"}, {2,16}, {s="talk",dir="Right"}, {2,15}, {5,15}, {s="potion",hp=17,yolo=12}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightXAccuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPause"}, {s="skill",move="dig",map=235}},
+	{235, {3,2}, {c="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,15}, {s="rareCandyGiovanni"}, {2,16}, {s="talk",dir="Right"}, {2,15}, {5,15}, {s="potion",hp=17,yolo=12}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightXAccuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPauseFromBattle"}, {s="skill",move="dig",map=235}},
 
 -- 11: SILPH CO.
 
