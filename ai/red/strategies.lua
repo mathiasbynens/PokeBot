@@ -1673,7 +1673,7 @@ strategyFunctions.fightKoga = function()
 		local curr_hp = Combat.hp()
 		if Pokemon.isOpponent("weezing") then
 			local drillHp = (Pokemon.index(0, "level") > 40) and 12 or 9
-			if curr_hp > 0 and curr_hp < drillHp + 10 and Battle.pp("horn_drill") > 0 then
+			if curr_hp > 0 and curr_hp < drillHp and Battle.pp("horn_drill") > 0 then
 				forced = "horn_drill"
 				if not status.drilling then
 					status.drilling = true
@@ -1860,7 +1860,7 @@ end
 strategyFunctions.fightGiovanni = function()
 	if Battle.isActive() then
 		if Strategies.initialize() then
-			status.needsXSpecial = Battle.pp("earthquake") <= (riskGiovanni and 4 or 2)
+			status.needsXSpecial = not Combat.inRedBar() or Battle.pp("earthquake") <= (riskGiovanni and 4 or 2)
 			status.canProgress = true
 		end
 		local forced
@@ -2287,7 +2287,7 @@ strategyFunctions.champion = function()
 				print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
 				print("Please save this seed number to share, if you would like proof of your run!")
 			end
-		elseif status.tries == 1000 then
+		elseif status.tries == 500 then
 			Bridge.chat("beat the game in "..status.canProgress.." !")
 		end
 		status.tries = status.tries + 1
