@@ -626,6 +626,10 @@ Strategies.functions = {
 		elseif not data.dir or Player.face(data.dir) then
 			if Pokemon.use(data.move) then
 				status.tries = status.tries + 1
+			elseif yellow and Memory.value("battle", "menu") == 19 then
+				if Textbox.handle() then
+					return true
+				end
 			else
 				Menu.pause()
 			end
@@ -658,16 +662,6 @@ Strategies.functions = {
 			Input.press(press)
 		elseif not Pokemon.use("fly") then
 			Menu.pause()
-		end
-	end,
-
-	bicycle = function()
-		if Memory.raw(0x1700) == 1 then
-			if Textbox.handle() then
-				return true
-			end
-		else
-			return Strategies.useItem({item="bicycle"})
 		end
 	end,
 
@@ -1121,7 +1115,12 @@ Strategies.functions = {
 strategyFunctions = Strategies.functions
 
 function Strategies.execute(data)
-	if strategyFunctions[data.s](data) then
+	local strategyFunction = strategyFunctions[data.s]
+	if not strategyFunction then
+		p("INVALID STRATEGY", data.s, GAME_NAME)
+		return true
+	end
+	if strategyFunction(data) then
 		status = {tries=0}
 		Strategies.status = status
 		Strategies.completeGameStrategy()

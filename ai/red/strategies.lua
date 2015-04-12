@@ -282,6 +282,16 @@ strategyFunctions.tweetVictoryRoad = function()
 	return true
 end
 
+strategyFunctions.bicycle = function()
+	if Memory.value("player", "bicycle") == 1 then
+		if Textbox.handle() then
+			return true
+		end
+	else
+		return Strategies.useItem({item="bicycle"})
+	end
+end
+
 strategyFunctions.fightXAccuracy = function()
 	return Strategies.prepare("x_accuracy")
 end
@@ -1053,85 +1063,40 @@ strategyFunctions.trashcans = function()
 			status.canProgress = true
 		end
 		Input.cancel()
-	else
-		if progress == 3 then
-			local px, py = Player.position()
-			if px == 4 and py == 6 then
-				status.tries = status.tries + 1
-				local timeLimit = Strategies.getTimeRequirement("trash") + 1.5
-				if Strategies.resetTime(timeLimit, "complete Trashcans ("..status.tries.." tries)") then
-					return true
-				end
-				Strategies.setYolo("trash")
-
-				local prefix
-				local suffix = "!"
-				if status.tries < 2 then
-					prefix = "PERFECT"
-				elseif status.tries < 4 then
-					prefix = "Amazing"
-				elseif status.tries < 7 then
-					prefix = "Great"
-				elseif status.tries < 10 then
-					prefix = "Good"
-				elseif status.tries < 24 then
-					prefix = "Ugh"
-					suffix = ""
-				else -- TODO trashcans WR
-					prefix = "Reset me now"
-					suffix = " BibleThump"
-				end
-				Bridge.chat(" "..prefix..", "..status.tries.." try Trashcans"..suffix, Utils.elapsedTime())
-				return true
-			end
-			local completePath = {
-				Down = {{2,11}, {8,7}},
-				Right = {{2,12}, {3,12}, {2,6}, {3,6}},
-				Left = {{9,8}, {8,8}, {7,8}, {6,8}, {5,8}, {9,10}, {8,10}, {7,10}, {6,10}, {5,10}, {}, {}, {}, {}, {}, {}},
-			}
-			local walkIn = "Up"
-			for dir,tileset in pairs(completePath) do
-				for i,tile in ipairs(tileset) do
-					if px == tile[1] and py == tile[2] then
-						walkIn = dir
-						break
-					end
-				end
-			end
-			Input.press(walkIn, 0)
-		elseif progress == 2 then
-			if status.canProgress then
-				status.canProgress = false
-				Walk.invertCustom()
-			end
-			local inverse = {
-				Up = "Down",
-				Right = "Left",
-				Down = "Up",
-				Left = "Right"
-			}
-			Player.interact(inverse[status.direction])
-		else
-			local trashPath = {{2,11},{"Left"},{2,11}, {2,12},{4,12},{4,11},{"Right"},{4,11}, {4,9},{"Left"},{4,9}, {4,7},{"Right"},{4,7}, {4,6},{2,6},{2,7},{"Left"},{2,7}, {2,6},{4,6},{4,8},{9,8},{"Up"},{9,8}, {8,8},{8,9},{"Left"},{8,9}, {8,10},{9,10},{"Down"},{9,10},{8,10}}
-			if status.direction and type(status.direction) == "number" then
-				local px, py = Player.position()
-				local dx, dy = px, py
-				if py < 12 then
-					dy = 12
-				elseif status.direction == 1 then
-					dx = 2
-				else
-					dx = 8
-				end
-				if px ~= dx or py ~= dy then
-					Walk.step(dx, dy)
-					return
-				end
-				status.direction = nil
-			end
-			status.direction = Walk.custom(trashPath, status.canProgress)
+	elseif progress == 3 then
+		return Strategies.completeCans()
+	elseif progress == 2 then
+		if status.canProgress then
 			status.canProgress = false
+			Walk.invertCustom()
 		end
+		local inverse = {
+			Up = "Down",
+			Right = "Left",
+			Down = "Up",
+			Left = "Right"
+		}
+		Player.interact(inverse[status.direction])
+	else
+		local trashPath = {{2,11},{"Left"},{2,11}, {2,12},{4,12},{4,11},{"Right"},{4,11}, {4,9},{"Left"},{4,9}, {4,7},{"Right"},{4,7}, {4,6},{2,6},{2,7},{"Left"},{2,7}, {2,6},{4,6},{4,8},{9,8},{"Up"},{9,8}, {8,8},{8,9},{"Left"},{8,9}, {8,10},{9,10},{"Down"},{9,10},{8,10}}
+		if status.direction and type(status.direction) == "number" then
+			local px, py = Player.position()
+			local dx, dy = px, py
+			if py < 12 then
+				dy = 12
+			elseif status.direction == 1 then
+				dx = 2
+			else
+				dx = 8
+			end
+			if px ~= dx or py ~= dy then
+				Walk.step(dx, dy)
+				return
+			end
+			status.direction = nil
+		end
+		status.direction = Walk.custom(trashPath, status.canProgress)
+		status.canProgress = false
 	end
 end
 

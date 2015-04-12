@@ -35,6 +35,7 @@ local memoryNames = {
 		repel = 0x10DB,
 		party_size = 0x1163,
 		inventory_count = 0x131D,
+		bicycle = 0x1700,
 	},
 	game = {
 		map = 0x135E,

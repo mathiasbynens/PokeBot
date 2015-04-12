@@ -5,6 +5,8 @@ local Input = require "util.input"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
 
+local yellow = YELLOW
+
 local pokeIDs = {
 	rhydon = 1,
 	kangaskhan = 2,
@@ -124,6 +126,33 @@ local function indexOf(...)
 	return -1
 end
 Pokemon.indexOf = indexOf
+
+local function fieldMoveIndex(move)
+	local moveIndex = 0
+	local menuSize = Memory.value("menu", "size")
+	if yellow then
+		if move == "cut" then
+			moveIndex = 1
+		end
+	else
+		if menuSize == 4 then
+			if move == "dig" then
+				moveIndex = 1
+			elseif move == "surf" then
+				if Pokemon.inParty("paras") then
+					moveIndex = 1
+				end
+			end
+		elseif menuSize == 5 then
+			if move == "dig" then
+				moveIndex = 2
+			elseif move == "surf" then
+				moveIndex = 1
+			end
+		end
+	end
+	return moveIndex
+end
 
 -- Table functions
 
@@ -261,24 +290,7 @@ function Pokemon.use(move)
 		if column == 11 then
 			Menu.select(1, true)
 		elseif column == 10 or column == 12 then
-			local midx = 0
-			local menuSize = Memory.value("menu", "size")
-			if menuSize == 4 then
-				if move == "dig" then
-					midx = 1
-				elseif move == "surf" then
-					if Pokemon.inParty("paras") then
-						midx = 1
-					end
-				end
-			elseif menuSize == 5 then
-				if move == "dig" then
-					midx = 2
-				elseif move == "surf" then
-					midx = 1
-				end
-			end
-			Menu.select(midx, true)
+			Menu.select(fieldMoveIndex(move), true)
 		else
 			Input.press("B")
 		end

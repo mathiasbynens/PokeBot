@@ -121,6 +121,16 @@ local function takeCenter(pp, startMap, entranceX, entranceY, finishX)
 	Walk.step(px, py)
 end
 
+strategyFunctions.bicycle = function()
+	if Memory.value("battle", "menu") == 19 then
+		if Textbox.handle() then
+			return true
+		end
+	else
+		return Strategies.useItem({item="bicycle"})
+	end
+end
+
 -- STRATEGIES
 
 -- dodgePalletBoy
