@@ -313,7 +313,7 @@ function Control.encounter(battleState)
 					Paint.wildEncounters(encounters)
 					Bridge.encounter()
 					if Control.moonEncounters then
-						if INTERNAL and Pokemon.isOpponent("zubat") then
+						if INTERNAL and STREAMING_MODE and Pokemon.isOpponent("zubat") then
 							Bridge.chat("NightBat")
 						end
 						Control.moonEncounters = Control.moonEncounters + 1
@@ -326,7 +326,7 @@ function Control.encounter(battleState)
 					for i,catch in ipairs(gottaCatchEm) do
 						if opponent == catch then
 							if not Pokemon.inParty(catch) then
-								Bridge.chat("accidentally killed "..Utils.capitalize(catch).." with a "..(isCritical and "critical" or "high damage range").." :(")
+								Bridge.chat("accidentally killed "..Utils.capitalize(catch).." with a "..(Control.criticaled and "critical" or "high damage range").." :(")
 								Control.killedCatch = true
 							end
 							break

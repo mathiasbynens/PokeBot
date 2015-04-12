@@ -1167,6 +1167,8 @@ strategyFunctions.procureBicycle = function()
 	end
 end
 
+-- announceFourTurn
+
 strategyFunctions.redbarCubone = function()
 	if Battle.isActive() then
 		local forced

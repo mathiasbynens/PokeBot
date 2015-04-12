@@ -46,6 +46,10 @@ Strategies.timeRequirements = {
 		return timeLimit
 	end,
 
+	trash = function()
+		return 55
+	end,
+
 }
 
 -- HELPERS
@@ -302,7 +306,7 @@ strategyFunctions.centerMoon = function()
 end
 
 strategyFunctions.centerCerulean = function(data)
-	local ppRequired = 150
+	local ppRequired = 15
 	if data.first then
 		local currentMap = Memory.value("game", "map")
 		if currentMap == 3 then
@@ -317,7 +321,7 @@ strategyFunctions.centerCerulean = function(data)
 			end
 		end
 	end
-	takeCenter(ppRequired, 3, 19, 17, 19)
+	return takeCenter(ppRequired, 3, 19, 17, 19)
 end
 
 -- reportMtMoon
@@ -463,6 +467,8 @@ strategyFunctions.trashcans = function()
 		end
 	end
 end
+
+-- announceFourTurn
 
 -- PROCESS
 
