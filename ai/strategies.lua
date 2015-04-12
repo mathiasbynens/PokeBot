@@ -405,6 +405,53 @@ local function nidokingStats()
 	Bridge.stats(statDesc)
 end
 
+function Strategies.completeCans()
+	local px, py = Player.position()
+	if px == 4 and py == 6 then
+		status.tries = status.tries + 1
+		local timeLimit = Strategies.getTimeRequirement("trash") + 1.5
+		if Strategies.resetTime(timeLimit, "complete Trashcans ("..status.tries.." tries)") then
+			return true
+		end
+		Strategies.setYolo("trash")
+
+		local prefix
+		local suffix = "!"
+		if status.tries <= 1 then
+			prefix = "PERFECT"
+		elseif status.tries <= (yellow and 2 or 3) then
+			prefix = "Amazing"
+		elseif status.tries <= (yellow and 4 or 6) then
+			prefix = "Great"
+		elseif status.tries <= (yellow and 6 or 9) then
+			prefix = "Good"
+		elseif status.tries <= (yellow and 10 or 22) then
+			prefix = "Ugh"
+			suffix = ""
+		else -- TODO trashcans WR
+			prefix = "Reset me now"
+			suffix = " BibleThump"
+		end
+		Bridge.chat(" "..prefix..", "..status.tries.." try Trashcans"..suffix, Utils.elapsedTime())
+		return true
+	end
+	local completePath = {
+		Down = {{2,11}, {8,7}},
+		Right = {{2,12}, {3,12}, {1,6}, {2,6}, {3,6}},
+		Left = {{9,8}, {8,8}, {7,8}, {6,8}, {5,8}, {9,10}, {8,10}, {7,10}, {6,10}, {5,10}, {}, {}, {}, {}, {}, {}},
+	}
+	local walkIn = "Up"
+	for dir,tileset in pairs(completePath) do
+		for i,tile in ipairs(tileset) do
+			if px == tile[1] and py == tile[2] then
+				walkIn = dir
+				break
+			end
+		end
+	end
+	Input.press(walkIn, 0)
+end
+
 -- GENERALIZED STRATEGIES
 
 Strategies.functions = {

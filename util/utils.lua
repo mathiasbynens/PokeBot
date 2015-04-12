@@ -69,6 +69,16 @@ function Utils.capitalize(string)
 	return string:sub(1, 1):upper()..string:sub(2)
 end
 
+function Utils.nextCircularIndex(index, direction, totalCount)
+	local nextIndex = index + direction
+	if nextIndex < 1 then
+		nextIndex = totalCount
+	elseif nextIndex > totalCount then
+		nextIndex = 1
+	end
+	return nextIndex
+end
+
 -- GAME
 
 function Utils.canPotionWith(potion, forDamage, curr_hp, max_hp)

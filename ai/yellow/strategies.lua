@@ -360,6 +360,100 @@ strategyFunctions.shopVermilionMart = function()
 	}
 end
 
+strategyFunctions.trashcans = function()
+	if not status.canIndex then
+		status.canIndex = 1
+		status.progress = 1
+		status.direction = 1
+	end
+	local trashPath = {
+	-- 	{next	location,	check,	mid,	pair,	finish,	end}		{waypoints}
+		{nd=2,	{1,12},	"Up",				{3,12},	"Up",	{3,12}},	{{4,12}},
+		{nd=3,	{4,11},	"Right",	{4,6},	{1,6},	"Down",	{1,6}},
+		{nd=1,	{4,9},	"Left",				{4,7},	"Left",	{4,7}},
+		{nd=1,	{4,7},	"Right",	{4,6},	{1,6},	"Down",	{1,6}},		{{4,6}},
+		{nd=0,	{1,6},	"Down",				{3,6},	"Down", {3,6}},		{{4,6}}, {{4,8}},
+		{nd=0,	{7,8},	"Down",				{7,8},	"Up",	{7,8}},		{{8,8}},
+		{nd=0,	{8,7},	"Right",			{8,7},	"Left", {8,7}},
+		{nd=0,	{8,11},	"Right",			{8,9},	"Right",{8,9}},		{{8,12}},
+	}
+	local totalPathCount = #trashPath
+
+	local unlockProgress = Memory.value("progress", "trashcans")
+	if Textbox.isActive() then
+		if not status.canProgress then
+			status.canProgress = true
+			local px, py = Player.position()
+			if unlockProgress < 2 then
+				status.tries = status.tries + 1
+				if status.unlocking then
+					status.unlocking = false
+					local flipIndex = status.canIndex + status.nextDelta
+					local flipCan = trashPath[flipIndex][1]
+					if px == flipCan[1] and py == flipCan[2] then
+						status.direction = status.direction * -1
+						status.canIndex = status.flipIndex
+					else
+						status.flipIndex = flipIndex
+						status.direction = 1
+						status.nextDirection = status.direction * -1
+						status.progress = status.progress + 1
+					end
+					return false
+				end
+				status.canIndex = Utils.nextCircularIndex(status.canIndex, status.direction, totalPathCount)
+				status.progress = nil
+			else
+				status.unlocking = true
+				status.progress = status.progress + 1
+			end
+		end
+		Input.cancel()
+	elseif unlockProgress == 3 then
+		return Strategies.completeCans()
+	else
+		if status.canIndex == status.flipIndex then
+			status.flipIndex = nil
+			status.direction = status.nextDirection
+		end
+		local targetCan = trashPath[status.canIndex]
+		local targetCount = #targetCan
+
+		local canProgression = status.progress
+		if not canProgression then
+			canProgression = 1
+			status.progress = 1
+		else
+			local reset
+			if canProgression < 1 then
+				reset = true
+			elseif canProgression > targetCount then
+				reset = true
+			end
+			if reset then
+				status.canIndex = Utils.nextCircularIndex(status.canIndex, status.direction, totalPathCount)
+				status.progress = nil
+				return strategyFunctions.trashcans()
+			end
+		end
+
+		local action = targetCan[canProgression]
+		if type(action) == "string" then
+			status.nextDelta = targetCan.nd
+			Player.interact(action)
+		else
+			status.canProgress = false
+			local px, py = Player.position()
+			local dx, dy = action[1], action[2]
+			if px == dx and py == dy then
+				status.progress = status.progress + 1
+				return strategyFunctions.trashcans()
+			end
+			Walk.step(dx, dy)
+		end
+	end
+end
+
 -- PROCESS
 
 function Strategies.initGame(midGame)
