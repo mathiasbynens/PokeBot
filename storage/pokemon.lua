@@ -20,16 +20,20 @@ local pokeIDs = {
 	nidoqueen = 16,
 	cubone = 17,
 	rhyhorn = 18,
+	lapras = 19,
 	gyarados = 22,
 	growlithe = 33,
 	onix = 34,
 	pidgey = 36,
 	kadabra = 38,
+	magneton = 54,
+	venonat = 65,
 	jinx = 72,
 	meowth = 77,
 	pikachu = 84,
 	dragonair = 89,
 	sandshrew = 96,
+	sandslash = 97,
 	zubat = 107,
 	ekans = 108,
 	paras = 109,
@@ -55,6 +59,7 @@ local pokeIDs = {
 local moveList = {
 	cut = 15,
 	fly = 19,
+	double_kick = 24,
 	sand_attack = 28,
 	horn_attack = 30,
 	horn_drill = 32,
@@ -132,6 +137,8 @@ local function fieldMoveIndex(move)
 	local menuSize = Memory.value("menu", "size")
 	if yellow then
 		if move == "cut" then
+			moveIndex = 1
+		elseif move == "surf" then
 			moveIndex = 1
 		end
 	else

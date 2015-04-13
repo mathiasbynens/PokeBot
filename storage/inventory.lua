@@ -7,6 +7,8 @@ local Utils = require "util.utils"
 
 local Pokemon = require "storage.pokemon"
 
+local yellow = YELLOW
+
 local items = {
 	pokeball = 4,
 	bicycle = 6,
@@ -18,6 +20,7 @@ local items = {
 	potion = 20,
 	escape_rope = 29,
 	carbos = 38,
+	ss_ticket = 63,
 	repel = 30,
 
 	rare_candy = 40,
@@ -33,6 +36,7 @@ local items = {
 	elixer = 82,
 
 	x_accuracy = 46,
+	x_attack = 65,
 	x_speed = 67,
 	x_special = 68,
 

@@ -41,6 +41,7 @@ local memoryNames = {
 		map = 0x135E,
 		battle = 0x1057,
 		textbox = 0x0FC4,
+		fly = 0x1FEF,
 	},
 	time = {
 		hours = 0x1A41,
