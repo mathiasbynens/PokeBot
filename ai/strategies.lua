@@ -675,10 +675,18 @@ Strategies.functions = {
 		end
 		local itemIndex = Inventory.indexOf(data.item)
 		local destIndex = data.dest
+		local hasSwappedItems
 		if type(destIndex) == "string" then
 			destIndex = Inventory.indexOf(destIndex)
+			if destIndex < 0 then
+				p("Not available to swap", data.item, data.dest)
+				return true
+			end
+			hasSwappedItems = itemIndex < destIndex
+		else
+			hasSwappedItems = itemIndex == destIndex
 		end
-		if itemIndex == destIndex then
+		if hasSwappedItems then
 			if Strategies.closeMenuFor(data) then
 				return true
 			end
