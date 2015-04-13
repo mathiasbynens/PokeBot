@@ -2092,7 +2092,7 @@ strategyFunctions.champion = function()
 				end
 			end
 		elseif status.tries == 500 then
-			Bridge.chat("beat the game in "..status.canProgress.." !")
+			Bridge.chat("beat the game in "..status.canProgress.."!")
 		end
 		status.tries = status.tries + 1
 	elseif Memory.value("menu", "shop_current") == 252 then
