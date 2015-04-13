@@ -28,13 +28,56 @@ function Paint.draw(currentMap)
 		end
 	end
 
+	local xPokemon = 125
+	local yPokemon = 15
+	drawText(xPokemon,yPokemon,"Pokemons: ")
+	local squirtx = Pokemon.indexOf("squirtle")
+	if squirtx ~= -1 then
+		drawText(xPokemon,yPokemon +5,"Squirtle")
+	end
+	
+	
+	local pidgeyx = Pokemon.indexOf("pidgey")
+	if pidgeyx ~= -1 then
+		drawText(xPokemon,yPokemon+15,"Pidgey")
+	end
+	
+	local spearowx = Pokemon.indexOf("spearow")
+	if spearowx ~= -1 then
+		drawText(xPokemon,yPokemon+15,"Spearow")
+	end
+	
+	local parasx = Pokemon.indexOf("paras")
+	if parasx ~= -1 then
+		drawText(xPokemon,yPokemon+20,"Paras")
+	end
+	
+	local oddishx = Pokemon.indexOf("oddish")
+	if oddishx ~= -1 then
+		drawText(xPokemon,yPokemon+20,"Oddish")
+	end
+	
 	local nidx = Pokemon.indexOf("nidoran", "nidorino", "nidoking")
 	if nidx ~= -1 then
 		local att = Pokemon.index(nidx, "attack")
 		local def = Pokemon.index(nidx, "defense")
 		local spd = Pokemon.index(nidx, "speed")
 		local scl = Pokemon.index(nidx, "special")
-		drawText(100, 0, att.." "..def.." "..spd.." "..scl)
+		drawText(60, 0,"Nido stats: "..att.." "..def.." "..spd.." "..scl)
+	end
+	nidx = Pokemon.indexOf("nidoran")
+	if nidx == -1 then
+		nidx = Pokemon.indexOf("nidorino")
+		if nidx == -1 then
+			nidx = Pokemon.indexOf("nidoking")
+			if nidx ~= -1 then
+				drawText(xPokemon,yPokemon+10,"Nidoking")
+			end
+		else
+			drawText(xPokemon,yPokemon+10,"Nidorino")
+		end
+	else
+		drawText(xPokemon,yPokemon+10,"Nidoran")
 	end
 	local enc = " encounter"
 	if encounters ~= 1 then
