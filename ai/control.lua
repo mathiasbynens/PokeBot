@@ -225,6 +225,9 @@ function Control.shouldCatch(partySize)
 	if not shouldCatch then
 		return false
 	end
+	if yellow and not Inventory.contains("pokeball") then
+		return false
+	end
 	if not partySize then
 		partySize = Memory.value("player", "party_size")
 	end

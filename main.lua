@@ -68,9 +68,6 @@ p("Welcome to PokeBot "..GAME_NAME.." version "..VERSION, true)
 Control.init()
 
 STREAMING_MODE = not Walk.init()
-if INTERNAL and STREAMING_MODE then
-	RESET_FOR_TIME = true
-end
 
 if CUSTOM_SEED then
 	client.reboot_core()

@@ -888,8 +888,8 @@ strategyFunctions.potionBeforeMisty = function(data)
 		if data.goldeen then
 			Strategies.setYolo("goldeen")
 			local curr_hp, red_hp = Combat.hp(), Combat.redHP()
-			if Control.yolo or curr_hp < red_hp + 6 then
-				if Pokemon.index(0, "hp") > 7 then
+			if Control.yolo or (not Combat.inRedBar() and curr_hp < red_hp + 6) then
+				if curr_hp > 7 then
 					return true
 				end
 			end

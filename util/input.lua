@@ -23,7 +23,7 @@ local function sendButton(button, ab)
 		Utils.drawText(0, 7, button.." "..remainingFrames)
 	end
 	if ab then
-		buttonbutton = "A,B"
+		button = "A,B"
 	end
 	bridgeButton(button)
 	setForFrame = button

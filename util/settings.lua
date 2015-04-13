@@ -1,6 +1,7 @@
 local Settings = {}
 
 local Textbox = require "action.textbox"
+local Strategies = require "ai.strategies"
 
 local Bridge = require "util.bridge"
 local Input = require "util.input"
