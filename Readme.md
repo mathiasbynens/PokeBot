@@ -2,7 +2,10 @@
 
 An automated computer program that speedruns Pokémon Red, Blue, or Yellow.
 
-Pokémon Red Any%: [1:51:11](https://www.youtube.com/watch?v=M4pOlQ-mIoc) (23 June 2014)
+Here are the bot’s best runs so far in the Pokémon Red Any% Glitchless category:
+
+* [1:50:14 (13 April 2015)](https://www.youtube.com/watch?v=lVE_ksd4WJw)
+* [1:51:11 (23 June 2014)](https://www.youtube.com/watch?v=M4pOlQ-mIoc)
 
 ## Watch live
 
