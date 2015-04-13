@@ -70,6 +70,10 @@ function Textbox.getName()
 	return nidoName
 end
 
+function Textbox.getNamePlaintext()
+	return nidoName
+end
+
 function Textbox.setName(name)
 	if type(name) == "string" then
 		nidoName = name

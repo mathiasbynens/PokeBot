@@ -2070,21 +2070,26 @@ strategyFunctions.champion = function()
 			return Strategies.hardReset("Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
 		end
 		if status.tries == 0 then
-			if STREAMING_MODE and CUSTOM_SEED ~= nil then
-				gui.text(0, 0, "PokeBot v"..VERSION)
-				gui.text(0, 7, "Seed: "..Strategies.seed)
-				gui.text(0, 14, "Reset for time: "..tostring(RESET_FOR_TIME))
-				gui.text(0, 21, "Time: "..Utils.elapsedTime())
-				gui.text(0, 28, "Frames: "..Utils.frames())
-				client.setscreenshotosd(true)
-				client.screenshot()
-				client.setscreenshotosd(false)
-				gui.cleartext()
-			end			
 			Strategies.tweetProgress("Beat Pokemon Red in "..status.canProgress.."!")
 			if Strategies.seed then
 				print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
 				print("Please save this seed number to share, if you would like proof of your run!")
+				print("A screenshot has been saved to the Gameboy\\Screenshots folder in BizHawk.")
+
+				if STREAMING_MODE and not Strategies.replay then
+					Strategies.seed = 0
+					gui.cleartext()
+					gui.text(0, 0, "PokeBot v"..VERSION)
+					gui.text(0, 7, "Seed: "..Strategies.seed)
+					gui.text(0, 14, "Name: "..Textbox.getNamePlaintext())
+					gui.text(0, 21, "Reset for time: "..tostring(RESET_FOR_TIME))
+					gui.text(0, 28, "Time: "..Utils.elapsedTime())
+					gui.text(0, 35, "Frames: "..Utils.frames())
+					client.setscreenshotosd(true)
+					client.screenshot()
+					client.setscreenshotosd(false)
+					gui.cleartext()
+				end
 			end
 		elseif status.tries == 500 then
 			Bridge.chat("beat the game in "..status.canProgress.." !")
