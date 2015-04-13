@@ -2,10 +2,13 @@
 
 PokéBot comes with a built-in run recording feature that takes advantage of random number seeding to reproduce runs in their entirety. Any time the bot resets or beats the game, it logs a number to the Lua console that is the seed for the run. This seed allows you to easily share the run with others.
 
-Have you found a seed that results in a run of `1:53:00` or better? [Let us know](https://github.com/kylecoburn/PokeBot/issues/4), and we’ll add it to the list!
+Have you found a seed that results in a run of 1:52:00 or better using the bot’s default settings? [Let us know](https://github.com/kylecoburn/PokeBot/issues/4), and we’ll add it to the list!
 
-| Time    | Frames | Seed         | Bot version | Found by |
-|---------|--------|--------------|-------------|----------|
-| 1:50:37 | 398226 | `1428414915` | v1.3.0      | Gofigga  |
+| Time    | Frames | Seed         | Bot version | Found by                                     |
+|---------|--------|--------------|-------------|----------------------------------------------|
+| 1:50:36 | 398208 | `1428414915` | v1.4.0      | [Gofigga](http://www.twitch.tv/gofigga)      |
+| 1:50:37 | 398226 | `1428414915` | v1.3.0      | [Gofigga](http://www.twitch.tv/gofigga)      |
+| 1:50:51 | 399076 | `1428414915` | v1.4.1      | [Gofigga](http://www.twitch.tv/gofigga)      |
+| 1:50:55 | 399355 | `1428801658` | v1.4.0      | [Marcin1503](https://github.com/Marcin1503)  |
 
-To reproduce any of these runs, set [`CUSTOM_SEED` in `main.lua`](https://github.com/kylecoburn/PokeBot/blob/0ec69a6a958d15b3a9dccb492fa83e4a1dcae2e0/main.lua#L5) to the seed number and run the bot.
+To reproduce any of these runs, set [`CUSTOM_SEED` in `main.lua`](https://github.com/kylecoburn/PokeBot/blob/27aa1dcd2cec1bbe25607fa346836f63b349ad5f/main.lua#L5) to the seed number and run the bot.
