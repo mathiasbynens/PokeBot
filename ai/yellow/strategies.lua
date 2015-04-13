@@ -50,6 +50,10 @@ Strategies.timeRequirements = {
 		return 55
 	end,
 
+	safari_carbos = function()
+		return 80
+	end,
+
 }
 
 -- HELPERS
@@ -469,6 +473,156 @@ strategyFunctions.trashcans = function()
 end
 
 -- announceFourTurn
+
+-- redbarCubone
+
+strategyFunctions.deptElevator = function()
+	if Textbox.isActive() then
+		status.canProgress = true
+		Menu.select(4, false, true)
+	else
+		if status.canProgress then
+			return true
+		end
+		Player.interact("Up")
+	end
+end
+
+strategyFunctions.shopBuffs = function()
+	local xAccs = Strategies.flareon and 10 or 11
+	local xSpeeds = Strategies.flareon and 7 or 6
+	return Shop.transaction{
+		direction = "Right",
+		sell = {{name="nugget"}},
+		buy = {{name="x_accuracy", index=0, amount=xAccs}, {name="x_attack", index=3, amount=3}, {name="x_speed", index=5, amount=xSpeeds}, {name="x_special", index=6, amount=5}},
+	}
+end
+
+-- shopVending
+
+-- giveWater
+
+-- shopExtraWater
+
+-- shopPokeDoll
+
+-- shopTM07
+
+-- shopRepels
+
+strategyFunctions.lavenderRival = function()
+	if Battle.isActive() then
+		status.canProgress = true
+		if Strategies.prepare("x_accuracy") then
+			Battle.automate()
+		end
+	elseif status.canProgress then
+		return true
+	else
+		Input.cancel()
+	end
+end
+
+-- digFight
+
+-- pokeDoll
+
+-- drivebyRareCandy
+
+-- silphElevator
+
+strategyFunctions.silphRival = function()
+	if Battle.isActive() then
+		if Strategies.initialize() then
+			status.canProgress = true
+		end
+
+		if Strategies.prepare("x_accuracy") then
+			-- Strategies.prepare("x_speed")
+			local forced, prepare
+			local opponentName = Battle.opponent()
+			if opponentName == "sandslash" then
+				local __, __, turnsToDie = Combat.bestMove()
+				if turnsToDie and turnsToDie < 2 then
+					forced = "horn_drill"
+				else
+					prepare = true
+				end
+			elseif opponentName == "magneton" then
+				prepare = true
+			elseif opponentName ~= "kadabra" then
+				forced = "horn_drill" --TODO necessary?
+			end
+			if not prepare or Strategies.prepare("x_speed") then
+				Battle.automate(forced)
+			end
+		end
+	elseif status.canProgress then
+		Control.ignoreMiss = false
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+-- playPokeflute
+
+strategyFunctions.tossTM34 = function()
+	if not Inventory.contains("carbos") then
+		return true
+	end
+	return Strategies.tossItem("tm34")
+end
+
+strategyFunctions.fightKoga = function()
+	if Battle.isActive() then
+		if Strategies.prepare("x_accuracy") then
+			status.canProgress = true
+			local forced = "horn_drill"
+			local opponent = Battle.opponent()
+			if opponent == "venonat" then
+				if Memory.double("battle", "opponent_hp") == 0 then
+					status.secondVenonat = true
+				end
+				if status.secondVenonat or Combat.isSleeping() then
+					if not Strategies.prepare("x_speed") then
+						return false
+					end
+				end
+			end
+			Battle.automate(forced)
+		end
+	elseif status.canProgress then
+		Strategies.deepRun = true
+		Control.ignoreMiss = false
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+strategyFunctions.fightSabrina = function()
+	if Battle.isActive() then
+		status.canProgress = true
+		if Strategies.prepare("x_accuracy", "x_speed") then
+			-- local forced = "horn_drill"
+			-- local opponent = Battle.opponent()
+			-- if opponent == "venonat" then
+			-- end
+			Battle.automate(forced)
+		end
+	elseif status.canProgress then
+		Strategies.deepRun = true
+		Control.ignoreMiss = false
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+-- dodgeGirl
+
+-- cinnabarCarbos
 
 -- PROCESS
 

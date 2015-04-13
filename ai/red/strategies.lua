@@ -292,10 +292,6 @@ strategyFunctions.bicycle = function()
 	end
 end
 
-strategyFunctions.fightXAccuracy = function()
-	return Strategies.prepare("x_accuracy")
-end
-
 -- Route
 
 strategyFunctions.squirtleIChooseYou = function()
@@ -1168,39 +1164,7 @@ end
 
 -- announceFourTurn
 
-strategyFunctions.redbarCubone = function()
-	if Battle.isActive() then
-		local forced
-		status.canProgress = true
-		if Pokemon.isOpponent("cubone") then
-			local enemyMove, enemyTurns = Combat.enemyAttack()
-			if enemyTurns then
-				local curr_hp, red_hp = Combat.hp(), Combat.redHP()
-				local clubDmg = enemyMove.damage
-				local afterHit = curr_hp - clubDmg
-				red_hp = red_hp - 2
-				local acceptableHealth = Control.yolo and -1 or 1
-				if afterHit >= acceptableHealth and afterHit < red_hp then
-					forced = "thunderbolt"
-				else
-					afterHit = afterHit - clubDmg
-					if afterHit > 1 and afterHit < red_hp then
-						forced = "thunderbolt"
-					end
-				end
-				if forced and Strategies.initialize() then
-					Bridge.chat("is using Thunderbolt to attempt to redbar off Cubone")
-				end
-			end
-			Control.ignoreMiss = forced ~= nil
-		end
-		Battle.automate(forced)
-	elseif status.canProgress then
-		return true
-	else
-		Battle.automate()
-	end
-end
+-- redbarCubone
 
 strategyFunctions.undergroundElixer = function()
 	if Strategies.initialize() then
@@ -1211,19 +1175,9 @@ strategyFunctions.undergroundElixer = function()
 	return strategyFunctions.interact({dir="Left"})
 end
 
-strategyFunctions.shopTM07 = function()
-	return Shop.transaction{
-		direction = "Up",
-		buy = {{name="horn_drill", index=3}}
-	}
-end
+-- shopTM07
 
-strategyFunctions.shopRepels = function()
-	return Shop.transaction{
-		direction = "Up",
-		buy = {{name="super_repel", index=3, amount=9}}
-	}
-end
+-- shopRepels
 
 strategyFunctions.dodgeDepartment = function()
 	if Strategies.initialize() then
@@ -1245,43 +1199,13 @@ strategyFunctions.dodgeDepartment = function()
 	Walk.step(dx, dy)
 end
 
-strategyFunctions.shopPokeDoll = function()
-	return Shop.transaction{
-		direction = "Down",
-		buy = {{name="pokedoll", index=0}}
-	}
-end
+-- shopPokeDoll
 
-strategyFunctions.shopVending = function()
-	return Shop.vend{
-		direction = "Up",
-		buy = {{name="fresh_water", index=0}, {name="soda_pop", index=1}}
-	}
-end
+-- shopVending
 
-strategyFunctions.giveWater = function()
-	if not Inventory.contains("fresh_water", "soda_pop") then
-		return true
-	end
-	if Textbox.isActive() then
-		Input.cancel("A")
-	else
-		local cx, cy = Memory.raw(0x0223) - 3, Memory.raw(0x0222) - 3
-		local px, py = Player.position()
-		if Utils.dist(cx, cy, px, py) == 1 then
-			Player.interact(Walk.dir(px, py, cx, cy))
-		else
-			Walk.step(cx, cy)
-		end
-	end
-end
+-- giveWater
 
-strategyFunctions.shopExtraWater = function()
-	return Shop.vend{
-		direction = "Up",
-		buy = {{name="fresh_water", index=0}}
-	}
-end
+-- shopExtraWater
 
 strategyFunctions.shopBuffs = function()
 	if Strategies.initialize() then
@@ -1306,7 +1230,7 @@ end
 strategyFunctions.deptElevator = function()
 	if Textbox.isActive() then
 		status.canProgress = true
-		Menu.select(0, false)
+		Menu.select(0, false, true)
 	else
 		if status.canProgress then
 			return true
@@ -1338,40 +1262,9 @@ strategyFunctions.lavenderRival = function()
 	end
 end
 
-strategyFunctions.digFight = function()
-	if Battle.isActive() then
-		status.canProgress = true
-		local currentlyDead = Memory.double("battle", "our_hp") == 0
-		if currentlyDead then
-			local backupPokemon = Pokemon.getSacrifice("paras", "squirtle")
-			if not backupPokemon then
-				return Strategies.death()
-			end
-			if Utils.onPokemonSelect(Memory.value("battle", "menu")) then
-				Menu.select(Pokemon.indexOf(backupPokemon), true)
-			else
-				Input.press("A")
-			end
-		else
-			Battle.automate()
-		end
-	elseif status.canProgress then
-		return true
-	else
-		Textbox.handle()
-	end
-end
+-- digFight
 
-strategyFunctions.pokeDoll = function()
-	if Battle.isActive() then
-		status.canProgress = true
-		Inventory.use("pokedoll", nil, true)
-	elseif status.canProgress then
-		return true
-	else
-		Input.cancel()
-	end
-end
+-- pokeDoll
 
 strategyFunctions.thunderboltFirst = function()
 	local forced
@@ -1393,27 +1286,7 @@ end
 
 -- playPokeflute
 
-strategyFunctions.drivebyRareCandy = function()
-	if Textbox.isActive() then
-		status.canProgress = true
-		Input.cancel()
-	elseif status.canProgress then
-		return true
-	else
-		local px, py = Player.position()
-		if py < 13 then
-			status.tries = 0
-			return
-		end
-		if py == 13 and status.tries % 2 == 0 then
-			Input.press("A", 2)
-		else
-			Input.press("Up")
-			status.tries = 0
-		end
-		status.tries = status.tries + 1
-	end
-end
+-- drivebyRareCandy
 
 strategyFunctions.tossInSafari = function()
 	if Inventory.count() <= (Inventory.contains("full_restore") and 18 or 17) then
@@ -1422,58 +1295,7 @@ strategyFunctions.tossInSafari = function()
 	return Strategies.tossItem("antidote", "pokeball")
 end
 
-strategyFunctions.safariCarbos = function()
-	if Strategies.initialize() then
-		Strategies.setYolo("safari_carbos")
-	end
-	if stats.nidoran.speedDV >= 7 then
-		return true
-	end
-	if Inventory.contains("carbos") then
-		if Walk.step(20, 20) then
-			return true
-		end
-	else
-		local px, py = Player.position()
-		if px < 21 then
-			Walk.step(21, py)
-		elseif px == 21 and py == 13 then
-			Player.interact("Left")
-		else
-			Walk.step(21, 13)
-		end
-	end
-end
-
-strategyFunctions.centerSkipFullRestore = function()
-	if Strategies.initialize() then
-		if Control.yolo or Inventory.contains("full_restore") then
-			return true
-		end
-		Bridge.chat("needs to grab the backup Full Restore here")
-	end
-	local px, py = Player.position()
-	if px < 21 then
-		px = 21
-	elseif py < 9 then
-		py = 9
-	else
-		return Strategies.functions.interact({dir="Down"})
-	end
-	Walk.step(px, py)
-end
-
-strategyFunctions.silphElevator = function()
-	if Textbox.isActive() then
-		status.canProgress = true
-		Menu.select(9, false, true)
-	else
-		if status.canProgress then
-			return true
-		end
-		Player.interact("Up")
-	end
-end
+-- silphElevator
 
 strategyFunctions.fightSilphMachoke = function()
 	if Battle.isActive() then
@@ -1712,44 +1534,9 @@ end
 
 -- 10: KOGA
 
-strategyFunctions.dodgeGirl = function()
-	local gx, gy = Memory.raw(0x0223) - 5, Memory.raw(0x0222)
-	local px, py = Player.position()
-	if py > gy then
-		if px > 3 then
-			px = 3
-		else
-			return true
-		end
-	elseif gy - py ~= 1 or px ~= gx then
-		py = py + 1
-	elseif px == 3 then
-		px = 2
-	else
-		px = 3
-	end
-	Walk.step(px, py)
-end
+-- dodgeGirl
 
-strategyFunctions.cinnabarCarbos = function()
-	local px, py = Player.position()
-	if px == 21 then
-		return true
-	end
-	if stats.nidoran.speedDV >= 10 then
-		Walk.step(21, 20)
-	else
-		if py == 20 then
-			py = 21
-		elseif px == 17 and not Inventory.contains("carbos") then
-			Player.interact("Right")
-			return false
-		else
-			px = 21
-		end
-		Walk.step(px, py)
-	end
-end
+-- cinnabarCarbos
 
 strategyFunctions.fightErika = function()
 	if Battle.isActive() then

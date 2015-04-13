@@ -22,9 +22,9 @@ function Player.face(direction)
 	end
 end
 
-function Player.interact(direction, instant)
+function Player.interact(direction, extended)
 	if Player.face(direction) then
-		local speed = 2
+		local speed = extended and 3 or 2
 		if yellow and instant then
 			fast = not fast
 			speed = fast and 1 or 2

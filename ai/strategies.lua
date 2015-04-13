@@ -12,6 +12,7 @@ local Input = require "util.input"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
 local Player = require "util.player"
+local Shop = require "action.shop"
 local Utils = require "util.utils"
 
 local Inventory = require "storage.inventory"
@@ -179,7 +180,7 @@ function Strategies.opponentDamaged(factor)
 	return Memory.double("battle", "opponent_hp") * factor < Memory.double("battle", "opponent_max_hp")
 end
 
-local function interact(direction)
+local function interact(direction, extended)
 	if Battle.handleWild() then
 		if Battle.isActive() then
 			return true
@@ -190,7 +191,7 @@ local function interact(direction)
 			end
 			Input.cancel()
 		else
-			if Player.interact(direction) then
+			if Player.interact(direction, extended) then
 				status.interacted = true
 			end
 		end
@@ -490,7 +491,7 @@ Strategies.functions = {
 	end,
 
 	talk = function(data)
-		return interact(data.dir, true)
+		return interact(data.dir, data.long)
 	end,
 
 	take = function(data)
@@ -647,14 +648,15 @@ Strategies.functions = {
 			celadon = {68, "Down"},
 			fuchsia = {69, "Down"},
 			cinnabar = {70, "Down"},
+			saffron = {72, "Down"},
 		}
 
 		local main = Memory.value("menu", "main")
-		if main == 228 then
-			local currentFly = Memory.raw(0x1FEF)
+		if main == (yellow and 144 or 228) then
+			local currentCity = Memory.value("game", "fly")
 			local destination = cities[data.dest]
 			local press
-			if destination[1] - currentFly == 0 then
+			if destination[1] - currentCity == 0 then
 				press = "A"
 			else
 				press = destination[2]
@@ -791,6 +793,10 @@ Strategies.functions = {
 			end
 		end
 		return Strategies.buffTo("leer", defLimit)
+	end,
+
+	fightX = function(data)
+		return Strategies.prepare("x_"..data.x)
 	end,
 
 	-- ROUTE
@@ -1094,12 +1100,156 @@ Strategies.functions = {
 		return true
 	end,
 
-	playPokeflute = function()
+	redbarCubone = function()
+		if Battle.isActive() then
+			local forced
+			status.canProgress = true
+			if Pokemon.isOpponent("cubone") then
+				local enemyMove, enemyTurns = Combat.enemyAttack()
+				if enemyTurns then
+					local curr_hp, red_hp = Combat.hp(), Combat.redHP()
+					local clubDmg = enemyMove.damage
+					local afterHit = curr_hp - clubDmg
+					red_hp = red_hp - 2
+					local acceptableHealth = Control.yolo and -1 or 1
+					if afterHit >= acceptableHealth and afterHit < red_hp then
+						forced = "thunderbolt"
+					else
+						afterHit = afterHit - clubDmg
+						if afterHit > 1 and afterHit < red_hp then
+							forced = "thunderbolt"
+						end
+					end
+					if forced and Strategies.initialize() then
+						Bridge.chat("is using Thunderbolt to attempt to redbar off Cubone")
+					end
+				end
+				Control.ignoreMiss = forced ~= nil
+			end
+			Battle.automate(forced)
+		elseif status.canProgress then
+			return true
+		else
+			Battle.automate()
+		end
+	end,
+
+	shopTM07 = function()
+		return Shop.transaction {
+			direction = "Up",
+			buy = {{name="horn_drill", index=3}}
+		}
+	end,
+
+	shopRepels = function()
+		local repelCount = yellow and 10 or 9
+		return Shop.transaction {
+			direction = "Up",
+			buy = {{name="super_repel", index=3, amount=repelCount}}
+		}
+	end,
+
+	shopPokeDoll = function()
+		return Shop.transaction {
+			direction = "Down",
+			buy = {{name="pokedoll", index=0}}
+		}
+	end,
+
+	shopVending = function()
+		return Shop.vend {
+			direction = "Up",
+			buy = {{name="fresh_water", index=0}, {name="soda_pop", index=1}}
+		}
+	end,
+
+	giveWater = function()
+		if not Inventory.contains("fresh_water", "soda_pop") then
+			return true
+		end
+		if Textbox.isActive() then
+			Input.cancel("A")
+		else
+			local cx, cy = Memory.raw(0x0223) - 3, Memory.raw(0x0222) - 3
+			local px, py = Player.position()
+			if Utils.dist(cx, cy, px, py) == 1 then
+				Player.interact(Walk.dir(px, py, cx, cy))
+			else
+				Walk.step(cx, cy)
+			end
+		end
+	end,
+
+	shopExtraWater = function()
+		return Shop.vend {
+			direction = "Up",
+			buy = {{name="fresh_water", index=0}}
+		}
+	end,
+
+	digFight = function()
+		if Strategies.initialize() then
+			if Combat.inRedBar() then
+				Bridge.chat("is using Rock Slide to one-hit these Ghastlies in red-bar (each is 1 in 10 to miss)")
+			end
+		end
+		if Battle.isActive() then
+			status.canProgress = true
+			local currentlyDead = Memory.double("battle", "our_hp") == 0
+			if currentlyDead then
+				if not status.died then
+					status.died = true
+					Bridge.chat(" Rock Slide missed BibleThump Trying to finish them off with Dig...")
+				end
+				local backupPokemon = Pokemon.getSacrifice("paras", "squirtle")
+				if not backupPokemon then
+					return Strategies.death()
+				end
+				if Menu.onPokemonSelect() then
+					Menu.select(Pokemon.indexOf(backupPokemon), true)
+				else
+					Input.press("A")
+				end
+			else
+				Battle.automate()
+			end
+		elseif status.canProgress then
+			return true
+		else
+			Textbox.handle()
+		end
+	end,
+
+	pokeDoll = function()
+		if Battle.isActive() then
+			status.canProgress = true
+			-- {s="swap",item="potion",dest="x_special",chain=true}, --TODO yellow
+			Inventory.use("pokedoll", nil, true)
+		elseif status.canProgress then
+			return true
+		else
+			Input.cancel()
+		end
+	end,
+
+	silphElevator = function()
+		if Textbox.isActive() then
+			status.canProgress = true
+			Menu.select(9, false, true)
+		else
+			if status.canProgress then
+				return true
+			end
+			Player.interact("Up")
+		end
+	end,
+
+	playPokeFlute = function()
 		if Battle.isActive() then
 			return true
 		end
-		if Memory.value("battle", "menu") == 95 then
-			Input.press("A")
+		if Menu.hasTextbox() then
+			Input.cancel()
 		elseif Menu.pause() then
 			Inventory.use("pokeflute")
 		end
@@ -1119,6 +1269,109 @@ Strategies.functions = {
 			return true
 		end
 		Input.press(data.dir, 0)
+	end,
+
+	drivebyRareCandy = function()
+		if Textbox.isActive() then
+			status.canProgress = true
+			Input.cancel()
+		elseif status.canProgress then
+			return true
+		else
+			local px, py = Player.position()
+			if py < 13 then
+				status.tries = 0
+				return
+			end
+			if py == 13 and status.tries % 2 == 0 then
+				Input.press("A", 2)
+			else
+				Input.press("Up")
+				status.tries = 0
+			end
+			status.tries = status.tries + 1
+		end
+	end,
+
+	safariCarbos = function()
+		if Strategies.initialize() then
+			Strategies.setYolo("safari_carbos")
+			status.carbos = Inventory.count("carbos")
+		end
+		if stats.nidoran.speedDV >= (yellow and 9 or 7) then
+			return true
+		end
+		if Inventory.count("carbos") ~= status.carbos then
+			if Walk.step(20, 20) then
+				return true
+			end
+		else
+			local px, py = Player.position()
+			if px < 21 then
+				Walk.step(21, py)
+			elseif px == 21 and py == 13 then
+				Player.interact("Left")
+			else
+				Walk.step(21, 13)
+			end
+		end
+	end,
+
+	centerSkipFullRestore = function()
+		if Strategies.initialize() then
+			if Control.yolo or Inventory.contains("full_restore") then
+				return true
+			end
+			Bridge.chat("needs to grab the backup Full Restore here")
+		end
+		local px, py = Player.position()
+		if px < 21 then
+			px = 21
+		elseif py < 9 then
+			py = 9
+		else
+			return Strategies.functions.interact({dir="Down"})
+		end
+		Walk.step(px, py)
+	end,
+
+	dodgeGirl = function()
+		local gx, gy = Memory.raw(0x0223) - 5, Memory.raw(0x0222)
+		local px, py = Player.position()
+		if py > gy then
+			if px > 3 then
+				px = 3
+			else
+				return true
+			end
+		elseif gy - py ~= 1 or px ~= gx then
+			py = py + 1
+		elseif px == 3 then
+			px = 2
+		else
+			px = 3
+		end
+		Walk.step(px, py)
+	end,
+
+	cinnabarCarbos = function()
+		local px, py = Player.position()
+		if px == 21 then
+			return true
+		end
+		if stats.nidoran.speedDV >= 10 then
+			Walk.step(21, 20)
+		else
+			if py == 20 then
+				py = 21
+			elseif px == 17 and not Inventory.contains("carbos") then
+				Player.interact("Right")
+				return false
+			else
+				px = 21
+			end
+			Walk.step(px, py)
+		end
 	end,
 
 }

@@ -225,7 +225,7 @@ local Paths = {
 	-- Leave Celadon
 	{6, {8,14}, {s="bicycle"}, {8,15}, {2,15}, {2,18}, {-1,18}},
 	-- Cut out of Celadon
-	{27, {39,10}, {34,10}, {s="teach",move="horn_drill",replace="bubblebeam",full=true,chain=true}, {s="skill",move="cut",dir="Up",done=0x0D4D}, {34,6}, {27,6}, {27,4}, {23,4}},
+	{27, {39,10}, {34,10}, {s="skill",move="cut",dir="Up",done=0x0D4D}, {34,6}, {27,6}, {27,4}, {23,4}},
 	-- Old man's hall
 	{186, {7,2}, {-1,2}},
 	-- To the Fly house
@@ -252,7 +252,7 @@ local Paths = {
 	-- F6
  	{147, {18,9}, {18,7}, {15,7}, {15,3}, {11,3}, {11,5}, {10,5}, {s="interact",dir="Left"}, {10,6}, {6,6}, {6,7}, {s="interact",dir="Down"}, {6,14}, {10,14}, {10,16}, {s="pokeDoll"}, {9,16}},
 	-- F7: Top
-	{148, {9,16}, {10,16}, {10,9}, {s="fightXAccuracy"}, {c="thrash",disable=false}, {10,7}, {s="thunderboltFirst"}, {10,4}, {s="interact",dir="Up"}},
+	{148, {9,16}, {10,16}, {10,9}, {s="fightX",x="accuracy"}, {c="thrash",disable=false}, {10,7}, {s="thunderboltFirst"}, {10,4}, {s="interact",dir="Up"}},
 	-- Old man's house
 	{149, {3,7}, {3,6}, {2,6}, {2,1}, {s="talk",dir="Right"}, {2,8}},
 
@@ -267,7 +267,7 @@ local Paths = {
 	-- Leave Celadon
 	{6, {41,10}, {c="a",a="Snorlax"}, {s="item",item="super_repel",chain=true}, {s="bicycle"}, {41,11}, {14,11}, {14,14}, {2,14}, {2,18}, {-1,18}},
 	-- トトロだ！
-	{27, {39,10}, {27,10}, {s="swapXSpeeds"}, {s="playPokeflute"}, {23,10}},
+	{27, {39,10}, {27,10}, {s="swapXSpeeds"}, {s="playPokeFlute"}, {23,10}},
 	-- Snorlax pass
 	{186, {7,8}, {-1,8}},
 	-- Bicycle road
@@ -293,7 +293,7 @@ local Paths = {
 	-- Safari 4
 	{219, {21,0}, {21,5}, {19,5}, {19,6}, {s="interact",dir="Down"}, {19,5}, {7,5}, {7,6}, {3,6}, {3,3}},
 	-- Warden
-	{222, {2,7}, {2,6}, {3,6}, {3,4}, {s="confirm",dir="Up"}, {3,8}},
+	{222, {2,7}, {2,6}, {3,6}, {3,4}, {s="talk",dir="Up"}, {3,8}},
 	-- Safari Warp
 	{219, {3,4}, {s="skill",move="dig",map=219}},
 	-- Celadon again
@@ -325,7 +325,7 @@ local Paths = {
 	-- Rival 5
 	{212, {5,3}, {c="a",a="Silph Rival"}, {4,3}, {4,2}, {3,2}, {c="potion",b=false}, {s="silphRival"}, {3,7}, {c="potion",b=true,yolo=true}, {5,7}},
 	-- Giovanni
-	{235, {3,2}, {c="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,15}, {s="rareCandyGiovanni"}, {2,16}, {s="talk",dir="Right"}, {2,15}, {5,15}, {s="potion",hp=17,yolo=12}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightXAccuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPauseFromBattle"}, {s="skill",move="dig",map=235}},
+	{235, {3,2}, {c="a",a="Silph Giovanni"}, {3,11}, {2,11}, {2,15}, {s="rareCandyGiovanni"}, {2,16}, {s="talk",dir="Right"}, {2,15}, {5,15}, {s="potion",hp=17,yolo=12}, {6,15}, {6,14}, {s="interact",dir="Up"}, {6,13}, {s="fightX",x="accuracy"}, {s="fightSilphGiovanni"}, {s="split"}, {s="waitToPauseFromBattle"}, {s="skill",move="dig",map=235}},
 
 -- 11: SILPH CO.
 
