@@ -3,6 +3,7 @@
 RESET_FOR_TIME = true -- Set to false if you just want to see the bot finish a run
 
 local CUSTOM_SEED = nil -- Set to a known seed to replay it, or leave nil for random runs
+local NIDORAN_NAME = "A" -- Set this to the single character to name Nidoran (note, to replay a seed, it MUST match!)
 local PAINT_ON    = true -- Display contextual information while the bot runs
 
 -- START CODE (hard hats on)
@@ -52,7 +53,7 @@ local function resetAll()
 	if CUSTOM_SEED then
 		Strategies.seed = CUSTOM_SEED
 		Strategies.replay = true
-		p("RUNNING WITH A FIXED SEED ("..Strategies.seed.."), every run will play out identically!", true)
+		p("RUNNING WITH A FIXED SEED ("..NIDORAN_NAME.." "..Strategies.seed.."), every run will play out identically!", true)
 	else
 		Strategies.seed = os.time()
 		print("PokeBot v"..VERSION..": starting a new run with seed "..Strategies.seed)
@@ -105,7 +106,7 @@ while true do
 		Utils.drawText(0, 80, Strategies.frames)
 	end
 	if Bridge.polling then
-		Settings.pollForResponse()
+		Settings.pollForResponse(NIDORAN_NAME)
 	end
 
 	if not Input.update() then

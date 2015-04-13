@@ -70,8 +70,11 @@ function Textbox.getName()
 	return nidoName
 end
 
-function Textbox.setName(index)
-	if index >= 0 and index < #alphabet then
+function Textbox.setName(name)
+	if type(name) == "string" then
+		nidoName = name
+		nidoIdx = getIndexForLetter(name)
+	elseif index >= 0 and index < #alphabet then
 		nidoIdx = index + 1
 		nidoName = getLetterAt(index)
 	end

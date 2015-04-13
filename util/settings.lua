@@ -84,11 +84,16 @@ function Settings.choosePlayerNames()
 	Textbox.name(name, true)
 end
 
-function Settings.pollForResponse()
+function Settings.pollForResponse(forcedName)
 	local response = Bridge.process()
+	if not INTERNAL or Strategies.replay then
+		response = forcedName
+	elseif response then
+		response = tonumber(response)
+	end
 	if response then
 		Bridge.polling = false
-		Textbox.setName(tonumber(response))
+		Textbox.setName(response)
 	end
 end
 
