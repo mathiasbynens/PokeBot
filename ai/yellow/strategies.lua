@@ -22,6 +22,7 @@ local status = Strategies.status
 local stats = Strategies.stats
 
 local strategyFunctions = Strategies.functions
+Strategies.flareon = true
 
 -- TIME CONSTRAINTS
 
@@ -408,19 +409,21 @@ strategyFunctions.trashcans = function()
 					status.unlocking = false
 					local flipIndex = status.canIndex + status.nextDelta
 					local flipCan = trashPath[flipIndex][1]
+					status.flipIndex = flipIndex
 					if px == flipCan[1] and py == flipCan[2] then
-						status.direction = status.direction * -1
-						status.canIndex = status.flipIndex
+						status.nextDirection = status.direction * -1
+						status.canIndex = flipIndex
+						status.progress = 1
 					else
 						status.flipIndex = flipIndex
 						status.direction = 1
 						status.nextDirection = status.direction * -1
 						status.progress = status.progress + 1
 					end
-					return false
+				else
+					status.canIndex = Utils.nextCircularIndex(status.canIndex, status.direction, totalPathCount)
+					status.progress = nil
 				end
-				status.canIndex = Utils.nextCircularIndex(status.canIndex, status.direction, totalPathCount)
-				status.progress = nil
 			else
 				status.unlocking = true
 				status.progress = status.progress + 1
@@ -662,6 +665,7 @@ end
 function Strategies.resetGame()
 	status = Strategies.status
 	stats = Strategies.stats
+	Strategies.flareon = true
 end
 
 return Strategies
