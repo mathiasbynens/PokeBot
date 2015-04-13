@@ -97,13 +97,6 @@ function Utils.ingame()
 	return Memory.raw(0x020E) > 0
 end
 
-function Utils.onPokemonSelect(battleMenu)
-	if yellow then
-		return battleMenu == 27 or battleMenu == 243
-	end
-	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
-end
-
 function Utils.drawText(x, y, message)
 	gui.text(x * EMP, y * EMP, message)
 end

@@ -205,7 +205,7 @@ end
 
 function Battle.swap(target)
 	local battleMenu = Memory.value("battle", "menu")
-	if Utils.onPokemonSelect(battleMenu) then
+	if Menu.onPokemonSelect(battleMenu) then
 		if Menu.getCol() == 0 then
 			Menu.select(Pokemon.indexOf(target), true)
 		else
@@ -262,10 +262,9 @@ function Battle.redeployNidoking()
 	if Pokemon.isDeployed("nidoking") then
 		return false
 	end
-	local battleMenu = Memory.value("battle", "menu")
-	if Utils.onPokemonSelect(battleMenu) then
+	if Menu.onPokemonSelect() then
 		Menu.select(0, true)
-	elseif battleMenu == 95 and Menu.getCol() == 1 then
+	elseif Menu.hasTextbox() and Menu.getCol() == 1 then
 		Input.press("A")
 	else
 		local __, turns = Combat.bestMove()

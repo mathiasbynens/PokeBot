@@ -169,6 +169,20 @@ end
 
 -- Pause menu
 
+function Menu.hasTextbox()
+	return Memory.value("battle", "menu") == (yellow and 19 or 95)
+end
+
+function Menu.onPokemonSelect(battleMenu)
+	if not battleMenu then
+		battleMenu = Memory.value("battle", "menu")
+	end
+	if yellow then
+		return battleMenu == 27 or battleMenu == 243
+	end
+	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
+end
+
 function Menu.isOpen()
 	return Memory.value("game", "textbox") == 1 or Memory.value("menu", "current") == 24
 end
@@ -182,7 +196,7 @@ end
 
 function Menu.pause()
 	if Memory.value("game", "textbox") == 1 then
-		if Memory.value("battle", "menu") == 95 then
+		if Menu.hasTextbox() then
 			Input.cancel()
 		else
 			local main = Memory.value("menu", "main")

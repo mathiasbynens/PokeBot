@@ -139,7 +139,7 @@ function Inventory.useItemOption(item, poke, option)
 	local main = Memory.value("menu", "main")
 	local column = Menu.getCol()
 	if main == 144 then
-		if Memory.value("battle", "menu") == 95 then
+		if Menu.hasTextbox() then
 			Input.press("B")
 		else
 			local idx = 0
@@ -190,7 +190,7 @@ function Inventory.use(item, poke, midfight)
 			end
 		elseif battleMenu == 233 then
 			Menu.select(Inventory.indexOf(item), "accelerate", true)
-		elseif Utils.onPokemonSelect(battleMenu) then
+		elseif Menu.onPokemonSelect(battleMenu) then
 			if poke then
 				if type(poke) == "string" then
 					poke = Pokemon.indexOf(poke)

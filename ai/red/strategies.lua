@@ -362,7 +362,7 @@ strategyFunctions.catchNidoran = function()
 		status.path = nil
 		if Memory.value("menu", "text_input") == 240 then
 			Textbox.name()
-		elseif Memory.value("battle", "menu") == 95 then
+		elseif Menu.hasTextbox() then
 			if isNidoran then
 				Input.press("A")
 			else
@@ -528,9 +528,8 @@ strategyFunctions.fightBrock = function()
 		elseif turnsToDie and turnsToDie < 2 and Inventory.contains("potion") then
 			Inventory.use("potion", "squirtle", true)
 		else
-			local battleMenu = Memory.value("battle", "menu")
 			local bideTurns = Memory.value("battle", "opponent_bide")
-			if battleMenu == 95 and Menu.getCol() == 1 then
+			if Menu.hasTextbox() and Menu.getCol() == 1 then
 				Input.press("A")
 			elseif bideTurns > 0 then
 				local onixHP = Memory.double("battle", "opponent_hp")
@@ -549,7 +548,7 @@ strategyFunctions.fightBrock = function()
 				else
 					Input.cancel()
 				end
-			elseif Utils.onPokemonSelect(battleMenu) then
+			elseif Menu.onPokemonSelect() then
 				Menu.select(Pokemon.indexOf("nidoran"), true)
 			else
 				status.canProgress = false
@@ -1947,10 +1946,10 @@ strategyFunctions.ether = function(data)
 			return Strategies.useItem({item="elixer", poke="nidoking", chain=data.chain, close=data.close})
 		end
 		if Memory.value("menu", "main") == 144 and Menu.getCol() == 5 then
-			if Memory.value("battle", "menu") ~= 95 then
-				Menu.select(Pokemon.battleMove("horn_drill"), true)
-			else
+			if Menu.hasTextbox() then
 				Input.cancel()
+			else
+				Menu.select(Pokemon.battleMove("horn_drill"), true)
 			end
 		elseif Menu.pause() then
 			Inventory.use(status.item, "nidoking")
@@ -2029,7 +2028,7 @@ strategyFunctions.depositPokemon = function()
 			Player.interact("Up")
 		else
 			local pc = Memory.value("menu", "size")
-			if Memory.value("battle", "menu") ~= 95 and (pc == 2 or pc == 4) then
+			if not Menu.hasTextbox() and (pc == 2 or pc == 4) then
 				local menuColumn = Menu.getCol()
 				if menuColumn == 10 then
 					Input.press("A")

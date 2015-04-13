@@ -626,7 +626,7 @@ Strategies.functions = {
 		elseif not data.dir or Player.face(data.dir) then
 			if Pokemon.use(data.move) then
 				status.tries = status.tries + 1
-			elseif yellow and Memory.value("battle", "menu") == 19 then
+			elseif yellow and Menu.hasTextbox() then
 				if Textbox.handle() then
 					return true
 				end
@@ -740,7 +740,7 @@ Strategies.functions = {
 		elseif Battle.isActive() then
 			status.canProgress = false
 			Battle.automate()
-		elseif main == 123 then
+		elseif main == (yellow and 23 or 123) then
 			status.canProgress = true
 			Input.press("B")
 		elseif Textbox.handle() then
@@ -887,7 +887,7 @@ Strategies.functions = {
 			if Memory.double("battle", "our_hp") == 0 then
 				if Pokemon.info("squirtle", "hp") == 0 then
 					Control.canDie(false)
-				elseif Utils.onPokemonSelect(Memory.value("battle", "menu")) then
+				elseif Menu.onPokemonSelect() then
 					Menu.select(Pokemon.indexOf("squirtle"), true)
 				else
 					Input.press("A")

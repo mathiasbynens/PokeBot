@@ -94,7 +94,7 @@ function Shop.vend(options)
 		Input.press("B")
 	elseif Player.face(options.direction) then
 		if Textbox.isActive() then
-			if Memory.value("battle", "text") > 1 and Memory.value("battle", "menu") ~= 95 then
+			if Memory.value("battle", "text") > 1 and not Menu.hasTextbox() then
 				Menu.select(item.index, true)
 			else
 				Input.press("A")

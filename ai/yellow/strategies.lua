@@ -164,7 +164,7 @@ strategyFunctions.catchNidoran = function()
 		status.tries = nil
 		if Memory.value("menu", "text_input") == 240 then
 			Textbox.name()
-		elseif Memory.value("battle", "menu") == 95 then
+		elseif Menu.hasTextbox() then
 			if isNidoran then
 				Input.press("A")
 			else
