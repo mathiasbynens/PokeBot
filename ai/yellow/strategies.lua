@@ -222,9 +222,9 @@ strategyFunctions.checkNidoStats = function()
 
 		local statDiff = (16 - att) + (15 - spd) + (13 - scl)
 		local resets = att < 15 or spd < 14 or scl < 12 --RISK
-		local nStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
+		local nidoranStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 		if resets then
-			return Strategies.reset("Bad Nidoran - "..nStatus)
+			return Strategies.reset("Bad Nidoran - "..nidoranStatus)
 		end
 		-- if def < 12 then
 		-- 	statDiff = statDiff + 1
@@ -255,8 +255,7 @@ strategyFunctions.checkNidoStats = function()
 			superlative = "Min stat"
 			exclaim = "."
 		end
-		nStatus = superlative.." Nidoran"..exclaim.." "..nStatus
-		Bridge.chat(nStatus)
+		Bridge.chat(superlative.." Nidoran"..exclaim.." "..nidoranStatus)
 		return true
 	end
 end

@@ -78,9 +78,9 @@ function Textbox.setName(name)
 	if type(name) == "string" then
 		nidoName = name
 		nidoIdx = getIndexForLetter(name)
-	elseif index >= 0 and index < #alphabet then
-		nidoIdx = index + 1
-		nidoName = getLetterAt(index)
+	elseif name >= 0 and name < #alphabet then
+		nidoIdx = name + 1
+		nidoName = getLetterAt(name)
 	end
 end
 
