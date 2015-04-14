@@ -992,8 +992,9 @@ strategyFunctions.catchOddish = function()
 			end
 			Battle.handle()
 		end
-	elseif status.tries == 1 and py == 31 then
+	elseif status.tries == 1 and py == 31 and Combat.hp() > 12 then
 		Player.interact("Left")
+		Strategies.foughtRaticateEarly = true
 	else
 		local path
 		if caught then
@@ -1038,6 +1039,14 @@ strategyFunctions.catchOddish = function()
 			Walk.custom(path)
 		end
 	end
+end
+
+strategyFunctions.potionBeforeRaticate = function()
+	if Strategies.foughtRaticateEarly then
+		Strategies.foughtRaticateEarly = nil
+		return true
+	end
+	return strategyFunctions.potion({hp=10, yolo=8, chain=true})
 end
 
 strategyFunctions.shopVermilionMart = function()
@@ -1125,14 +1134,14 @@ strategyFunctions.fightSurge = function()
 		status.canProgress = true
 		local forced
 		if Pokemon.isOpponent("voltorb") then
-			Combat.disableThrash = true
+			Combat.disableThrash = not Control.yolo or Combat.inRedBar()
 			local __, enemyTurns = Combat.enemyAttack()
 			if not enemyTurns or enemyTurns > 2 then
 				forced = "bubblebeam"
 			elseif enemyTurns == 2 and not Strategies.opponentDamaged() then
 				local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 				local afterHit = curr_hp - 20
-				if afterHit > 5 and afterHit <= red_hp then
+				if afterHit > 5 and afterHit <= red_hp - 3 then
 					forced = "bubblebeam"
 				end
 			end
@@ -1163,6 +1172,8 @@ end
 -- announceFourTurn
 
 -- redbarCubone
+
+-- announceOddish
 
 strategyFunctions.undergroundElixer = function()
 	if Strategies.initialize() then

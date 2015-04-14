@@ -136,7 +136,7 @@ local Paths = {
 	-- Underground exit
 	{74, {4,4}, {3,8}},
 	-- Oddish
-	{17, {17,14}, {c="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=10,yolo=7}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=10,yolo=7}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potion",hp=10,yolo=7}, {10,31}, {9,31}, {9,36}},
+	{17, {17,14}, {c="a",a="Vermilion City"}, {c="catchOddish"}, {17,15}, {s="potion",hp=10,yolo=7}, {17,19}, {s="catchOddish"}, {11,29}, {s="potion",hp=10,yolo=7}, {11,29}, {s="waitToFight",dir="Down"}, {10,29}, {10,30}, {s="potionBeforeRaticate"}, {10,31}, {9,31}, {9,36}},
 	-- Enter Vermilion
 	{5, {19,0}, {c="disableCatch"}, {19,6}, {21,6}, {21,14}, {23,14}, {23,13}},
 	-- Vermilion mart
@@ -148,7 +148,7 @@ local Paths = {
 	-- First deck
 	{95, {27,0}, {27,1}, {26,1}, {26,7}, {2,7}, {2,6}},
 	-- Rival 3
-	{96, {2,4}, {2,11}, {3,11}, {3,12}, {37,12}, {37,9}, {s="swap",item="potion",dest=2,chain=true}, {s="potion",hp=23,yolo=16,chain=true}, {s="teach",move="bubblebeam",replace="tackle",close=true}, {37,8}, {s="rivalSandAttack"}, {37,5}, {36,5}, {36,4}},
+	{96, {2,4}, {2,11}, {3,11}, {3,12}, {37,12}, {37,9}, {s="swap",item="potion",dest=2,chain=true}, {s="potion",hp=25,yolo=19,chain=true}, {s="teach",move="bubblebeam",replace="tackle",close=true}, {37,8}, {s="rivalSandAttack"}, {37,5}, {36,5}, {36,4}},
 	-- Old man Cut
 	{101, {0,7}, {0,4}, {4,4}, {4,3}, {s="talk",dir="Up"}, {4,5}, {0,5}, {0,7}},
 	-- Second deck out
