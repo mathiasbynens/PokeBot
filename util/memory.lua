@@ -61,6 +61,7 @@ local memoryNames = {
 		exp3 = 0x117B,
 	},
 	battle = {
+		opponent_turns = 0x0CD5,
 		attack_turns = 0x1067,
 		text = 0x1125,
 		menu = 0x0C50,
@@ -72,6 +73,7 @@ local memoryNames = {
 		opponent_next_move = 0x0CDD,
 		opponent_last_move = 0x0FCC,
 
+		dig = 0x1067,
 		critical = 0x105E,
 		miss = 0x105F,
 		our_turn = 0x1FF1,

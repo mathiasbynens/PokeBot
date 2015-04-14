@@ -541,6 +541,18 @@ end
 
 -- silphElevator
 
+strategyFunctions.silphCarbos = function(data)
+	if stats.nidoran.speedDV < 11 then
+		if Strategies.closeMenuFor(data) then
+			return true
+		end
+	else
+		data.item = "carbos"
+		data.poke = "nidoking"
+		return strategyFunctions.item(data)
+	end
+end
+
 strategyFunctions.silphRival = function()
 	if Battle.isActive() then
 		if Strategies.initialize() then
@@ -578,8 +590,10 @@ end
 -- playPokeflute
 
 strategyFunctions.tossTM34 = function()
-	if not Inventory.contains("carbos") then
-		return true
+	if Strategies.initialize() then
+		if not Inventory.contains("carbos") or Inventory.count() < 19 then
+			return true
+		end
 	end
 	return Strategies.tossItem("tm34")
 end
@@ -633,6 +647,202 @@ end
 -- dodgeGirl
 
 -- cinnabarCarbos
+
+-- waitToReceive
+
+strategyFunctions.fightGiovanni = function()
+	if Battle.isActive() then
+		if Strategies.initialize() then
+			status.canProgress = true
+			Bridge.chat(" Giovanni can end the run here with Dugtrio's high chance to critical...")
+		end
+		if Strategies.prepare("x_speed") then
+			local forced
+			local prepareAccuracy
+			local opponent = Battle.opponent()
+			if opponent == "persian" then
+				prepareAccuracy = true
+				if not status.prepared and not Strategies.isPrepared("x_accuracy")
+					status.prepared = true
+					Bridge.chat("needs to finish setting up against Persian...")
+				end
+			elseif opponent == "dugtrio" then
+				prepareAccuracy = Memory.value("battle", "dig") > 0
+				if prepareAccuracy and not status.dug then
+					status.dug = true
+					Bridge.chat("got Dig, which gives an extra turn to set up with X Accuracy. No criticals!")
+				end
+			end
+			if not prepareAccuracy or Strategies.prepare("x_accuracy") then
+				Battle.automate(forced)
+			end
+		end
+	elseif status.canProgress then
+		Strategies.deepRun = true
+		Control.ignoreMiss = false
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+strategyFunctions.depositPokemon = function()
+	if Memory.value("player", "party_size") == 1 then
+		if Menu.close() then
+			return true
+		end
+	else
+		local menuSize = Memory.value("menu", "size")
+		if not Menu.hasTextbox() then
+			if menuSize == 5 then
+				Menu.select(1)
+				return false
+			end
+			local menuColumn = Menu.getCol()
+			if menuColumn == 10 then
+				Input.press("A")
+				return false
+			end
+			if menuColumn == 5 then
+				Menu.select(1)
+				return false
+			end
+		end
+		Input.press("A")
+	end
+end
+
+strategyFunctions.centerSkip = function()
+	if Strategies.initialize() then
+		Strategies.setYolo("e4center")
+		if false then --TODO
+			local message = "is skipping the Elite 4 Center!"
+			Bridge.chat(message)
+			return true
+		end
+	end
+	return strategyFunctions.confirm({dir="Up"})
+end
+
+strategyFunctions.lorelei = function()
+	if Battle.isActive() then
+		status.canProgress = true
+
+		local opponentName = Battle.opponent()
+		if opponentName == "dewgong" then
+			if Memory.double("battle", "our_speed") < 121 then
+				if not status.speedFall then
+					status.speedFall = true
+					Bridge.chat("got speed fall from Dewgong D: Attempting to recover with X Speed...")
+				end
+				if not Strategies.prepare("x_speed") then
+					return false
+				end
+			end
+		end
+		if Strategies.prepare("x_accuracy") then
+			Battle.automate()
+		end
+	elseif status.canProgress then
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+strategyFunctions.bruno = function()
+	if Battle.isActive() then
+		status.canProgress = true
+
+		local forced
+		local opponentName = Battle.opponent()
+		if opponentName == "onix" then
+			forced = "ice_beam"
+		elseif opponentName == "hitmonchan" then
+			if not Strategies.prepare("x_accuracy") then
+				return false
+			end
+		end
+		Battle.automate(forced)
+	elseif status.canProgress then
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+strategyFunctions.agatha = function()
+	if Battle.isActive() then
+		status.canProgress = true
+		if Combat.isSleeping() then
+			Inventory.use("pokeflute", nil, true)
+			return false
+		end
+		if Pokemon.isOpponent("gengar") then
+			if Memory.double("battle", "our_speed") < 147 then
+				if Inventory.count("x_speed") > 1 then
+					status.preparing = nil
+				end
+				if not Strategies.prepare("x_speed") then
+					return false
+				end
+			end
+		end
+		Battle.automate()
+	elseif status.canProgress then
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+strategyFunctions.lance = function()
+	if Battle.isActive() then
+		status.canProgress = true
+		local xItem
+		if Pokemon.isOpponent("dragonair") then
+			xItem = "x_speed"
+		else
+			xItem = "x_special"
+		end
+		if Strategies.prepare(xItem) then
+			Battle.automate()
+		end
+	elseif status.canProgress then
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
+strategyFunctions.blue = function()
+	if Battle.isActive() then
+		status.canProgress = true
+		local xItem
+		if Pokemon.isOpponent("exeggutor") then
+			if Combat.isSleeping() then
+				local sleepHeal
+				if not Combat.inRedBar() and Inventory.contains("full_restore") then
+					sleepHeal = "full_restore"
+				else
+					sleepHeal = "pokeflute"
+				end
+				Inventory.use(sleepHeal, nil, true)
+				return false
+			end
+			xItem = "x_accuracy"
+		else
+			xItem = "x_special"
+		end
+		if Strategies.prepare(xItem) then
+			Battle.automate()
+		end
+	elseif status.canProgress then
+		return true
+	else
+		Textbox.handle()
+	end
+end
 
 -- PROCESS
 
