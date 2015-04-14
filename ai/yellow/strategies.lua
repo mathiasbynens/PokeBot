@@ -188,24 +188,28 @@ strategyFunctions.catchNidoran = function()
 		end
 	else
 		Pokemon.updateParty()
+		local px, py = Player.position()
 		local hasNidoran = Pokemon.inParty("nidoran")
 		if hasNidoran then
-			Bridge.caught("nidoran")
-			return true
-		end
-
-		local timeLimit = Strategies.getTimeRequirement("nidoran")
-		local resetMessage = "find a suitable Nidoran"
-		if Strategies.resetTime(timeLimit, resetMessage) then
-			return true
-		end
-		local px, py = Player.position()
-		if py > 48 then
-			py = 48
-		elseif px < 9 then
-			px = 9
+			if px < 8 then
+				px = 8
+			else
+				Bridge.caught("nidoran")
+				return true
+			end
 		else
-			px = 8
+			local timeLimit = Strategies.getTimeRequirement("nidoran")
+			local resetMessage = "find a suitable Nidoran"
+			if Strategies.resetTime(timeLimit, resetMessage) then
+				return true
+			end
+			if py > 48 then
+				py = 48
+			elseif px < 9 then
+				px = 9
+			else
+				px = 8
+			end
 		end
 		Walk.step(px, py) --TODO DSum
 	end

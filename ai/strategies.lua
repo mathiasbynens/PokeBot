@@ -797,6 +797,11 @@ Strategies.functions = {
 			if status.canProgress then
 				return true
 			end
+		elseif main == 32 or main == 123 then
+			status.canProgress = true
+			Input.cancel()
+		else
+			Input.press("Start", 2)
 		end
 	end,
 
@@ -1366,7 +1371,7 @@ Strategies.functions = {
 		elseif py < 9 then
 			py = 9
 		else
-			return Strategies.functions.interact({dir="Down"})
+			return strategyFunctions.interact({dir="Down"})
 		end
 		Walk.step(px, py)
 	end,

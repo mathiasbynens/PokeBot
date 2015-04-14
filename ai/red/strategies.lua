@@ -451,7 +451,7 @@ strategyFunctions.grabForestPotion = function()
 			if status.startPotions and potionCount > status.startPotions then
 				status.startPotions = nil
 			end
-			if Pokemon.info("squirtle", "hp") <= 14 then
+			if Pokemon.info("squirtle", "hp") <= 12 then
 				if Menu.pause() then
 					Inventory.use("potion", "squirtle")
 				end
@@ -563,12 +563,12 @@ strategyFunctions.fightBrock = function()
 						p(Pokemon.getDVs("nidoran"))
 
 						local resetsForStats = att < 15 or spd < 14 or scl < 12
-						if not resetsForStats and not RESET_FOR_TIME then
+						if not resetsForStats and RESET_FOR_TIME then
 							resetsForStats = att == 15 and spd == 14
 						end
 
 						local nidoranStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
-						if resets then
+						if resetsForStats then
 							return Strategies.reset("Bad Nidoran - "..nidoranStatus)
 						end
 						status.tries = 9001
@@ -665,7 +665,7 @@ strategyFunctions.bugCatcher = function()
 				return
 			end
 		end
-		Strategies.functions.leer({{"caterpie",8}, {"weedle",7}})
+		strategyFunctions.leer({{"caterpie",8}, {"weedle",7}})
 	elseif status.canProgress then
 		return true
 	else
@@ -692,14 +692,14 @@ strategyFunctions.shortsKid = function()
 		end
 	end
 	Control.battlePotion(fightingEkans or Strategies.damaged(2))
-	return Strategies.functions.leer({{"rattata",9}, {"ekans",10}})
+	return strategyFunctions.leer({{"rattata",9}, {"ekans",10}})
 end
 
 strategyFunctions.potionBeforeCocoons = function()
 	if stats.nidoran.speed >= 15 then
 		return true
 	end
-	return Strategies.functions.potion({hp=6, yolo=3})
+	return strategyFunctions.potion({hp=6, yolo=3})
 end
 
 -- swapHornAttack
@@ -792,7 +792,7 @@ strategyFunctions.potionForMankey = function()
 			return true
 		end
 	end
-	return Strategies.functions.potion({hp=18, yolo=8})
+	return strategyFunctions.potion({hp=18, yolo=8})
 end
 
 strategyFunctions.redbarMankey = function()
@@ -924,7 +924,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 			Bridge.chat(message, potionCount)
 		end
 	end
-	return Strategies.functions.potion({hp=healAmount, chain=data.chain})
+	return strategyFunctions.potion({hp=healAmount, chain=data.chain})
 end
 
 strategyFunctions.fightMisty = function()
@@ -961,7 +961,7 @@ strategyFunctions.potionBeforeRocket = function()
 	if stats.nidoran.attackDV >= 12 then
 		return true
 	end
-	return Strategies.functions.potion({hp=13, yolo=11})
+	return strategyFunctions.potion({hp=13, yolo=11})
 end
 
 -- jingleSkip
@@ -1115,9 +1115,9 @@ strategyFunctions.potionBeforeSurge = function()
 		end
 	end
 	if Inventory.contains("potion") then
-		return Strategies.functions.potion({hp=20, yolo=yoloHp, forced="potion", chain=true})
+		return strategyFunctions.potion({hp=20, yolo=yoloHp, forced="potion", chain=true})
 	end
-	return Strategies.functions.potion({hp=8, yolo=yoloHp, chain=true})
+	return strategyFunctions.potion({hp=8, yolo=yoloHp, chain=true})
 end
 
 strategyFunctions.fightSurge = function()
@@ -1313,7 +1313,7 @@ strategyFunctions.silphCarbos = function()
 	if stats.nidoran.speedDV >= 8 then
 		return true
 	end
-	return Strategies.functions.interact({dir="Left"})
+	return strategyFunctions.interact({dir="Left"})
 end
 
 strategyFunctions.swapXSpecials = function()
@@ -1463,7 +1463,7 @@ strategyFunctions.potionBeforeHypno = function()
 		return false
 	end
 
-	return Strategies.functions.potion({hp=healTarget, yolo=yoloHP, close=true})
+	return strategyFunctions.potion({hp=healTarget, yolo=yoloHP, close=true})
 end
 
 strategyFunctions.fightHypno = function()
@@ -1630,7 +1630,7 @@ strategyFunctions.checkGiovanni = function()
 		Bridge.chat(message)
 		riskGiovanni = false
 	end
-	return Strategies.functions.potion({hp=50, yolo=ryhornDamage})
+	return strategyFunctions.potion({hp=50, yolo=ryhornDamage})
 end
 
 strategyFunctions.fightGiovanni = function()
@@ -1691,17 +1691,7 @@ end
 
 -- ether
 
-strategyFunctions.tossInVictoryRoad = function()
-	if Strategies.initialize() then
-		if maxEtherSkip then
-			return true
-		end
-		if Inventory.count("ether") + Inventory.count("elixer") >= 2 then
-			return true
-		end
-	end
-	return Strategies.tossItem("antidote", "pokeball")
-end
+-- tossInVictoryRoad
 
 -- grabMaxEther
 
@@ -1723,7 +1713,7 @@ strategyFunctions.potionBeforeLorelei = function()
 		end
 		Bridge.chat("is healing before Lorelei to skip the Elite 4 Center...")
 	end
-	return Strategies.functions.potion({hp=Combat.healthFor("LoreleiDewgong")})
+	return strategyFunctions.potion({hp=Combat.healthFor("LoreleiDewgong")})
 end
 
 strategyFunctions.depositPokemon = function()
@@ -1812,21 +1802,12 @@ end
 strategyFunctions.bruno = function()
 	if Battle.isActive() then
 		status.canProgress = true
-		local forced
-		if Pokemon.isOpponent("onix") then
-			forced = "ice_beam"
-			-- local curr_hp, red_hp = Pokemon.info("nidoking", "hp"), Combat.redHP()
-			-- if curr_hp > red_hp then
-			-- 	local enemyMove, enemyTurns = Combat.enemyAttack()
-			-- 	if enemyTurns and enemyTurns > 1 then
-			-- 		local rockDmg = enemyMove.damage
-			-- 		if curr_hp - rockDmg <= red_hp then
-			-- 			forced = "thunderbolt"
-			-- 		end
-			-- 	end
-			-- end
-		end
+
 		if Strategies.prepare("x_accuracy") then
+			local forced
+			if Pokemon.isOpponent("onix") then
+				forced = "ice_beam"
+			end
 			Battle.automate(forced)
 		end
 	elseif status.canProgress then
@@ -1836,7 +1817,7 @@ strategyFunctions.bruno = function()
 	end
 end
 
-strategyFunctions.agatha = function() --TODO test without x acc
+strategyFunctions.agatha = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		if Combat.isSleeping() then
@@ -1897,7 +1878,7 @@ strategyFunctions.prepareForBlue = function()
 	end
 	local skyDmg = Combat.healthFor("BlueSky") * 0.925
 	local wingDmg = Combat.healthFor("BluePidgeot")
-	return Strategies.functions.potion({hp=skyDmg-50, yolo=wingDmg, full=true})
+	return strategyFunctions.potion({hp=skyDmg-50, yolo=wingDmg, full=true})
 end
 
 strategyFunctions.blue = function()
