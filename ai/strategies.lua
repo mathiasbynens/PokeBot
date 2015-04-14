@@ -533,10 +533,9 @@ Strategies.functions = {
 				end
 				return false
 			end
-			if Strategies.initialize() then
-				if not Inventory.contains(data.item) then
-					print("No "..data.item.." available!")
-				end
+			if not status.unavailable and data.item ~= "carbos" and not Inventory.contains(data.item) then
+				status.unavailable = true
+				print("No "..data.item.." available!")
 			end
 			return Strategies.useItem(data)
 		end
@@ -1172,6 +1171,13 @@ Strategies.functions = {
 		else
 			Battle.automate()
 		end
+	end,
+
+	announceOddish = function()
+		if Pokemon.info("nidoking", "level") < 30 then
+			Bridge.chat("needs a good damage range to 1-shot this Oddish, which can Paralyze")
+		end
+		return true
 	end,
 
 	shopTM07 = function()

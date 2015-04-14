@@ -244,7 +244,9 @@ strategyFunctions.tweetAfterBrock = function()
 end
 
 strategyFunctions.tweetMisty = function()
-	if not Strategies.updates.brock and not Strategies.setYolo("misty") then
+	Strategies.setYolo("misty")
+
+	if not Strategies.updates.brock and not Control.yolo then
 		local timeLimit = Strategies.getTimeRequirement("misty")
 		if not Strategies.overMinute(timeLimit - 0.25) then
 			local pbn = ""
@@ -753,6 +755,10 @@ strategyFunctions.rivalSandAttack = function(data)
 				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "oddish")
 			end
 			if Battle.sacrifice(sacrifice) then
+				if not status.sacrificed then
+					status.sacrificed = true
+					Bridge.chat("got Sand-Attacked... Swapping out "..sacrifice.." to restore our accuracy (let's hope for no more trolling)")
+				end
 				return false
 			end
 		end
@@ -840,6 +846,10 @@ strategyFunctions.thrashGeodude = function()
 				end
 			end
 			if status.sacrificeSquirtle and Battle.sacrifice("squirtle") then
+				if not status.sacrificed then
+					status.sacrificed = true
+					Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety")
+				end
 				return false
 			end
 		end
@@ -944,6 +954,10 @@ strategyFunctions.fightMisty = function()
 			end
 			status.swappedOut = false
 			if Battle.sacrifice("pidgey", "spearow", "squirtle", "paras") then
+				if not status.sacrificed then
+					status.sacrificed = true
+					Bridge.chat(" Thrash didn't finish the kill :( Swapping out to cure Confusion")
+				end
 				return false
 			end
 		end
@@ -1790,7 +1804,12 @@ strategyFunctions.lorelei = function()
 		local forced
 		local opponentName = Battle.opponent()
 		if opponentName == "dewgong" then
-			if Battle.sacrifice("pidgey", "spearow", "squirtle", "paras", "oddish") then
+			local sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras", "oddish")
+			if Battle.sacrifice(sacrifice) then
+				if not status.sacrificed then
+					status.sacrificed = true
+					Bridge.chat(" Swapping out "..Utils.capitalize(sacrifice).." to tank Aurora Beam into turn 2 Rest. Only a problem if it misses...")
+				end
 				return false
 			end
 		elseif opponentName == "jinx" then
