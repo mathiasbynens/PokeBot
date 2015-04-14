@@ -547,7 +547,7 @@ strategyFunctions.fightBrock = function()
 					Input.cancel()
 				end
 			elseif Menu.onPokemonSelect() then
-				Menu.select(Pokemon.indexOf("nidoran"), true)
+				Pokemon.select("nidoran")
 			else
 				status.canProgress = false
 				Battle.fight()

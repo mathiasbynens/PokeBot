@@ -178,7 +178,7 @@ function Menu.onPokemonSelect(battleMenu)
 		battleMenu = Memory.value("battle", "menu")
 	end
 	if yellow then
-		return battleMenu == 27 or battleMenu == 243
+		battleMenu = battleMenu - 19
 	end
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
 end

@@ -42,7 +42,7 @@ local function recover()
 						second = "full_restore"
 					end
 				else
-					if maxHP - currentHP > 22 then
+					if Control.preferSuper and maxHP - currentHP > 22 then
 						first = "super_potion"
 						second = "potion"
 					else
@@ -207,7 +207,7 @@ function Battle.swap(target)
 	local battleMenu = Memory.value("battle", "menu")
 	if Menu.onPokemonSelect(battleMenu) then
 		if Menu.getCol() == 0 then
-			Menu.select(Pokemon.indexOf(target), true)
+			Pokemon.select(target)
 		else
 			Input.press("A")
 		end
@@ -263,7 +263,7 @@ function Battle.redeployNidoking()
 		return false
 	end
 	if Menu.onPokemonSelect() then
-		Menu.select(0, true)
+		Pokemon.select("nidoking")
 	elseif Menu.hasTextbox() and Menu.getCol() == 1 then
 		Input.press("A")
 	else

@@ -319,4 +319,7 @@ function Pokemon.getDVs(name)
 	return bit.rshift(attackDefense, 4), bit.band(attackDefense, 15), bit.rshift(speedSpecial, 4), bit.band(speedSpecial, 15)
 end
 
+function Pokemon.select(name)
+	return Menu.select(indexOf(name), true, false, nil, false, Memory.value("player", "party_size"))
+end
 return Pokemon

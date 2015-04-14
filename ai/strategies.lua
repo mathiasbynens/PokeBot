@@ -620,7 +620,7 @@ Strategies.functions = {
 
 	skill = function(data)
 		if completedSkillFor(data) then
-			if not Textbox.isActive() then
+			if not Menu.hasTextbox() and not Textbox.isActive() then
 				return true
 			end
 			Input.press("B")
@@ -902,7 +902,7 @@ Strategies.functions = {
 				if Pokemon.info("squirtle", "hp") == 0 then
 					Control.canDie(false)
 				elseif Menu.onPokemonSelect() then
-					Menu.select(Pokemon.indexOf("squirtle"), true)
+					Pokemon.select("squirtle")
 				else
 					Input.press("A")
 				end
@@ -1214,7 +1214,7 @@ Strategies.functions = {
 					return Strategies.death()
 				end
 				if Menu.onPokemonSelect() then
-					Menu.select(Pokemon.indexOf(backupPokemon), true)
+					Pokemon.select(backupPokemon)
 				else
 					Input.press("A")
 				end

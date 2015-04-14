@@ -191,13 +191,10 @@ function Inventory.use(item, poke, midfight)
 		elseif battleMenu == 233 then
 			Menu.select(Inventory.indexOf(item), "accelerate", true)
 		elseif Menu.onPokemonSelect(battleMenu) then
-			if poke then
-				if type(poke) == "string" then
-					poke = Pokemon.indexOf(poke)
-				end
-				Menu.select(poke, true)
+			if type(poke) == "string" then
+				Pokemon.select(poke)
 			else
-				Input.press("A")
+				Menu.select(poke or 0, true)
 			end
 		else
 			Input.press("B")
