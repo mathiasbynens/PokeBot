@@ -7,6 +7,7 @@ Have you found a seed that results in a run of 1:51:30 or better using the bot‚Ä
 | Time    | Frames  | Seed         | Nidoran name | Bot version | Found by                                     |
 |---------|---------|--------------|--------------|-------------|----------------------------------------------|
 | 1:48:55 | 392,144 | `1428943783` | A            | v1.4.2      | [KriPet](https://github.com/KriPet)          |
+| 1:49:45 | 395,108 |   `91780872` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:14 | 396,858 | `1428898417` | ,            | v1.4.2      | ThePok√©Bot                                   |
 | 1:50:22 | 397,352 | `1428414915` | A            | v1.4.2      | [Gofigga](http://www.twitch.tv/gofigga)      |
 | 1:50:36 | 398,208 | `1428414915` | A            | v1.4.0      | [Gofigga](http://www.twitch.tv/gofigga)      |
