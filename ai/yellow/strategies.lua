@@ -655,6 +655,7 @@ function Strategies.initGame(midGame)
 			}
 		end
 	end
+	Control.preferSuper = true
 end
 
 function Strategies.completeGameStrategy()
@@ -664,6 +665,7 @@ end
 function Strategies.resetGame()
 	status = Strategies.status
 	stats = Strategies.stats
+
 	Strategies.flareon = true
 end
 

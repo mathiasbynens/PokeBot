@@ -69,36 +69,30 @@ local controlFunctions = {
 
 	viridianExp = function()
 		minExp = 210
-		shouldFight = {{name="rattata",lvl={2,3}}, {name="pidgey",lvl={2}}}
+		shouldFight = {{name="rattata",levels={2,3}}, {name="pidgey",levels={2}}}
 	end,
 
 	viridianBackupExp = function()
 		minExp = 210
-		shouldFight = {{name="rattata",lvl={2,3}}, {name="pidgey",lvl={2,3}}}
+		shouldFight = {{name="rattata",levels={2,3}}, {name="pidgey",levels={2,3}}}
 	end,
 
 	nidoranBackupExp = function()
 		minExp = 210
-		shouldFight = {{name="rattata"}, {name="pidgey"}, {name="nidoran"}, {name="nidoranf",lvl={2}}}
+		shouldFight = {{name="rattata"}, {name="pidgey"}, {name="nidoran"}, {name="nidoranf",levels={2}}}
 	end,
 
 	startMtMoon = function()
 		Control.moonEncounters = 0
 		Control.canDie(false)
-		Control.getMoonExp = true
-		if not yellow then
-			local nidoStats = Strategies.stats.nidoran
-			if nidoStats.attack == 16 and not nidoStats.level4 then
-				Control.getMoonExp = false
-			end
-		end
+		Control.getMoonExp = not yellow
 	end,
 
 	moon1Exp = function()
 		if Control.getMoonExp then
 			minExp = 2704
-			local levels = Strategies.stats.nidoran.level4 and {9, 10} or {10}
-			shouldFight = {{name="zubat",lvl=levels}}
+			local levels = Strategies.stats.nidoran.level4 and {9,10} or {10}
+			shouldFight = {{name="zubat",levels=levels}}
 			oneHits = true
 		end
 	end,
@@ -117,6 +111,7 @@ local controlFunctions = {
 			minExp = 3798
 			if withinOneKill(minExp) then
 				shouldFight = {{name="zubat"}, {name="paras"}}
+				oneHits = false
 			else
 				shouldFight = nil
 			end
@@ -124,7 +119,7 @@ local controlFunctions = {
 	end,
 
 	catchNidoran = function()
-		shouldCatch = {{name="nidoran",lvl={3,4}}, {name="spearow"}}
+		shouldCatch = {{name="nidoran",levels={3,4}}, {name="spearow"}}
 	end,
 
 	catchFlier = function()
@@ -142,12 +137,12 @@ local controlFunctions = {
 	-- YELLOW
 
 	catchNidoranYellow = function()
-		shouldCatch = {{name="nidoran",lvl={6}}}
+		shouldCatch = {{name="nidoran",levels={6}}}
 	end,
 
 	moonExpYellow = function()
 		minExp = 2704 --TODO
-		shouldFight = {{name="geodude"}, {name="clefairy",lvl={12,13}}}
+		shouldFight = {{name="geodude"}, {name="clefairy",levels={12,13}}}
 		oneHits = true
 	end,
 
@@ -183,9 +178,9 @@ function Control.shouldFight()
 	local expTotal = Pokemon.getExp()
 	if expTotal < minExp then
 		local oid = Memory.value("battle", "opponent_id")
-		local olvl = Memory.value("battle", "opponent_level")
+		local opponentLevel = Memory.value("battle", "opponent_level")
 		for i,p in ipairs(shouldFight) do
-			if oid == Pokemon.getID(p.name) and (not p.lvl or Utils.match(olvl, p.lvl)) then
+			if oid == Pokemon.getID(p.name) and (not p.levels or Utils.match(opponentLevel, p.levels)) then
 				if oneHits then
 					local move = Combat.bestMove()
 					if move and move.maxDamage * 0.925 < Memory.double("battle", "opponent_hp") then
@@ -239,9 +234,10 @@ function Control.shouldCatch(partySize)
 		return true
 	end
 	local oid = Memory.value("battle", "opponent_id")
+	local opponentLevel = Memory.value("battle", "opponent_level")
 	for i,poke in ipairs(shouldCatch) do
 		if oid == Pokemon.getID(poke.name) and not Pokemon.inParty(poke.name, poke.alt) then
-			if not poke.lvl or Utils.match(Memory.value("battle", "opponent_level"), poke.lvl) then
+			if not poke.levels or Utils.match(opponentLevel, poke.levels) then
 				local penultimate = poke.hp and Memory.double("battle", "opponent_hp") > poke.hp
 				if penultimate then
 					penultimate = Combat.nonKill()
@@ -264,7 +260,12 @@ function Control.canRecover()
 end
 
 function Control.set(data)
-	controlFunctions[data.c](data)
+	local controlFunction = controlFunctions[data.c]
+	if controlFunction then
+		controlFunction(data)
+	else
+		p("INVALID CONTROL", data.c, GAME_NAME)
+	end
 end
 
 function Control.setYolo(enabled)
@@ -329,7 +330,8 @@ function Control.encounter(battleState)
 					for i,catch in ipairs(gottaCatchEm) do
 						if opponent == catch then
 							if not Pokemon.inParty(catch) then
-								Bridge.chat("accidentally killed "..Utils.capitalize(catch).." with a "..(Control.criticaled and "critical" or "high damage range").." :(")
+								local criticaled = Memory.value("battle", "critical") == 1
+								Bridge.chat("accidentally killed "..Utils.capitalize(catch).." with a "..(criticaled and "critical" or "high damage range").." :(")
 								Control.killedCatch = true
 							end
 							break
@@ -357,6 +359,7 @@ function Control.reset()
 
 	Control.yolo = false
 	Control.inBattle = false
+	Control.preferSuper = false
 end
 
 function Control.init()

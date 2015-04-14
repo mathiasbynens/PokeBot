@@ -259,6 +259,8 @@ strategyFunctions.tweetMisty = function()
 end
 
 strategyFunctions.tweetSurge = function()
+	Control.preferSuper = true
+
 	if not Strategies.updates.misty and not Control.yolo then
 		local elt = Utils.elapsedTime()
 		local pbn = ""
