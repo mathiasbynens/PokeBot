@@ -301,7 +301,9 @@ function Strategies.useItem(data)
 end
 
 function Strategies.tossItem(...)
-	if not Inventory.isFull() then
+	if not status.startCount then
+		status.startCount = Inventory.count()
+	elseif Inventory.count() < status.startCount then
 		return true
 	end
 	local tossItem = Inventory.contains(...)
@@ -457,6 +459,17 @@ end
 
 Strategies.functions = {
 
+	tweetVictoryRoad = function()
+		local elt = Utils.elapsedTime()
+		local pbn = ""
+		if not Strategies.overMinute("victory_road") then
+			pbn = " (PB pace)"
+		end
+		local elt = Utils.elapsedTime()
+		Strategies.tweetProgress("Entering Victory Road at "..elt..pbn.." on our way to the Elite Four", "victory")
+		return true
+	end,
+
 	startFrames = function()
 		Strategies.frames = 0
 		return true
@@ -519,6 +532,11 @@ Strategies.functions = {
 					return true
 				end
 				return false
+			end
+			if Strategies.initialize() then
+				if not Inventory.contains(data.item) then
+					print("No "..data.item.." available!")
+				end
 			end
 			return Strategies.useItem(data)
 		end
@@ -741,6 +759,21 @@ Strategies.functions = {
 		end
 	end,
 
+	waitToFight = function(data)
+		if Battle.isActive() then
+			status.canProgress = true
+			Battle.automate()
+		elseif status.canProgress then
+			return true
+		elseif Textbox.handle() then
+			if data.dir then
+				Player.interact(data.dir, false)
+			else
+				Input.cancel()
+			end
+		end
+	end,
+
 	waitToPauseFromBattle = function()
 		local main = Memory.value("menu", "main")
 		if main == 128 then
@@ -758,17 +791,11 @@ Strategies.functions = {
 		end
 	end,
 
-	waitToFight = function(data)
-		if Battle.isActive() then
-			status.canProgress = true
-			Battle.automate()
-		elseif status.canProgress then
-			return true
-		elseif Textbox.handle() then
-			if data.dir then
-				Player.interact(data.dir, false)
-			else
-				Input.cancel()
+	waitToReceive = function()
+		local main = Memory.value("menu", "main")
+		if main == 128 then
+			if status.canProgress then
+				return true
 			end
 		end
 	end,
@@ -1209,7 +1236,7 @@ Strategies.functions = {
 					status.died = true
 					Bridge.chat(" Rock Slide missed BibleThump Trying to finish them off with Dig...")
 				end
-				local backupPokemon = Pokemon.getSacrifice("paras", "squirtle")
+				local backupPokemon = Pokemon.getSacrifice("paras", "squirtle", "sandshrew", "charmander")
 				if not backupPokemon then
 					return Strategies.death()
 				end
@@ -1306,7 +1333,8 @@ Strategies.functions = {
 			Strategies.setYolo("safari_carbos")
 			status.carbos = Inventory.count("carbos")
 		end
-		if stats.nidoran.speedDV >= (yellow and 9 or 7) then
+		local minDV = yellow and 9 or 7
+		if stats.nidoran.speedDV >= minDV then
 			return true
 		end
 		if Inventory.count("carbos") ~= status.carbos then
@@ -1367,18 +1395,155 @@ Strategies.functions = {
 		if px == 21 then
 			return true
 		end
-		if stats.nidoran.speedDV >= 10 then
-			Walk.step(21, 20)
+		if Strategies.initialize() then
+			status.startCount = Inventory.count("carbos")
+		end
+		local minDV = yellow and 11 or 10
+		if stats.nidoran.speedDV >= minDV then
+			px, py = 21, 20
 		else
 			if py == 20 then
 				py = 21
-			elseif px == 17 and not Inventory.contains("carbos") then
+			elseif px == 17 and Inventory.count("carbos") == status.startCount then
 				Player.interact("Right")
 				return false
 			else
 				px = 21
 			end
-			Walk.step(px, py)
+		end
+		Walk.step(px, py)
+	end,
+
+	checkEther = function()
+		-- TODO don't skip center if not in redbar
+		Strategies.maxEtherSkip = not Strategies.requiresE4Center()
+		if not Strategies.maxEtherSkip then
+			Bridge.chat("is grabbing the Max Ether to skip the Elite 4 Center")
+		end
+		return true
+	end,
+
+	ether = function(data)
+		local main = Memory.value("menu", "main")
+		data.item = status.item
+		if status.item and Strategies.completedMenuFor(data) then
+			if Strategies.closeMenuFor(data) then
+				return true
+			end
+		else
+			if not status.item then
+				if data.max and Strategies.maxEtherSkip then
+					return true
+				end
+				status.item = Inventory.contains("ether", "max_ether", "elixer")
+				if not status.item then
+					if Strategies.closeMenuFor(data) then
+						return true
+					end
+					print("No Ether - "..Control.areaName)
+					return false
+				end
+			end
+			if status.item == "elixer" then
+				return Strategies.useItem({item="elixer", poke="nidoking", chain=data.chain, close=data.close})
+			end
+			if Memory.value("menu", "main") == 144 and Menu.getCol() == 5 then
+				if Menu.hasTextbox() then
+					Input.cancel()
+				else
+					Menu.select(Pokemon.battleMove("horn_drill"), true)
+				end
+			elseif Menu.pause() then
+				Inventory.use(status.item, "nidoking")
+				status.menuOpened = true
+			end
+		end
+	end,
+
+	tossInVictoryRoad = function()
+		if Strategies.initialize() then
+			if Strategies.maxEtherSkip then
+				return true
+			end
+			if Inventory.count("ether") + Inventory.count("elixer") >= 2 then
+				return true
+			end
+		end
+		return Strategies.tossItem("antidote", "pokeball")
+	end,
+
+	grabMaxEther = function()
+		if Strategies.initialize() then
+			if Strategies.maxEtherSkip and (Inventory.count("ether") + Inventory.count("elixer") >= 2) then
+				return true
+			end
+			if Inventory.isFull() then
+				return true
+			end
+		end
+		if Inventory.contains("max_ether") then
+			return true
+		end
+		local px, py = Player.position()
+		if px > 7 then
+			return Strategies.reset("Accidentally walked on the island :(", px, true)
+		end
+		if Memory.value("player", "moving") == 0 then
+			Player.interact("Right")
+		end
+	end,
+
+	prepareForLance = function()
+		local enableFull
+		if Strategies.hasHealthFor("LanceGyarados", 100) then
+			enableFull = Inventory.count("super_potion") < 2
+		elseif Strategies.hasHealthFor("LanceGyarados", 50) then
+			enableFull = not Inventory.contains("super_potion")
+		else
+			enableFull = true
+		end
+		local min_recovery = Combat.healthFor("LanceGyarados")
+		if not Control.yolo then
+			min_recovery = min_recovery + 2
+		end
+		return strategyFunctions.potion({hp=min_recovery, full=enableFull, chain=true})
+	end,
+
+	champion = function()
+		if status.finishTime then
+			if not status.frames then
+				status.frames = 0
+				Strategies.tweetProgress("Beat Pokemon "..Utils.capitalize(GAME_NAME).." in "..status.finishTime.."!")
+				if Strategies.seed then
+					print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
+					print("Please save this seed number to share, if you would like proof of your run!")
+					print("A screenshot has been saved to the Gameboy\\Screenshots folder in BizHawk.")
+
+					if STREAMING_MODE and not Strategies.replay then
+						gui.cleartext()
+						gui.text(0, 0, "PokeBot v"..VERSION)
+						gui.text(0, 7, "Seed: "..Strategies.seed)
+						gui.text(0, 14, "Name: "..Textbox.getNamePlaintext())
+						gui.text(0, 21, "Reset for time: "..tostring(RESET_FOR_TIME))
+						gui.text(0, 28, "Time: "..Utils.elapsedTime())
+						gui.text(0, 35, "Frames: "..Utils.frames())
+						client.setscreenshotosd(true)
+						client.screenshot()
+						client.setscreenshotosd(false)
+						gui.cleartext()
+					end
+				end
+			elseif status.frames == 500 then
+				Bridge.chat("beat the game in "..status.finishTime.."!")
+			elseif status.frames > 2000 then
+				return Strategies.hardReset("Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
+			end
+			status.frames = status.frames + 1
+		elseif Memory.value("menu", "shop_current") == 252 then
+			strategyFunctions.split({finished=true})
+			status.finishTime = Utils.elapsedTime()
+		else
+			Input.cancel()
 		end
 	end,
 
@@ -1396,7 +1561,9 @@ function Strategies.execute(data)
 		status = {tries=0}
 		Strategies.status = status
 		Strategies.completeGameStrategy()
-		-- print(data.s)
+		if yellow then
+			print(data.s)
+		end
 		if resetting then
 			return nil
 		end

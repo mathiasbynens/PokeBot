@@ -55,6 +55,10 @@ Strategies.timeRequirements = {
 		return 80
 	end,
 
+	victory_road = function() --PB
+		return 102
+	end,
+
 }
 
 -- HELPERS
@@ -138,6 +142,10 @@ strategyFunctions.bicycle = function()
 	else
 		return Strategies.useItem({item="bicycle"})
 	end
+end
+
+function Strategies.requiresE4Center()
+	return Combat.hp() < 100
 end
 
 -- STRATEGIES
