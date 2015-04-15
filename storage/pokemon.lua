@@ -140,7 +140,13 @@ local function fieldMoveIndex(move)
 	local menuSize = Memory.value("menu", "size")
 	if yellow then
 		if move == "cut" then
-			moveIndex = 1
+			if Pokemon.inParty("charmander") then
+				moveIndex = 1
+			end
+		elseif move == "dig" then
+			if Pokemon.inParty("sandshrew") then
+				moveIndex = 1
+			end
 		elseif move == "surf" then
 			moveIndex = 1
 		end

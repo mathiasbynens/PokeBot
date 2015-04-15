@@ -220,6 +220,32 @@ local Opponents = {
 		}
 	},
 
+-- YELLOW
+
+	GarySandslash = {
+		type1 = "ground",
+		type2 = "ground",
+		def = 148,
+		id = 97,
+		spec = 81,
+		hp = 172,
+		speed = 94,
+		level = 61,
+		att = 137,
+		moves = {
+			{
+				max_pp = 10,
+				accuracy = 100,
+				name = "Earthquake",
+				power = 100,
+				id = 89,
+				special = false,
+				pp = 6,
+				move_type = "ground",
+			}
+		}
+	},
+
 }
 
 return Opponents
