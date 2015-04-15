@@ -119,11 +119,11 @@ function Inventory.teach(item, poke, replaceIdx, altPoke)
 		elseif column == 15 then
 			Menu.select(0, true)
 		else
-			local idx = 0
+			local teachIndex = 0
 			if poke then
-				idx = Pokemon.indexOf(poke, altPoke)
+				teachIndex = Pokemon.indexOf(poke, altPoke)
 			end
-			Menu.select(idx, true)
+			Pokemon.select(teachIndex)
 		end
 	else
 		return false

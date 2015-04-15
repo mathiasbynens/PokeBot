@@ -256,7 +256,7 @@ end
 -- Items
 
 function Control.canRecover()
-	return potionInBattle and (not battleYolo or not Control.yolo)
+	return potionInBattle and (not battleYolo or not Control.yolo) and Pokemon.mainFighter()
 end
 
 function Control.set(data)
