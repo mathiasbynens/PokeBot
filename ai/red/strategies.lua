@@ -277,16 +277,6 @@ end
 
 -- tweetVictoryRoad
 
-strategyFunctions.bicycle = function()
-	if Memory.value("player", "bicycle") == 1 then
-		if Textbox.handle() then
-			return true
-		end
-	else
-		return Strategies.useItem({item="bicycle"})
-	end
-end
-
 -- Route
 
 strategyFunctions.squirtleIChooseYou = function()

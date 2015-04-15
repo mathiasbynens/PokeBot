@@ -470,6 +470,16 @@ Strategies.functions = {
 		return true
 	end,
 
+	bicycle = function()
+		if Memory.value("player", "bicycle") == 1 then
+			if Menu.close() then
+				return true
+			end
+		else
+			return Strategies.useItem({item="bicycle"})
+		end
+	end,
+
 	startFrames = function()
 		Strategies.frames = 0
 		return true
