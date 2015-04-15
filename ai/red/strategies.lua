@@ -1450,8 +1450,16 @@ strategyFunctions.fightSilphGiovanni = function()
 			end
 		elseif opponentName == "rhyhorn" then
 			forced = "ice_beam"
-		elseif opponentName == "kangaskhan" or opponentName == "nidoqueen" then
+		elseif opponentName == "kangaskhan" then
 			forced = "horn_drill"
+		elseif opponentName == "nidoqueen" then
+			if Strategies.hasHealthFor("KogaWeezing") then
+				if not Strategies.opponentDamaged() then
+					forced = "earthquake"
+				end
+			else
+				forced = "horn_drill"
+			end
 		end
 		Battle.automate(forced)
 	elseif status.canProgress then
