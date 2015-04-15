@@ -757,7 +757,7 @@ strategyFunctions.rivalSandAttack = function(data)
 			if Battle.sacrifice(sacrifice) then
 				if not status.sacrificed then
 					status.sacrificed = true
-					Bridge.chat("got Sand-Attacked... Swapping out "..sacrifice.." to restore our accuracy (let's hope for no more trolling)")
+					Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore our accuracy (let's hope for no more trolling)")
 				end
 				return false
 			end
@@ -841,16 +841,18 @@ strategyFunctions.thrashGeodude = function()
 		if Pokemon.isOpponent("geodude") and Pokemon.isDeployed("nidoking") then
 			if Strategies.initialize() then
 				status.sacrificeSquirtle = not Control.yolo or Combat.inRedBar()
-				if not status.sacrificeSquirtle then
-					Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle")
-				end
 			end
-			if status.sacrificeSquirtle and Battle.sacrifice("squirtle") then
-				if not status.sacrificed then
-					status.sacrificed = true
-					Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety")
+			if status.sacrificeSquirtle then
+				if Battle.sacrifice("squirtle") then
+					if not status.sacrificed then
+						status.sacrificed = true
+						Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety")
+					end
+					return false
 				end
-				return false
+			elseif not status.confused and Combat.isConfused() then
+				status.confused = true
+				Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle")
 			end
 		end
 		Battle.automate()
@@ -947,7 +949,7 @@ strategyFunctions.fightMisty = function()
 			return false
 		end
 		local forced
-		if not status.swappedOut and Combat.isConfused() then
+		if not status.swappedOut and Memory.double("battle", "opponent_hp") > 0 and Combat.isConfused() then
 			if status.swappedOut == nil and Control.yolo then
 				status.swappedOut = true
 				return false
@@ -1911,11 +1913,16 @@ strategyFunctions.lance = function()
 end
 
 strategyFunctions.prepareForBlue = function()
-	if Strategies.initialize() then
-		Strategies.setYolo("blue")
-	end
 	local skyDmg = Combat.healthFor("BlueSky") * 0.925
 	local wingDmg = Combat.healthFor("BluePidgeot")
+	if Strategies.initialize() then
+		Strategies.setYolo("blue")
+		local curr_hp, red_hp = Combat.hp(), Combat.redHP()
+		if Control.yolo and curr_hp < red_hp + 30 then
+			Bridge.chat("is using limited potions to attempt to red-bar off Pidgeot")
+		end
+	end
+
 	return strategyFunctions.potion({hp=skyDmg-50, yolo=wingDmg, full=true})
 end
 
