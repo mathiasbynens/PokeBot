@@ -122,6 +122,10 @@ Strategies.timeRequirements = {
 		return 108.5
 	end,
 
+	champion = function() --PB
+		return 110.22
+	end,
+
 }
 
 -- HELPERS
@@ -904,7 +908,8 @@ strategyFunctions.potionBeforeMisty = function(data)
 	end
 	healAmount = healAmount - (stats.nidoran.special - 43)
 
-	if Strategies.initialize() then
+	if not status.healed then
+		status.healed = true
 		local message
 		local potionCount = Inventory.count("potion")
 		local needsToHeal = healAmount - Pokemon.index(0, "hp")
@@ -1940,7 +1945,8 @@ strategyFunctions.blue = function()
 		if Memory.value("battle", "attack_turns") > 0 then
 			local skyDamage = Combat.healthFor("BlueSky")
 			local healCutoff = skyDamage * 0.825
-			if Strategies.initialize() then
+			if not status.skyAttacked then
+				status.skyAttacked = true
 				if not Strategies.isPrepared("x_accuracy", status.xItem) then
 					local msg = " Uh oh... First-turn Sky Attack could end the run here, "
 					if Pokemon.index(0, "hp") > skyDamage then

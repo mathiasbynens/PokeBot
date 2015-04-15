@@ -627,7 +627,8 @@ Strategies.functions = {
 				return true
 			end
 		else
-			if Strategies.initialize() then
+			if not status.triedTeaching then
+				status.triedTeaching = true
 				if not Inventory.contains(itemName) then
 					return Strategies.reset("Unable to teach move "..itemName.." to "..data.poke, nil, true)
 				end
@@ -702,25 +703,26 @@ Strategies.functions = {
 	end,
 
 	swap = function(data)
-		if Strategies.initialize() then
-			if not Inventory.contains(data.item) then
-				return true
-			end
+		local itemIndex = data.item
+		if type(itemIndex) == "string" then
+			itemIndex = Inventory.indexOf(itemIndex)
 		end
-		local itemIndex = Inventory.indexOf(data.item)
 		local destIndex = data.dest
-		local hasSwappedItems
 		if type(destIndex) == "string" then
 			destIndex = Inventory.indexOf(destIndex)
-			if destIndex < 0 then
-				p("Not available to swap", data.item, data.dest)
-				return true
-			end
-			hasSwappedItems = itemIndex < destIndex
-		else
-			hasSwappedItems = itemIndex == destIndex
 		end
-		if hasSwappedItems then
+		local swapComplete
+		if itemIndex < 0 or destIndex < 0 then
+			swapComplete = true
+			if not status.swapUnavailable then
+				status.swapUnavailable = true
+				p("Not available to swap", data.item, data.dest, itemIndex, destIndex)
+			end
+		else
+			swapComplete = itemIndex == destIndex
+		end
+
+		if swapComplete then
 			if Strategies.closeMenuFor(data) then
 				return true
 			end
@@ -1543,7 +1545,11 @@ Strategies.functions = {
 		if status.finishTime then
 			if not status.frames then
 				status.frames = 0
-				Strategies.tweetProgress("Beat Pokemon "..Utils.capitalize(GAME_NAME).." in "..status.finishTime.."!")
+				local victoryMessage = "Beat Pokemon "..Utils.capitalize(GAME_NAME).." in "..status.finishTime
+				if not Strategies.overMinute("champion") then
+					victoryMessage = victoryMessage..", a new PB!"
+				end
+				Strategies.tweetProgress(victoryMessage)
 				if Strategies.seed then
 					print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
 					print("Please save this seed number to share, if you would like proof of your run!")

@@ -56,7 +56,11 @@ Strategies.timeRequirements = {
 	end,
 
 	victory_road = function() --PB
-		return 102
+		return 105
+	end,
+
+	champion = function() --PB
+		return 120
 	end,
 
 }
