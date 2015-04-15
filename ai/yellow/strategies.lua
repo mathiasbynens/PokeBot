@@ -656,9 +656,9 @@ strategyFunctions.fightGiovanni = function()
 			local opponent = Battle.opponent()
 			if opponent == "persian" then
 				prepareAccuracy = true
-				if not status.prepared and not Strategies.isPrepared("x_accuracy")
+				if not status.prepared and not Strategies.isPrepared("x_accuracy") then
 					status.prepared = true
-					Bridge.chat("needs to finish setting up against Persian...")
+					Bridge.chat("needs to finish setting up against Persian")
 				end
 			elseif opponent == "dugtrio" then
 				prepareAccuracy = Memory.value("battle", "dig") > 0
@@ -720,6 +720,12 @@ strategyFunctions.centerSkip = function()
 		end
 	end
 	return strategyFunctions.confirm({dir="Up"})
+end
+
+strategyFunctions.shopE4 = function()
+	return Shop.transaction{
+		buy = {{name="full_restore", index=2, amount=3}}
+	}
 end
 
 strategyFunctions.lorelei = function()
@@ -800,6 +806,16 @@ strategyFunctions.lance = function()
 		local xItem
 		if Pokemon.isOpponent("dragonair") then
 			xItem = "x_speed"
+			if not Strategies.isPrepared(xItem) then
+				local __, turnsToDie = Combat.enemyAttack()
+				if turnsToDie and turnsToDie <= 1 then
+					local potion = Inventory.contains("full_restore", "super_potion")
+					if potion then
+						Inventory.use(potion, nil, true)
+						return false
+					end
+				end
+			end
 		else
 			xItem = "x_special"
 		end
