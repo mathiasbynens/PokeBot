@@ -1136,7 +1136,7 @@ strategyFunctions.fightSurge = function()
 		status.canProgress = true
 		local forced
 		if Pokemon.isOpponent("voltorb") then
-			Combat.disableThrash = not Control.yolo or Combat.inRedBar()
+			Combat.disableThrash = not Control.yolo or stats.nidoran.attackDV < 9 or Combat.inRedBar()
 			local __, enemyTurns = Combat.enemyAttack()
 			if not enemyTurns or enemyTurns > 2 then
 				forced = "bubblebeam"
