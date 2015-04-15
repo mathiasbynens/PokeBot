@@ -495,7 +495,7 @@ strategyFunctions.fightBrock = function()
 		if status.tries < 1 then
 			status.tries = 1
 		end
-		local bubble, turnsToKill, turnsToDie = Combat.bestMove()
+		local __, turnsToKill, turnsToDie = Combat.bestMove()
 		if not Pokemon.isDeployed("squirtle") then
 			Battle.swap("squirtle")
 		elseif turnsToDie and turnsToDie < 2 and Inventory.contains("potion") then
@@ -729,8 +729,8 @@ strategyFunctions.rivalSandAttack = function(data)
 		if Memory.value("battle", "accuracy") < 7 then
 			local sacrifice
 			if opponent == "pidgeotto" then
-				local __, turns = Combat.bestMove()
-				if turns == 1 then
+				local __, turnsToKill = Combat.bestMove()
+				if turnsToKill == 1 then
 					sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "paras", "oddish", "squirtle")
 				end
 			elseif opponent == "raticate" then

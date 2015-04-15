@@ -71,7 +71,7 @@ function Settings.startNewAdventure(startWait)
 			Menu.select(0)
 		end
 	elseif math.random(0, startWait) == 0 then
-		Input.press("Start")
+		Input.press("Start", 2)
 	end
 end
 

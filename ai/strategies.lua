@@ -543,10 +543,10 @@ Strategies.functions = {
 				end
 				return false
 			end
-			if not status.unavailable and data.item ~= "carbos" and not Inventory.contains(data.item) then
-				status.unavailable = true
+			if not status.checked and data.item ~= "carbos" and not Inventory.contains(data.item) then
 				print("No "..data.item.." available!")
 			end
+			status.checked = true
 			return Strategies.useItem(data)
 		end
 	end,
@@ -565,6 +565,7 @@ Strategies.functions = {
 		if type(toHP) == "string" then
 			toHP = Combat.healthFor(toHP)
 		end
+		toHP = math.min(toHP, Pokemon.index(0, "max_hp"))
 		local toHeal = toHP - curr_hp
 		if toHeal > 0 then
 			local toPotion
@@ -1076,13 +1077,16 @@ Strategies.functions = {
 
 	rareCandyEarly = function(data)
 		if Strategies.initialize() then
-			p("RCE", Pokemon.getExp())
+			if Pokemon.info("nidoking", "level") ~= 20 then
+				return true
+			end
 			if yellow then
+				p("RCE", Pokemon.getExp())
 				if Pokemon.getExp() > 5500 then --TODO
 					return true
 				end
 			else
-				if Pokemon.info("nidoking", "level") ~= 20 or Pokemon.getExp() > 5550 then
+				if Pokemon.getExp() > 5550 then
 					return true
 				end
 			end
@@ -1165,13 +1169,12 @@ Strategies.functions = {
 					local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 					local clubDmg = enemyMove.damage
 					local afterHit = curr_hp - clubDmg
-					red_hp = red_hp - 2
 					local acceptableHealth = Control.yolo and -1 or 1
-					if afterHit >= acceptableHealth and afterHit < red_hp then
+					if afterHit >= acceptableHealth and afterHit < red_hp - 2 then
 						forced = "thunderbolt"
 					else
 						afterHit = afterHit - clubDmg
-						if afterHit > 1 and afterHit < red_hp then
+						if afterHit > 1 and afterHit < red_hp - 4 then
 							forced = "thunderbolt"
 						end
 					end
@@ -1589,7 +1592,7 @@ function Strategies.execute(data)
 		Strategies.status = status
 		Strategies.completeGameStrategy()
 		if yellow then
-			print(data.s)
+			-- print(data.s)
 		end
 		if resetting then
 			return nil
