@@ -428,13 +428,6 @@ strategyFunctions.grabAntidote = function()
 	if py < 11 then
 		return true
 	end
-	-- if Pokemon.info("spearow", "level") == 3 then
-	-- 	if px < 26 then
-	-- 		px = 26
-	-- 	else
-	-- 		py = 10
-	-- 	end
-	-- else
 	if Inventory.contains("antidote") then
 		py = 10
 	else
@@ -447,24 +440,23 @@ strategyFunctions.grabForestPotion = function()
 	if Battle.handleWild() then
 		local potionCount = Inventory.count("potion")
 		if Strategies.initialize() then
-			status.startPotions = potionCount
+			status.previousPotions = potionCount
+			status.needsExtraPotion = Pokemon.info("squirtle", "hp") <= 16
+		elseif status.needsExtraPotion then
+			if potionCount > status.previousPotions then
+				status.needsExtraPotion = false
+			else
+				status.previousPotions = potionCount
+			end
 		end
-		if potionCount > 0 then
-			if status.startPotions and potionCount > status.startPotions then
-				status.startPotions = nil
-			end
-			if Pokemon.info("squirtle", "hp") <= 12 then
-				if Menu.pause() then
-					Inventory.use("potion", "squirtle")
-				end
-			elseif Menu.close() then
-				return true
-			end
-		elseif not status.startPotions then
-			if Menu.close() then
-				return true
+		if potionCount > 0 and Pokemon.info("squirtle", "hp") <= 12 then
+			if Menu.pause() then
+				Inventory.use("potion", "squirtle")
 			end
 		elseif Menu.close() then
+			if not status.needsExtraPotion then
+				return true
+			end
 			Player.interact("Up")
 		end
 	end
