@@ -308,9 +308,9 @@ function Control.encounter(battleState)
 			Control.criticaled = isCritical
 		end
 		if wildBattle then
-			local opponentHP = Memory.double("battle", "opponent_hp")
+			local opponentAlive = Battle.opponentAlive()
 			if not Control.inBattle then
-				if opponentHP > 0 then
+				if opponentAlive then
 					Control.killedCatch = false
 					Control.inBattle = true
 					encounters = encounters + 1
@@ -324,7 +324,7 @@ function Control.encounter(battleState)
 					end
 				end
 			else
-				if opponentHP == 0 and shouldCatch and not Control.killedCatch then
+				if not opponentAlive and shouldCatch and not Control.killedCatch then
 					local gottaCatchEm = {"pidgey", "spearow", "paras", "oddish"}
 					local opponent = Battle.opponent()
 					for i,catch in ipairs(gottaCatchEm) do

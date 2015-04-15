@@ -93,7 +93,7 @@ local function openBattleMenu()
 end
 
 local function attack(attackIndex)
-	if Memory.double("battle", "opponent_hp") < 1 then
+	if not Battle.opponentAlive() then
 		Input.cancel()
 	elseif openBattleMenu() then
 		Menu.select(attackIndex, true, false, false, false, 3)
@@ -146,10 +146,14 @@ function Battle.opponent()
 	return Pokemon.getName(Memory.value("battle", "opponent_id"))
 end
 
+function Battle.opponentAlive()
+	return Memory.double("battle", "opponent_hp") > 0
+end
+
 -- HANDLE
 
 function Battle.run()
-	if Memory.double("battle", "opponent_hp") < 1 then
+	if not Battle.opponentAlive() then
 		Input.cancel()
 	elseif Memory.value("battle", "menu") ~= 94 then
 		if Memory.value("menu", "text_length") == 127 then
@@ -161,6 +165,8 @@ function Battle.run()
 		local selected = Memory.value("menu", "selection")
 		if selected == 239 then
 			Input.press("A", 2)
+		elseif selected == 233 then
+			Input.press("Right")
 		else
 			Input.escape()
 		end

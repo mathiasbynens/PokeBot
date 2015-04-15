@@ -921,7 +921,7 @@ Strategies.functions = {
 		if Battle.isActive() then
 			status.tries = 0
 			status.canProgress = true
-			if Memory.double("battle", "opponent_hp") == 0 then
+			if not Battle.opponentAlive() then
 				Input.press("A")
 			else
 				Battle.automate()

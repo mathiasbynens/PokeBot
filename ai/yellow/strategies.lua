@@ -599,7 +599,7 @@ strategyFunctions.fightKoga = function()
 			local forced = "horn_drill"
 			local opponent = Battle.opponent()
 			if opponent == "venonat" then
-				if Memory.double("battle", "opponent_hp") == 0 then
+				if not Battle.opponentAlive() then
 					status.secondVenonat = true
 				end
 				if status.secondVenonat or Combat.isSleeping() then

@@ -208,7 +208,6 @@ local function potionForRedBar(damage)
 			end
 		end
 	end
-	return canPotion
 end
 
 -- STATE
@@ -306,7 +305,7 @@ strategyFunctions.fightBulbasaur = function()
 			status.tries = status.tries + 1
 		end
 	end
-	if Battle.isActive() and Memory.double("battle", "opponent_hp") > 0 and Strategies.resetTime("bulbasaur", "beat Bulbasaur") then
+	if Battle.isActive() and Battle.opponentAlive() and Strategies.resetTime("bulbasaur", "beat Bulbasaur") then
 		return true
 	end
 	return Strategies.buffTo("tail_whip", 6)
@@ -691,7 +690,7 @@ end
 strategyFunctions.fightMetapod = function()
 	if Battle.isActive() then
 		status.canProgress = true
-		if Memory.double("battle", "opponent_hp") > 0 and Pokemon.isOpponent("metapod") then
+		if Battle.opponentAlive() and Pokemon.isOpponent("metapod") then
 			return true
 		end
 		Battle.automate()
@@ -820,7 +819,7 @@ end
 strategyFunctions.thrashGeodude = function()
 	if Battle.isActive() then
 		status.canProgress = true
-		if Pokemon.isOpponent("geodude") and Pokemon.isDeployed("nidoking") then
+		if Pokemon.isOpponent("geodude") and Battle.opponentAlive() and Pokemon.isDeployed("nidoking") then
 			if Strategies.initialize() then
 				status.sacrificeSquirtle = not Control.yolo or Combat.inRedBar()
 			end
@@ -931,7 +930,7 @@ strategyFunctions.fightMisty = function()
 			return false
 		end
 		local forced
-		if not status.swappedOut and Memory.double("battle", "opponent_hp") > 0 and Combat.isConfused() then
+		if not status.swappedOut and Battle.opponentAlive() and Combat.isConfused() then
 			if status.swappedOut == nil and Control.yolo then
 				status.swappedOut = true
 				return false
@@ -1901,7 +1900,14 @@ strategyFunctions.prepareForBlue = function()
 		Strategies.setYolo("blue")
 		local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 		if Control.yolo and curr_hp < red_hp + 30 then
-			Bridge.chat("is using limited potions to attempt to red-bar off Pidgeot")
+			local message
+			if curr_hp > wingDmg then
+				message = "is skipping potioning"
+			else
+				message = "is using limited potions"
+			end
+			message = message.." to attempt to red-bar off Pidgeot"
+			Bridge.chat(message)
 		end
 	end
 
