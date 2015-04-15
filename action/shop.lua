@@ -42,12 +42,12 @@ function Shop.transaction(options)
 	end
 
 	if not item then
-		if not Textbox.isActive() then
+		if not Menu.isOpened() then
 			return true
 		end
 		Input.press("B")
 	elseif Player.isFacing(options.direction or "Left") then
-		if Textbox.isActive() then
+		if Menu.isOpened() then
 			local mainMenu = yellow and 245 or 32
 			if Menu.isCurrently(mainMenu, "shop") then
 				Menu.select(menuIdx, true, false, "shop")
@@ -88,12 +88,12 @@ function Shop.vend(options)
 		end
 	end
 	if not item then
-		if not Textbox.isActive() then
+		if not Menu.isOpened() then
 			return true
 		end
 		Input.press("B")
 	elseif Player.face(options.direction) then
-		if Textbox.isActive() then
+		if Menu.isOpened() then
 			if Memory.value("battle", "text") > 1 and not Menu.hasTextbox() then
 				Menu.select(item.index, true)
 			else

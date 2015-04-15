@@ -332,7 +332,7 @@ local function completedSkillFor(data)
 		if Memory.raw(data.done) > (data.val or 0) then
 			return true
 		end
-	elseif status.tries > 0 and not Menu.isOpen() then
+	elseif status.tries > 0 and not Menu.isOpened() then
 		return true
 	end
 	return false
@@ -637,8 +637,14 @@ Strategies.functions = {
 
 	skill = function(data)
 		if completedSkillFor(data) then
-			if not Menu.hasTextbox() and not Textbox.isActive() then
-				return true
+			if yellow then
+				if not Menu.hasTextbox() then
+					return true
+				end
+			else
+				if not Menu.isOpened() then
+					return true
+				end
 			end
 			Input.press("B")
 		elseif not data.dir or Player.face(data.dir) then
@@ -1279,7 +1285,7 @@ Strategies.functions = {
 	end,
 
 	silphElevator = function()
-		if Textbox.isActive() then
+		if Menu.isOpened() then
 			status.canProgress = true
 			Menu.select(9, false, true)
 		else

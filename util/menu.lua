@@ -6,6 +6,7 @@ local Memory = require "util.memory"
 local yellow = GAME_NAME == "yellow"
 
 local sliding = false
+local alternateStart = 0
 
 Menu.pokemon = yellow and 51 or 103
 
@@ -183,19 +184,32 @@ function Menu.onPokemonSelect(battleMenu)
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
 end
 
-function Menu.isOpen()
-	return Memory.value("game", "textbox") == 1 or Memory.value("menu", "current") == 24
+function Menu.isOpened()
+	return Memory.value("game", "textbox") == 1
+end
+
+function Menu.hasBeenOpened()
+	local mainMenu = Memory.value("menu", "main")
+	if mainMenu > 7 then
+		return true
+	end
+	if (Menu.isOpened() or Menu.onPokemonSelect()) and (mainMenu == 0 or mainMenu == 2 or mainMenu == 4 or mainMenu == 6) then
+		return true
+	end
+	if mainMenu > 0 and INTERNAL and not STREAMING_MODE then
+		p("DMM", mainMenu)
+	end
 end
 
 function Menu.close()
-	if Memory.value("game", "textbox") == 0 and Memory.value("menu", "main") < 8 then
+	if not Menu.hasBeenOpened() then
 		return true
 	end
 	Input.press("B")
 end
 
 function Menu.pause()
-	if Memory.value("game", "textbox") == 1 then
+	if Menu.isOpened() then
 		if Menu.hasTextbox() then
 			Input.cancel()
 		else
@@ -206,6 +220,15 @@ function Menu.pause()
 			Input.press("B")
 		end
 	else
+		if yellow then
+			alternateStart = alternateStart + 1
+			if alternateStart > 1 then
+				if alternateStart > 2 then
+					alternateStart = 0
+				end
+				return false
+			end
+		end
 		Input.press("Start", 2)
 	end
 end

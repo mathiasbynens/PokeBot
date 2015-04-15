@@ -64,9 +64,7 @@ Strategies.timeRequirements = {
 -- HELPERS
 
 local function depositPikachu()
-	if not Textbox.isActive() then
-		Player.interact("Up")
-	else
+	if Menu.isOpened() then
 		local pc = Memory.value("menu", "size")
 		if Memory.value("battle", "menu") ~= 19 then
 			local menuColumn = Menu.getCol()
@@ -84,6 +82,8 @@ local function depositPikachu()
 		else
 			Input.cancel()
 		end
+	else
+		Player.interact("Up")
 	end
 end
 
@@ -491,7 +491,7 @@ end
 -- redbarCubone
 
 strategyFunctions.deptElevator = function()
-	if Textbox.isActive() then
+	if Menu.isOpened() then
 		status.canProgress = true
 		Menu.select(4, false, true)
 	else
@@ -695,7 +695,7 @@ strategyFunctions.depositPokemon = function()
 		if Menu.close() then
 			return true
 		end
-	else
+	elseif Menu.isOpened() then
 		local menuSize = Memory.value("menu", "size")
 		if not Menu.hasTextbox() then
 			if menuSize == 5 then
@@ -713,6 +713,8 @@ strategyFunctions.depositPokemon = function()
 			end
 		end
 		Input.press("A")
+	else
+		Player.interact("Up")
 	end
 end
 

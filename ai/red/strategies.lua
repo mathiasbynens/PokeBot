@@ -1251,7 +1251,7 @@ strategyFunctions.shopBuffs = function()
 end
 
 strategyFunctions.deptElevator = function()
-	if Textbox.isActive() then
+	if Menu.isOpened() then
 		status.canProgress = true
 		Menu.select(0, false, true)
 	else
@@ -1761,7 +1761,7 @@ strategyFunctions.depositPokemon = function()
 			return true
 		end
 	else
-		if not Textbox.isActive() then
+		if not Menu.isOpened() then
 			Player.interact("Up")
 		else
 			local pc = Memory.value("menu", "size")
