@@ -359,7 +359,7 @@ function Control.reset()
 
 	Control.yolo = false
 	Control.inBattle = false
-	Control.preferSuper = false
+	Control.preferredPotion = nil
 end
 
 function Control.init()

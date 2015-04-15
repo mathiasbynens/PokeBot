@@ -719,6 +719,8 @@ end
 strategyFunctions.centerSkip = function()
 	if Strategies.initialize() then
 		Strategies.setYolo("e4center")
+		Control.preferredPotion = "full"
+
 		if false then --TODO
 			local message = "is skipping the Elite 4 Center!"
 			Bridge.chat(message)
@@ -877,7 +879,7 @@ function Strategies.initGame(midGame)
 			}
 		end
 	end
-	Control.preferSuper = true
+	Control.preferredPotion = "super"
 end
 
 function Strategies.completeGameStrategy()

@@ -1588,7 +1588,7 @@ function Strategies.init(midGame)
 		splitTime = Utils.timeSince(0)
 	end
 	if midGame then
-		Control.preferSuper = true
+		Control.preferredPotion = "super"
 		Combat.factorPP(true)
 	end
 	Strategies.initGame(midGame)

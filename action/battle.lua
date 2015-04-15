@@ -32,7 +32,7 @@ local function recover()
 			local maxHP = Pokemon.index(0, "max_hp")
 			if currentHP < maxHP then
 				local first, second
-				if potionIn == "full" then
+				if Control.preferredPotion == "full" then
 					first, second = "full_restore", "super_potion"
 					if maxHP - currentHP > 54 then
 						first = "full_restore"
@@ -42,7 +42,7 @@ local function recover()
 						second = "full_restore"
 					end
 				else
-					if Control.preferSuper and maxHP - currentHP > 22 then
+					if Control.preferredPotion == "super" and maxHP - currentHP > 22 then
 						first = "super_potion"
 						second = "potion"
 					else
