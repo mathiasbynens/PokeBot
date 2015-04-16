@@ -29,11 +29,7 @@ Strategies.flareon = true
 Strategies.timeRequirements = {
 
 	nidoran = function()
-		local timeLimit = 8
-		if Pokemon.inParty("pidgey") then
-			timeLimit = timeLimit + 0.67
-		end
-		return timeLimit
+		return 10
 	end,
 
 	mt_moon = function()
@@ -66,6 +62,108 @@ Strategies.timeRequirements = {
 }
 
 -- HELPERS
+
+local function nidoranDSum(enabled)
+	local px, py = Player.position()
+	if enabled and status.path == nil then
+		local opponentName = Battle.opponent()
+		local opponentLevel = Memory.value("battle", "opponent_level")
+		if opponentName == "rattata" then
+			if opponentLevel == 3 then
+				status.path = {4, 37}
+			elseif opponentLevel == 4 then
+				status.path = {0, 24}
+			end
+		elseif opponentName == "pidgey" then
+			if opponentLevel == 3 then
+				status.path = {0, 32}
+			elseif opponentLevel == 5 then
+				status.path = {0, 10}
+			end
+		elseif opponentName == "nidoran" then
+			if opponentLevel == 4 then
+				status.path = {0, 19}
+			end
+		elseif opponentName == "nidoranf" then
+			if opponentLevel == 4 then
+				status.path = {0, 14}
+			elseif opponentLevel == 6 then
+				status.path = {0, 4}
+			end
+		end
+		if status.path then
+			status.pathIndex = 1
+			status.pathX, status.pathY = px, py
+		else
+			status.path = 0
+		end
+	end
+
+	local dx, dy = px, py
+	if enabled and status.path ~= 0 then
+		if status.path[status.pathIndex] == 0 then
+			status.pathIndex = status.pathIndex + 1
+			if status.pathIndex > 2 then
+				status.path = 0
+			end
+			return nidoranDSum()
+		end
+		if status.pathX ~= px or status.pathY ~= py then
+			status.path[status.pathIndex] = status.path[status.pathIndex] - 1
+			status.pathX, status.pathY = px, py
+		end
+		if status.pathIndex == 1 then
+			dx = 4
+		else
+			dx = 3
+		end
+		if px == dx then
+			if Player.isFacing("Up") then
+				if py > 48 then
+					dy = 48
+				else
+					dy = 51
+				end
+			else
+				if py > 50 then
+					dy = 48
+				else
+					dy = 51
+				end
+			end
+		end
+	else
+		if px == 4 and py == 48 then
+			local encounterless = Memory.value("game", "encounterless")
+			if encounterless == 0 then
+				if not status.bonkWait then
+					local direction
+					if Player.isFacing("Up") then
+						direction = "Left"
+					else
+						direction = "Up"
+					end
+					Input.press(direction, direction == "Up" and 3 or 2)
+				end
+				status.bonkWait = not status.bonkWait
+				return
+			end
+			if encounterless < 2 then
+				dx = 3
+			else
+				dy = 49
+			end
+		else
+			status.bonkWait = nil
+			if py ~= 48 then
+				dy = 48
+			else
+				dx = 4
+			end
+		end
+	end
+	Walk.step(dx, dy)
+end
 
 local function depositPikachu()
 	if Menu.isOpened() then
@@ -162,13 +260,13 @@ strategyFunctions.catchNidoran = function()
 		return Strategies.reset("Ran too low on PokeBalls", pokeballs)
 	end
 	if Battle.isActive() then
+		status.path = nil
 		local isNidoran = Pokemon.isOpponent("nidoran")
 		if isNidoran and Memory.value("battle", "opponent_level") == 6 then
 			if Strategies.initialize() then
 				Bridge.pollForName()
 			end
 		end
-		status.tries = nil
 		if Memory.value("menu", "text_input") == 240 then
 			Textbox.name()
 		elseif Menu.hasTextbox() then
@@ -182,30 +280,28 @@ strategyFunctions.catchNidoran = function()
 		end
 	else
 		Pokemon.updateParty()
-		local px, py = Player.position()
 		local hasNidoran = Pokemon.inParty("nidoran")
 		if hasNidoran then
-			if px < 8 then
-				px = 8
+			local px, py = Player.position()
+			local dx, dy = px, py
+			if px ~= 8 then
+				dx = 8
+			elseif py > 47 then
+				dy = 47
 			else
 				Bridge.caught("nidoran")
 				return true
 			end
+			Walk.step(dx, dy)
 		else
-			local timeLimit = Strategies.getTimeRequirement("nidoran")
+			local resetLimit = Strategies.getTimeRequirement("nidoran")
 			local resetMessage = "find a suitable Nidoran"
-			if Strategies.resetTime(timeLimit, resetMessage) then
+			if Strategies.resetTime(resetLimit, resetMessage) then
 				return true
 			end
-			if py > 48 then
-				py = 48
-			elseif px < 9 then
-				px = 9
-			else
-				px = 8
-			end
+			local enableDSum = Control.escaped and not Strategies.overMinute(resetLimit - 0.25)
+			nidoranDSum(enableDSum)
 		end
-		Walk.step(px, py) --TODO DSum
 	end
 end
 
