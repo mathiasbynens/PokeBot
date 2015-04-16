@@ -707,23 +707,37 @@ Strategies.functions = {
 	end,
 
 	swap = function(data)
-		local itemIndex = data.item
-		if type(itemIndex) == "string" then
-			itemIndex = Inventory.indexOf(itemIndex)
-		end
-		local destIndex = data.dest
-		if type(destIndex) == "string" then
-			destIndex = Inventory.indexOf(destIndex)
+		if not status.firstIndex then
+			local itemIndex = data.item
+			if type(data.item) == "string" then
+				itemIndex = Inventory.indexOf(data.item)
+				status.checkItem = data.item
+			end
+			local destIndex = data.dest
+			if type(data.dest) == "string" then
+				destIndex = Inventory.indexOf(data.dest)
+				status.checkItem = data.dest
+			end
+			if destIndex < itemIndex then
+				status.firstIndex = destIndex
+				status.lastIndex = itemIndex
+			else
+				status.firstIndex = destIndex
+				status.lastIndex = itemIndex
+			end
+			status.startedAt = Inventory.indexOf(status.checkItem)
 		end
 		local swapComplete
-		if itemIndex < 0 or destIndex < 0 then
+		if status.firstIndex == status.lastIndex then
+			swapComplete = true
+		elseif status.firstIndex < 0 or status.lastIndex < 0 then
 			swapComplete = true
 			if not status.swapUnavailable then
 				status.swapUnavailable = true
 				p("Not available to swap", data.item, data.dest, itemIndex, destIndex)
 			end
-		else
-			swapComplete = itemIndex == destIndex
+		elseif status.startedAt ~= Inventory.indexOf(status.checkItem) then
+			swapComplete = true
 		end
 
 		if swapComplete then
@@ -738,11 +752,11 @@ Strategies.functions = {
 				else
 					local selection = Memory.value("menu", "selection_mode")
 					if selection == 0 then
-						if Menu.select(destIndex, "accelerate", true, nil, true) then
+						if Menu.select(status.firstIndex, "accelerate", true, nil, true) then
 							Input.press("Select")
 						end
 					else
-						if Menu.select(itemIndex, "accelerate", true, nil, true) then
+						if Menu.select(status.lastIndex, "accelerate", true, nil, true) then
 							Input.press("Select")
 						end
 					end
