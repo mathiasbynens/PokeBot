@@ -111,16 +111,22 @@ Battle.pp = movePP
 
 -- UTILS
 
-function Battle.swapMove(sidx, fidx)
+function Battle.swapMove(move, toIndex)
+	toIndex = toIndex + 1
 	if openBattleMenu() then
+		local moveIndex = Pokemon.battleMove(move)
+		if not moveIndex or moveIndex == toIndex then
+			return true
+		end
 		local selection = Memory.value("menu", "selection_mode")
 		local swapSelect
-		if selection == sidx then
-			swapSelect = fidx
+		if selection == toIndex then
+			swapSelect = moveIndex
 		else
-			swapSelect = sidx
+			swapSelect = toIndex
 		end
-		if Menu.select(swapSelect, false, false, nil, true, 3) then
+		local menuSize = Memory.raw(0x101F) == 0 and 3 or 4
+		if Menu.select(swapSelect, true, false, nil, true, menuSize) then
 			Input.press("Select")
 		end
 	end

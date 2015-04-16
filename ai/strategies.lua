@@ -749,6 +749,10 @@ Strategies.functions = {
 		end
 	end,
 
+	swapMove = function(data)
+		return Battle.swapMove(data.move, data.to)
+	end,
+
 	wait = function()
 		print("Please save state")
 		Input.press("Start", 999999999)
@@ -902,13 +906,6 @@ Strategies.functions = {
 				Input.press("B")
 			end
 		end
-	end,
-
-	swapHornAttack = function()
-		if Pokemon.battleMove("horn_attack") == 1 then
-			return true
-		end
-		Battle.swapMove(1, 3)
 	end,
 
 	dodgePalletBoy = function()
@@ -1138,8 +1135,17 @@ Strategies.functions = {
 				nidokingStats()
 			end
 			return true
+		end
+	end,
+
+	swapThrash = function()
+		if not Battle.isActive() then
+			if Textbox.handle() and status.canProgress then
+				return true
+			end
 		else
-			Battle.automate()
+			status.canProgress = true
+			return Battle.swapMove("thrash", 0)
 		end
 	end,
 
