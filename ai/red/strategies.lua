@@ -144,8 +144,10 @@ local function nidoranDSum(enabled)
 				status.path = {0, 0, 10}
 			end
 		elseif opponentName == "spearow" then
-			if opponentLevel == 5 then --TODO
+			if opponentLevel == 3 then
+				status.path = {2, 6, 12}
 			else
+				status.path = {3, 6, 12}
 			end
 		elseif opponentName == "nidoran" then
 			status.path = {0, 6, 12}
@@ -434,7 +436,7 @@ strategyFunctions.grabForestPotion = function()
 		local potionCount = Inventory.count("potion")
 		if Strategies.initialize() then
 			status.previousPotions = potionCount
-			status.needsExtraPotion = Pokemon.info("squirtle", "hp") <= 16
+			status.needsExtraPotion = potionCount == 0 or Pokemon.info("squirtle", "hp") <= 16
 		elseif status.needsExtraPotion then
 			if potionCount > status.previousPotions then
 				status.needsExtraPotion = false
@@ -773,6 +775,24 @@ strategyFunctions.rivalSandAttack = function(data)
 	end
 end
 
+strategyFunctions.hornAttackCaterpie = function()
+	if Strategies.initialize() then
+		if Pokemon.hasMove("thrash") then
+			return true
+		end
+	end
+	local forced
+	if Battle.isActive() then
+		status.canProgress = true
+		if not Strategies.opponentDamaged() then
+			forced = "horn_attack"
+		end
+	elseif status.canProgress then
+		return true
+	end
+	Battle.automate(forced)
+end
+
 -- rareCandyEarly
 
 -- teachThrash
@@ -1048,7 +1068,7 @@ strategyFunctions.potionBeforeRaticate = function()
 		Strategies.foughtRaticateEarly = nil
 		return true
 	end
-	return strategyFunctions.potion({hp=10, yolo=8, chain=true})
+	return strategyFunctions.potion({hp=10, yolo=8})
 end
 
 strategyFunctions.shopVermilionMart = function()
