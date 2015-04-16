@@ -305,7 +305,13 @@ strategyFunctions.catchNidoran = function()
 	end
 end
 
--- leer
+strategyFunctions.leerCaterpies = function()
+	if not status.secondCaterpie and not Battle.opponentAlive() then
+		status.secondCaterpie = true
+	end
+	local leerAmount = status.secondCaterpie and 10 or 7
+	return strategyFunctions.leer({{"caterpie", leerAmount}})
+end
 
 strategyFunctions.checkNidoStats = function()
 	local nidx = Pokemon.indexOf("nidoran")
@@ -414,9 +420,13 @@ end
 strategyFunctions.centerCerulean = function(data)
 	local ppRequired = 15
 	if data.first then
+		local hasSufficientPP = Pokemon.pp(0, "horn_attack") > ppRequired
+		if Strategies.initialize() then
+			Combat.factorPP(hasSufficientPP)
+		end
 		local currentMap = Memory.value("game", "map")
 		if currentMap == 3 then
-			if Pokemon.pp(0, "horn_attack") > ppRequired then
+			if hasSufficientPP then
 				local px, py = Player.position()
 				if py > 8 then
 					return strategyFunctions.dodgeCerulean({left=true})
