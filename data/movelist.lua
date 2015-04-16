@@ -1494,6 +1494,7 @@ local moves = {
 		power = 70,
 		max_pp = 20,
 		accuracy = 100,
+		multiple = 1.9,
 	},
 	{
 		name = 'Substitute',
