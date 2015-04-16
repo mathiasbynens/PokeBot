@@ -1081,13 +1081,9 @@ Strategies.functions = {
 			end
 			if yellow then
 				p("RCE", Pokemon.getExp())
-				if Pokemon.getExp() > 5500 then --TODO
-					return true
-				end
-			else
-				if Pokemon.getExp() > 5550 then
-					return true
-				end
+			end
+			if Pokemon.getExp() > 5550 then
+				return true
 			end
 		end
 		return strategyFunctions.item({item="rare_candy", amount=2, poke="nidoking", chain=data.chain, close=data.close})
@@ -1095,47 +1091,57 @@ Strategies.functions = {
 
 	teachThrash = function()
 		if Strategies.initialize() then
-			if Pokemon.hasMove("thrash") or Pokemon.info("nidoking", "level") < 21 or not Inventory.contains("rare_candy") then
-				return true
+			local nidoLevel = Pokemon.info("nidoking", "level")
+			if nidoLevel < 21 or nidoLevel >= 23 or not Inventory.contains("rare_candy") then
+				status.close = true
 			end
 		end
-		local replacementMove = yellow and "tackle" or "leer"
-		if strategyFunctions.teach({move="thrash",item="rare_candy",replace=replacementMove}) then
-			if Menu.close() then
+		if not status.close then
+			local replacementMove = yellow and "tackle" or "leer"
+			status.close = strategyFunctions.teach({move="thrash", item="rare_candy", replace=replacementMove})
+			status.updateStats = true
+		elseif Menu.close() then
+			if status.updateStats then
 				nidokingStats()
-				return true
 			end
+			return true
 		end
 	end,
 
 	learnThrash = function()
+		if Strategies.initialize() then
+			if Pokemon.hasMove("thrash") then
+				return true
+			end
+		end
 		if Battle.isActive() then
 			status.canProgress = true
+			if Pokemon.moveIndex("thrash", "nidoking") then
+				nidokingStats()
+				return true
+			end
 			local settingsRow = Memory.value("menu", "settings_row")
 			if settingsRow == 8 then
 				local column = Memory.value("menu", "column")
 				if column == 15 then
 					Input.press("A")
-				elseif column == 5 then
+					return false
+				end
+				if column == 5 then
 					local replacementMove = yellow and "tackle" or "leer"
 					local replaceIndex = Pokemon.moveIndex(replacementMove, "nidoking")
 					if replaceIndex then
 						Menu.select(replaceIndex - 1, true)
-						status.learned = true
 					else
 						Input.cancel()
 					end
+					return false
 				end
-			else
-				Battle.automate()
 			end
 		elseif status.canProgress then
-			if status.learned then
-				print("learn'd")
-				nidokingStats()
-			end
 			return true
 		end
+		Battle.automate()
 	end,
 
 	swapThrash = function()
