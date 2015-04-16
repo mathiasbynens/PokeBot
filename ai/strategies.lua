@@ -1212,7 +1212,7 @@ Strategies.functions = {
 
 	announceOddish = function()
 		if Pokemon.info("nidoking", "level") < 30 then
-			Bridge.chat("needs a good damage range to 1-shot this Oddish, which can Paralyze")
+			Bridge.chat("needs a good damage range to 1-shot this Oddish, which can paralyze")
 		end
 		return true
 	end,
@@ -1280,13 +1280,13 @@ Strategies.functions = {
 			status.canProgress = true
 			local currentlyDead = Memory.double("battle", "our_hp") == 0
 			if currentlyDead then
-				if not status.died then
-					status.died = true
-					Bridge.chat(" Rock Slide missed BibleThump Trying to finish them off with Dig...")
-				end
 				local backupPokemon = Pokemon.getSacrifice("paras", "squirtle", "sandshrew", "charmander")
 				if not backupPokemon then
 					return Strategies.death()
+				end
+				if not status.died then
+					status.died = true
+					Bridge.chat(" Rock Slide missed BibleThump Trying to finish them off with Dig...")
 				end
 				if Menu.onPokemonSelect() then
 					Pokemon.select(backupPokemon)

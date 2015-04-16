@@ -746,7 +746,7 @@ strategyFunctions.rivalSandAttack = function(data)
 			if Battle.sacrifice(sacrifice) then
 				if not status.sacrificed then
 					status.sacrificed = true
-					Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore our accuracy (let's hope for no more trolling)")
+					Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore accuracy (no more trolling please)")
 				end
 				return false
 			end
@@ -965,11 +965,25 @@ strategyFunctions.fightMisty = function()
 				return false
 			end
 			status.swappedOut = false
-			if Battle.sacrifice("pidgey", "spearow", "squirtle", "paras") then
-				if not status.sacrificed then
-					status.sacrificed = true
-					Bridge.chat(" Thrash didn't finish the kill :( Swapping out to cure Confusion")
+			local sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras")
+			if not status.sacrificed then
+				status.sacrificed = true
+				local swapMessage = " Thrash didn't finish the kill :( "
+				if stats.nidoran.speedDV < 11 then
+					swapMessage = swapMessage.."We're slower than Misty, looks like it's over"
+					sacrifice = nil
+				elseif sacrifice then
+					if Control.yolo then
+						swapMessage = swapMessage.."Attempting to hit through Confusion to save time"
+					else
+						swapMessage = swapMessage.."Swapping out to cure Confusion"
+					end
+				else
+					swapMessage = swapMessage.."We'll have to hit through Confusion here"
 				end
+				Bridge.chat(swapMessage)
+			end
+			if sacrifice and not Control.yolo and Battle.sacrifice(sacrifice) then
 				return false
 			end
 		end
@@ -1359,8 +1373,8 @@ strategyFunctions.silphRival = function()
 	if Battle.isActive() then
 		if Strategies.initialize() then
 			if Control.yolo then
-				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!")
 				status.gyaradosDamage = Combat.healthFor("RivalGyarados")
+				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!", status.gyaradosDamage.." "..Combat.redHP())
 			end
 			status.canProgress = true
 		end
