@@ -1299,12 +1299,9 @@ end
 
 -- drivebyRareCandy
 
-strategyFunctions.tossInSafari = function()
-	if Inventory.count() <= (Inventory.contains("full_restore") and 18 or 17) then
-		return true
-	end
-	return Strategies.tossItem("antidote", "pokeball")
-end
+-- safariCarbos
+
+-- tossInSafari
 
 -- silphElevator
 

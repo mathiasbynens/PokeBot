@@ -307,6 +307,10 @@ function Strategies.tossItem(...)
 		return true
 	end
 	local tossItem = Inventory.contains(...)
+	if not tossItem then
+		p("Nothing available to toss", ...)
+		return true
+	end
 	if tossItem ~= status.toss then
 		status.toss = tossItem
 		p("Tossing "..tossItem.." to make space", Inventory.count())
@@ -1397,6 +1401,13 @@ Strategies.functions = {
 		end
 	end,
 
+	tossInSafari = function()
+		if Inventory.count() <= (Inventory.contains("full_restore") and 18 or 17) then
+			return true
+		end
+		return Strategies.tossItem("antidote", "tm34", "pokeball")
+	end,
+
 	centerSkipFullRestore = function()
 		if Strategies.initialize() then
 			if Control.yolo or Inventory.contains("full_restore") then
@@ -1513,7 +1524,7 @@ Strategies.functions = {
 				return true
 			end
 		end
-		return Strategies.tossItem("antidote", "pokeball")
+		return Strategies.tossItem("antidote", "tm34", "pokeball")
 	end,
 
 	grabMaxEther = function()
