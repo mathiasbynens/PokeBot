@@ -393,7 +393,7 @@ local function nidokingStats()
 	local spd = Pokemon.index(0, "speed")
 	local scl = Pokemon.index(0, "special")
 	local statDesc = att.." "..def.." "..spd.." "..scl
-	local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
+	local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("nidoking")
 	stats.nidoran = {
 		attack = att,
 		defense = def,
@@ -401,13 +401,13 @@ local function nidokingStats()
 		special = scl,
 		level4 = stats.nidoran.level4,
 		rating = stats.nidoran.rating,
-		attackDV = attDv,
+		attackDV = attDV,
 		defenseDV = defDV,
-		speedDV = spdDv,
+		speedDV = spdDV,
 		specialDV = sclDV,
 	}
 
-	p(attDv, defDV, spdDv, sclDV)
+	p(attDV, defDV, spdDV, sclDV)
 	print(statDesc)
 	Bridge.stats(statDesc)
 end
@@ -1575,10 +1575,10 @@ Strategies.functions = {
 				Strategies.tweetProgress(victoryMessage)
 				if Strategies.seed then
 					print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
-					print("Please save this seed number to share, if you would like proof of your run!")
-					print("A screenshot has been saved to the Gameboy\\Screenshots folder in BizHawk.")
 
 					if STREAMING_MODE and not Strategies.replay then
+						print("Please save this seed number to share, if you would like proof of your run!")
+						print("A screenshot has been saved to the Gameboy\\Screenshots folder in BizHawk.")
 						gui.cleartext()
 						gui.text(0, 0, "PokeBot v"..VERSION)
 						gui.text(0, 7, "Seed: "..Strategies.seed)

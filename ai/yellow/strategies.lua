@@ -868,17 +868,17 @@ function Strategies.initGame(midGame)
 	if not STREAMING_MODE then
 		-- Strategies.setYolo("")
 		if Pokemon.inParty("nidoking") then
-			local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
-			p(attDv, defDV, spdDv, sclDV)
+			local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("nidoking")
+			p(attDV, defDV, spdDV, sclDV)
 			stats.nidoran = {
 				attack = 55,
 				defense = 45,
 				speed = 50,
 				special = 45,
 				level4 = true,
-				attackDV = attDv,
+				attackDV = attDV,
 				defenseDV = defDV,
-				speedDV = spdDv,
+				speedDV = spdDV,
 				specialDV = sclDV,
 			}
 		else

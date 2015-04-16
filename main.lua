@@ -81,6 +81,9 @@ if RESET_FOR_TIME and hasAlreadyStartedPlaying then
 	p("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.", true)
 end
 if STREAMING_MODE then
+	if not CUSTOM_SEED and INTERNAL then
+		RESET_FOR_TIME = true
+	end
 	Bridge.init()
 else
 	Input.setDebug(true)

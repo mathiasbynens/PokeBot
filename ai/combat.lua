@@ -43,7 +43,7 @@ types[25] = "ice"
 types[26] = "dragon"
 
 local savedEncounters = {}
-local enablePP = false
+local conservePP = false
 
 local floor = math.floor
 
@@ -191,7 +191,7 @@ local function calcBestHit(attacker, defender, ours, rng)
 						replaces = maxTurns <= bestTurns
 					elseif ret.fast then
 						replaces = maxTurns < bestTurns
-					elseif enablePP then
+					elseif conservePP then
 						if maxTurns < 2 or maxTurns == bestMaxTurns then
 							if ret.name == "Earthquake" and (move.name == "Ice-Beam" or move.name == "Thunderbolt") then
 								replaces = true
@@ -287,6 +287,8 @@ local function activePokemon(preset)
 end
 Combat.activePokemon = activePokemon
 
+-- STATUS
+
 local function isSleeping()
 	return Memory.raw(0x116F) > 1
 end
@@ -311,14 +313,14 @@ function Combat.inRedBar()
 	return Combat.hp() <= Combat.redHP()
 end
 
--- Combat AI
+-- COMBAT
 
 function Combat.factorPP(enabled)
-	enablePP = enabled
+	conservePP = enabled
 end
 
 function Combat.reset()
-	enablePP = false
+	conservePP = false
 end
 
 function Combat.healthFor(opponent)

@@ -196,9 +196,6 @@ function Menu.hasBeenOpened()
 	if (Menu.isOpened() or Menu.onPokemonSelect()) and (mainMenu == 0 or mainMenu == 2 or mainMenu == 4 or mainMenu == 6) then
 		return true
 	end
-	if mainMenu > 0 and INTERNAL and not STREAMING_MODE then
-		p("DMM", mainMenu)
-	end
 end
 
 function Menu.close()

@@ -317,6 +317,8 @@ strategyFunctions.fightBulbasaur = function()
 	return Strategies.buffTo("tail_whip", 6)
 end
 
+-- 1: RIVAL
+
 -- dodgePalletBoy
 
 strategyFunctions.shopViridianPokeballs = function()
@@ -394,7 +396,7 @@ strategyFunctions.catchNidoran = function()
 	end
 end
 
--- 1: NIDORAN
+-- 2: NIDORAN
 
 strategyFunctions.dodgeViridianOldMan = function()
 	return Strategies.dodgeUp(0x0273, 18, 6, 17, 9)
@@ -611,7 +613,7 @@ strategyFunctions.fightBrock = function()
 	end
 end
 
--- 2: BROCK
+-- 3: BROCK
 
 strategyFunctions.shopPewterMart = function()
 	return Shop.transaction{
@@ -709,7 +711,7 @@ end
 
 -- catchFlierBackup
 
--- 3: ROUTE 3
+-- 4: ROUTE 3
 
 -- startMtMoon
 
@@ -721,7 +723,7 @@ end
 
 -- reportMtMoon
 
--- 4: MT. MOON
+-- 5: MT. MOON
 
 -- dodgeCerulean
 
@@ -839,6 +841,8 @@ strategyFunctions.redbarMankey = function()
 		Bridge.chat("is using Poison Sting to attempt to red-bar off Mankey")
 	end
 end
+
+-- 6: NUGGET BRIDGE
 
 strategyFunctions.thrashGeodude = function()
 	if Battle.isActive() then
@@ -977,7 +981,7 @@ strategyFunctions.fightMisty = function()
 	end
 end
 
--- 6: MISTY
+-- 7: MISTY
 
 strategyFunctions.potionBeforeRocket = function()
 	if stats.nidoran.attackDV >= 12 then
@@ -1178,7 +1182,7 @@ strategyFunctions.fightSurge = function()
 	end
 end
 
--- 7: SURGE
+-- 8: SURGE
 
 strategyFunctions.procureBicycle = function()
 	if Inventory.contains("bicycle") then
@@ -1270,7 +1274,7 @@ strategyFunctions.deptElevator = function()
 	end
 end
 
--- 8: FLY
+-- 9: FLY
 
 strategyFunctions.lavenderRival = function()
 	if Battle.isActive() then
@@ -1308,7 +1312,7 @@ strategyFunctions.thunderboltFirst = function()
 	Battle.automate(forced)
 end
 
--- 8: POKÉFLUTE
+-- 10: POKÉFLUTE
 
 strategyFunctions.swapXSpeeds = function()
 	local destination = Inventory.contains("ether") and 4 or 5
@@ -1354,9 +1358,9 @@ end
 strategyFunctions.silphRival = function()
 	if Battle.isActive() then
 		if Strategies.initialize() then
-			status.gyaradosDamage = Combat.healthFor("RivalGyarados")
 			if Control.yolo then
 				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!")
+				status.gyaradosDamage = Combat.healthFor("RivalGyarados")
 			end
 			status.canProgress = true
 		end
@@ -1366,7 +1370,7 @@ strategyFunctions.silphRival = function()
 			local opponentName = Battle.opponent()
 			local curr_hp, red_hp = Combat.hp(), Combat.redHP()
 			if opponentName == "gyarados" then
-				if Control.yolo then
+				if status.gyaradosDamage then
 					if willRedBar(status.gyaradosDamage) then
 						if not Strategies.prepare("x_special") then
 							return false
@@ -1393,7 +1397,7 @@ strategyFunctions.silphRival = function()
 					end
 				end
 			elseif opponentName == "pidgeot" then
-				if Control.yolo then
+				if status.gyaradosDamage then
 					if not willRedBar(status.gyaradosDamage) then
 						if curr_hp > status.gyaradosDamage * 0.95 then
 							if not Strategies.prepare("x_special") then
@@ -1474,7 +1478,7 @@ strategyFunctions.fightSilphGiovanni = function()
 	end
 end
 
---	9: SILPH CO.
+--	11: SILPH CO.
 
 strategyFunctions.potionBeforeHypno = function()
 	local curr_hp, red_hp = Combat.hp(), Combat.redHP()
@@ -1568,7 +1572,7 @@ strategyFunctions.fightKoga = function()
 	end
 end
 
--- 10: KOGA
+-- 12: KOGA
 
 -- dodgeGirl
 
@@ -1599,13 +1603,13 @@ strategyFunctions.fightErika = function()
 	end
 end
 
--- 11: ERIKA
+-- 13: ERIKA
 
 -- waitToReceive
 
--- 13: BLAINE
+-- 14: BLAINE
 
--- 14: SABRINA
+-- 15: SABRINA
 
 strategyFunctions.earthquakeElixer = function(data)
 	if Battle.pp("earthquake") >= data.min then
@@ -1698,7 +1702,7 @@ strategyFunctions.fightGiovanni = function()
 	end
 end
 
--- 15: GIOVANNI
+-- 16: GIOVANNI
 
 strategyFunctions.viridianRival = function()
 	if Battle.isActive() then
@@ -1840,7 +1844,7 @@ strategyFunctions.lorelei = function()
 	end
 end
 
--- 16: LORELEI
+-- 17: LORELEI
 
 strategyFunctions.bruno = function()
 	if Battle.isActive() then
@@ -2026,17 +2030,17 @@ function Strategies.initGame(midGame)
 			special = 11,
 		}
 		if Pokemon.inParty("nidoking") then
-			local attDv, defDV, spdDv, sclDV = Pokemon.getDVs("nidoking")
-			p(attDv, defDV, spdDv, sclDV)
+			local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("nidoking")
+			p(attDV, defDV, spdDV, sclDV)
 			stats.nidoran = {
 				attack = 55,
 				defense = 45,
 				speed = 50,
 				special = 45,
 				rating = 1,
-				attackDV = attDv,
+				attackDV = attDV,
 				defenseDV = defDV,
-				speedDV = spdDv,
+				speedDV = spdDV,
 				specialDV = sclDV,
 			}
 			riskGiovanni = canRiskGiovanni()
