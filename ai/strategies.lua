@@ -443,7 +443,7 @@ function Strategies.completeCans()
 			prefix = "Good"
 		elseif status.tries <= (yellow and 10 or 22) then
 			prefix = "Ugh"
-			suffix = ""
+			suffix = "."
 		else -- TODO trashcans WR
 			prefix = "Reset me now"
 			suffix = " BibleThump"
@@ -1222,7 +1222,7 @@ Strategies.functions = {
 						end
 					end
 					if forced and Strategies.initialize() then
-						Bridge.chat("is using Thunderbolt to attempt to redbar off Cubone")
+						Bridge.chat("is using Thunderbolt to attempt to redbar off Cubone.")
 					end
 				end
 				Control.ignoreMiss = forced ~= nil
@@ -1237,7 +1237,7 @@ Strategies.functions = {
 
 	announceOddish = function()
 		if Pokemon.info("nidoking", "level") < 30 then
-			Bridge.chat("needs a good damage range to 1-shot this Oddish, which can paralyze")
+			Bridge.chat("needs a good damage range to 1-shot this Oddish, which can paralyze.")
 		end
 		return true
 	end,
@@ -1298,7 +1298,7 @@ Strategies.functions = {
 	digFight = function()
 		if Strategies.initialize() then
 			if Combat.inRedBar() then
-				Bridge.chat("is using Rock Slide to one-hit these Ghastlies in red-bar (each is 1 in 10 to miss)")
+				Bridge.chat("is using Rock Slide to one-hit these Ghastlies in red-bar (each is 1 in 10 to miss).")
 			end
 		end
 		if Battle.isActive() then
@@ -1438,7 +1438,7 @@ Strategies.functions = {
 			if Control.yolo or Inventory.contains("full_restore") then
 				return true
 			end
-			Bridge.chat("needs to grab the backup Full Restore here")
+			Bridge.chat("needs to grab the backup Full Restore here.")
 		end
 		local px, py = Player.position()
 		if px < 21 then
@@ -1498,7 +1498,7 @@ Strategies.functions = {
 		-- TODO don't skip center if not in redbar
 		Strategies.maxEtherSkip = not Strategies.requiresE4Center()
 		if not Strategies.maxEtherSkip then
-			Bridge.chat("is grabbing the Max Ether to skip the Elite 4 Center")
+			Bridge.chat("is grabbing the Max Ether to skip the Elite 4 Center.")
 		end
 		return true
 	end,

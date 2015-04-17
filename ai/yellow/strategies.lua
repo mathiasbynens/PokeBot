@@ -768,7 +768,7 @@ strategyFunctions.fightGiovanni = function()
 				prepareAccuracy = true
 				if not status.prepared and not Strategies.isPrepared("x_accuracy") then
 					status.prepared = true
-					Bridge.chat("needs to finish setting up against Persian")
+					Bridge.chat("needs to finish setting up against Persian...")
 				end
 			elseif opponent == "dugtrio" then
 				prepareAccuracy = Memory.value("battle", "dig") > 0

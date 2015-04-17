@@ -376,7 +376,7 @@ strategyFunctions.catchNidoran = function()
 				Bridge.caught("nidoran")
 				status.canProgress = true
 				if not gotExperience then
-					Bridge.chat("is waiting in the grass for a suitable encounter for experience", Pokemon.getExp())
+					Bridge.chat("is waiting in the grass for a suitable encounter for experience.", Pokemon.getExp())
 				end
 			end
 			if gotExperience then
@@ -753,7 +753,7 @@ strategyFunctions.rivalSandAttack = function(data)
 			if Battle.sacrifice(sacrifice) then
 				if not status.sacrificed then
 					status.sacrificed = true
-					Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore accuracy (no more trolling please)")
+					Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore accuracy.")
 				end
 				return false
 			end
@@ -845,7 +845,7 @@ strategyFunctions.redbarMankey = function()
 		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 4 then -- RISK
 			return true
 		end
-		Bridge.chat("is using Poison Sting to attempt to red-bar off Mankey")
+		Bridge.chat("is using Poison Sting to attempt to red-bar off Mankey.")
 	end
 end
 
@@ -862,13 +862,13 @@ strategyFunctions.thrashGeodude = function()
 				if Battle.sacrifice("squirtle") then
 					if not status.sacrificed then
 						status.sacrificed = true
-						Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety")
+						Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety.")
 					end
 					return false
 				end
 			elseif not status.confused and Combat.isConfused() then
 				status.confused = true
-				Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle")
+				Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle...")
 			end
 		end
 		Battle.automate()
@@ -1666,7 +1666,7 @@ strategyFunctions.fightGiovanniMachoke = function()
 			status.killedMachoke = true
 		elseif not status.killedMachoke then
 			if status.skipSpecial and Combat.hp() > 13 and Memory.value("battle", "opponent_last_move") == 116 then
-				Bridge.chat("got Focus Energy - using an X Special to guarantee the last Machoke")
+				Bridge.chat("got Focus Energy - which prevents Machoke criticalling - using an X Special to guarantee the last damage range.")
 				status.skipSpecial = false
 			end
 			if not status.skipSpecial and not Strategies.prepare("x_special") then
@@ -1962,7 +1962,7 @@ strategyFunctions.prepareForBlue = function()
 			else
 				message = "is using limited potions"
 			end
-			message = message.." to attempt to red-bar off Pidgeot"
+			message = message.." to attempt to red-bar off Pidgeot..."
 			Bridge.chat(message)
 		end
 	end
