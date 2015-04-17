@@ -206,9 +206,11 @@ local function potionForRedBar(damage)
 		{"potion", 20},
 		{"super_potion", 50},
 	}
-	for i,potion in ipairs(potions) do
-		if Inventory.contains(potion[1]) then
-			local healTo = math.min(curr_hp + potion[2], max_hp)
+	for i,potionTable in ipairs(potions) do
+		local potion = potionTable[1]
+		if Inventory.contains(potion) then
+			local healsFor = potionTable[2]
+			local healTo = math.min(curr_hp + healsFor, max_hp)
 			if healTo > damage and healTo - damage < red_hp then
 				return potion
 			end
@@ -1423,6 +1425,9 @@ strategyFunctions.silphRival = function()
 								Inventory.use("super_potion", nil, true)
 								return false
 							end
+							if not Strategies.prepare("x_special") then
+								return false
+							end
 							if not potionForRedBar(status.gyaradosDamage) then
 								forced = "ice_beam"
 							end
@@ -1477,10 +1482,12 @@ strategyFunctions.fightSilphGiovanni = function()
 			forced = "horn_drill"
 		elseif opponentName == "nidoqueen" then
 			if Strategies.hasHealthFor("KogaWeezing") then
-				if not Strategies.opponentDamaged() then
+				if Battle.pp("earthquake") > 4 then
 					forced = "earthquake"
+				else
+					forced = "ice_beam"
 				end
-			else
+			elseif not Strategies.opponentDamaged() then
 				forced = "horn_drill"
 			end
 		end
@@ -1502,6 +1509,10 @@ strategyFunctions.potionBeforeHypno = function()
 
 	local healTarget
 	if healthUnderRedBar >= 0 then
+		if not status.warned then
+			status.warned = true
+			Bridge.chat("Attempting to carry red-bar through Koga. Hypno has a 1 in 4 chance to end the run with Confusion here...")
+		end
 		healTarget = "HypnoHeadbutt"
 		if useRareCandy then
 			useRareCandy = healthUnderRedBar > 2
@@ -1525,7 +1536,7 @@ end
 strategyFunctions.fightHypno = function()
 	if Battle.isActive() then
 		local forced
-		if Pokemon.isOpponent("hypno") then
+		if Pokemon.isOpponent("hypno") and not Strategies.damaged() then
 			if Pokemon.info("nidoking", "hp") > Combat.healthFor("KogaWeezing") * 0.9 then
 				if Combat.isDisabled(85) then
 					forced = "ice_beam"
