@@ -8,6 +8,8 @@ local Input = require "util.input"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
 
+local Data = require "data.data"
+
 local START_WAIT = 99
 
 local yellow = YELLOW
@@ -91,6 +93,7 @@ function Settings.pollForResponse(forcedName)
 		response = forcedName
 	elseif response then
 		response = tonumber(response)
+		Data.run.voted_for_name = true
 	end
 	if response then
 		Bridge.polling = false

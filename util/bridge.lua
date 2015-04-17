@@ -1,5 +1,7 @@
 local Bridge = {}
 
+local json = require("external.json")
+
 local socket
 if INTERNAL then
 	socket = require("socket")
@@ -130,6 +132,13 @@ end
 
 function Bridge.encounter()
 	send("encounter")
+end
+
+function Bridge.report(report)
+	if not STREAMING_MODE then
+		print(json.encode(report))
+	end
+	send("report", json.encode(report))
 end
 
 function Bridge.reset()

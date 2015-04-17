@@ -15,6 +15,7 @@ local Menu = require "util.menu"
 local Player = require "util.player"
 local Utils = require "util.utils"
 
+local Data = require "data.data"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
@@ -306,7 +307,7 @@ strategyFunctions.fightBulbasaur = function()
 				special = Pokemon.index(0, "special"),
 			}
 			if stats.squirtle.attack < 11 and stats.squirtle.special < 12 then
-				return Strategies.reset("Bad Squirtle - "..stats.squirtle.attack.." attack, "..stats.squirtle.special.." special")
+				return Strategies.reset("stats", "Bad Squirtle - "..stats.squirtle.attack.." attack, "..stats.squirtle.special.." special")
 			end
 			status.tries = 9001
 		else
@@ -339,7 +340,7 @@ strategyFunctions.catchNidoran = function()
 	local pokeballs = Inventory.count("pokeball")
 	local caught = Memory.value("player", "party_size") - 1
 	if pokeballs < 5 - caught * 2 then
-		return Strategies.reset("Ran too low on PokeBalls", pokeballs)
+		return Strategies.reset("pokeballs", "Ran too low on PokeBalls", pokeballs)
 	end
 	if Battle.isActive() then
 		local isNidoran = Pokemon.isOpponent("nidoran")
@@ -363,7 +364,11 @@ strategyFunctions.catchNidoran = function()
 		end
 	else
 		local enableDSum = true
+
 		Pokemon.updateParty()
+		if not Data.run.early_flier then
+			Data.run.early_flier = Pokemon.inParty("spearow") ~= nil
+		end
 		local hasNidoran = Pokemon.inParty("nidoran")
 		if hasNidoran then
 			local gotExperience = Pokemon.getExp() > 205
@@ -465,7 +470,7 @@ strategyFunctions.fightWeedle = function()
 	if Battle.isTrainer() then
 		status.canProgress = true
 		if Memory.value("battle", "our_status") > 0 and not Inventory.contains("antidote") then
-			return Strategies.reset("Poisoned, but we skipped the antidote")
+			return Strategies.reset("antidote", "Poisoned, but we skipped the antidote")
 		end
 		return Strategies.buffTo("tail_whip", 5)
 	elseif status.canProgress then
@@ -476,7 +481,7 @@ end
 strategyFunctions.equipForBrock = function(data)
 	if Strategies.initialize() then
 		if Pokemon.info("squirtle", "level") < 8 then
-			return Strategies.reset("Did not reach level 8 before Brock", Pokemon.getExp(), true)
+			return Strategies.reset("level8", "Did not reach level 8 before Brock", Pokemon.getExp(), true)
 		end
 		if data.anti then
 			local poisoned = Pokemon.info("squirtle", "status") > 0
@@ -484,7 +489,7 @@ strategyFunctions.equipForBrock = function(data)
 				return true
 			end
 			if not Inventory.contains("antidote") then
-				return Strategies.reset("Poisoned, but we risked skipping the antidote")
+				return Strategies.reset("antidote", "Poisoned, but we risked skipping the antidote")
 			end
 			local curr_hp = Pokemon.info("squirtle", "hp")
 			if Inventory.contains("potion") and curr_hp > 8 and curr_hp < 18 then
@@ -562,7 +567,7 @@ strategyFunctions.fightBrock = function()
 
 						local nidoranStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 						if resetsForStats then
-							return Strategies.reset("Bad Nidoran - "..nidoranStatus)
+							return Strategies.reset("stats", "Bad Nidoran - "..nidoranStatus)
 						end
 						status.tries = 9001
 

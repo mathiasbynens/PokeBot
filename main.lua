@@ -30,6 +30,7 @@ local Paint = require "util.paint"
 local Utils = require "util.utils"
 local Settings = require "util.settings"
 
+local Data = require "data.data"
 local Pokemon = require "storage.pokemon"
 
 local hasAlreadyStartedPlaying = false
@@ -48,17 +49,16 @@ local function resetAll()
 	Bridge.reset()
 	oldSeconds = 0
 	running = false
-	-- client.speedmode = 200
 
 	if CUSTOM_SEED then
-		Strategies.seed = CUSTOM_SEED
+		Data.run.seed = CUSTOM_SEED
 		Strategies.replay = true
-		p("RUNNING WITH A FIXED SEED ("..NIDORAN_NAME.." "..Strategies.seed.."), every run will play out identically!", true)
+		p("RUNNING WITH A FIXED SEED ("..NIDORAN_NAME.." "..Data.run.seed.."), every run will play out identically!", true)
 	else
-		Strategies.seed = os.time()
-		print("PokeBot v"..VERSION..": starting a new run with seed "..Strategies.seed)
+		Data.run.seed = os.time()
+		print("PokeBot v"..VERSION..": starting a new run with seed "..Data.run.seed)
 	end
-	math.randomseed(Strategies.seed)
+	math.randomseed(Data.run.seed)
 end
 
 -- EXECUTE

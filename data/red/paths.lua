@@ -12,7 +12,7 @@ local Paths = {
 -- 1: RIVAL 1
 
 	-- Let's try this escape again
-	{0, {12,12}, {c="a",a="Pallet Town"}, {c="viridianExp"}, {c="encounters",limit=4}, {9,12}, {9,2}, {10,2}, {10,-1}},
+	{0, {12,12}, {c="a",a="Pallet Town"}, {c="viridianExp"}, {c="encounters",limit=4}, {c="trackEncounters",area="route1"}, {9,12}, {9,2}, {10,2}, {10,-1}},
 	-- First encounters
 	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {11,2}, {11,-1}},
 	-- To the Mart
@@ -36,7 +36,7 @@ local Paths = {
 	-- Viridian Mart redux
 	{42, {3,7}, {3,5}, {2,5}, {s="shopViridianPokeballs"}, {3,5}, {3,8}},
 	-- Sidequest
-	{1, {29,20}, {15,20}, {15,17}, {-1, 17}},
+	{1, {29,20}, {c="trackEncounters",area="nidoran"}, {15,20}, {15,17}, {-1, 17}},
 	-- Nidoran
 	{33, {39, 9}, {c="a",a="Nidoran grass"}, {c="nidoranBackupExp"}, {c="encounters",limit=7,extra="spearow"}, {35, 9}, {35,12}, {33,12}, {c="catchNidoran"}, {s="catchNidoran"}, {33,12}, {s="split"}, {37,12}, {37,9}, {40,9}},
 
@@ -47,7 +47,7 @@ local Paths = {
 	-- To the Forest
 	{13, {7,71}, {7,57}, {4,57}, {4,52}, {10,52}, {10,44}, {3,44}, {3,43}},
 	-- Forest entrance
-	{50, {4,7}, {c="a",a="Viridian Forest"}, {4,1}, {5,1}, {5,0}},
+	{50, {4,7}, {c="a",a="Viridian Forest"}, {c="trackEncounters",area="forest"}, {4,1}, {5,1}, {5,0}},
 	-- Viridian Forest
 	{51, {17,47}, {17,43}, {26,43}, {26,34}, {25,34}, {25,32}, {27,32}, {27,20}, {25,20}, {25,12}, {s="grabAntidote"}, {25,9}, {17,9}, {17,16}, {13,16}, {13,3}, {7,3}, {7,22}, {1,22}, {1,19}, {s="grabForestPotion"}, {1,18}, {s="fightWeedle"}, {c="encounters",limit=22,extra="paras"}, {1,16}, {c="potion",b=false}, {s="equipForBrock",anti=true}, {1,5}, {s="equipForBrock"}, {1,-1}},
 	-- Forest exit
@@ -68,7 +68,7 @@ local Paths = {
 	-- Leaving Pewter City
 	{2, {23,18}, {40,18}},
 	-- Route 3
-	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {s="potion",hp=19}, {13,4}, {s="talk",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {s="potionBeforeCocoons"}, {18,5}, {s="talk",dir="Right"}, {s="swapMove",move="horn_attack",to=0}, {18,6}, {22,6}, {22,5}, {s="potion",hp=4}, {24,5}, {s="talk",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
+	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {c="trackEncounters",area="route3"}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {c="a",a="Shorts Kid"}, {s="potion",hp=19}, {13,4}, {s="talk",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {c="a",a="Route 3"}, {s="potionBeforeCocoons"}, {18,5}, {s="talk",dir="Right"}, {s="swapMove",move="horn_attack",to=0}, {18,6}, {22,6}, {22,5}, {s="potion",hp=4}, {24,5}, {s="talk",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
 	-- To the Center
 	{15, {9,16}, {c="pp",on=false}, {12,16}, {12,6}, {11,6}, {11,5}},
 	-- PP up
@@ -79,7 +79,7 @@ local Paths = {
 -- 4: ROUTE 3
 
 	-- Mt. Moon F1
-	{59, {14,35}, {c="a",a="Mt. Moon"}, {c="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="talk",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="take",dir="Right"}, {35,31}, {35,23}, {s="take",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="take",dir="Up"}, {5,3}, {5,5}},
+	{59, {14,35}, {c="a",a="Mt. Moon"}, {c="trackEncounters",area="moon"}, {c="startMtMoon"}, {c="catchParas"}, {14,22}, {21,22}, {21,15}, {24,15}, {24,27}, {25,27}, {25,31}, {s="talk",dir="Left"}, {25,32}, {33,32}, {33,31}, {34,31}, {s="take",dir="Right"}, {35,31}, {35,23}, {s="take",dir="Right"}, {35,7}, {30,7}, {s="evolveNidorino"}, {c="moon1Exp"}, {28,7}, {16,7}, {16,17}, {2,17}, {2,3}, {s="take",dir="Up"}, {5,3}, {5,5}},
 	-- Mt. Moon B2
 	{60, {5,5}, {5,17}, {21,17}},
 	-- Mt. Moon B3
@@ -90,7 +90,7 @@ local Paths = {
 -- 5: MT. MOON
 
 	-- To Cerulean
-	{15, {24,6}, {s="reportMtMoon"}, {s="split"}, {24,8}, {35,8}, {35,10}, {61,10}, {61,8}, {79,8}, {79,10}, {90,10}},
+	{15, {24,6}, {s="reportMtMoon"}, {c="trackEncounters",area=nil}, {s="split"}, {24,8}, {35,8}, {35,10}, {61,10}, {61,8}, {79,8}, {79,10}, {90,10}},
 	-- Enter Cerulean
 	{3, {0,18}, {c="a",a="Cerulean"}, {14,18}, {s="dodgeCerulean"}, {19,18}, {19,17}},
 	-- Cerulean Center
@@ -106,7 +106,7 @@ local Paths = {
 	-- Rival 2
 	{3, {9,12}, {c="a",a="Cerulean Rival"}, {21,12}, {21,6}, {s="rivalSandAttack"}, {21,-1}},
 	-- Nugget bridge
-	{35, {11,35}, {c="a",a="Nugget Bridge"}, {11,32}, {s="talk",dir="Up"}, {s="hornAttackCaterpie"}, {10,32}, {10,29}, {s="potion",hp=12,yolo=10}, {s="talk",dir="Up"}, {11,29}, {11,27}, {s="rareCandyEarly",close=true}, {s="potion",hp=10,yolo=8,close=true}, {11,26}, {s="talk",dir="Up"}, {s="swapThrash"}, {10,26}, {10,24}, {s="teachThrash"}, {s="potion",hp=4}, {10,23}, {s="talk",dir="Up"}, {s="swapThrash"}, {11,23}, {11,21}, {s="teachThrash"}, {s="potionForMankey"}, {11,20}, {s="talk",dir="Up"}, {s="redbarMankey"}, {s="swapThrash"}, {10,20}, {10,19}, {s="teachThrash"}, {10,15}, {s="learnThrash"}, {s="swapThrash"}, {s="waitToFight"}, {s="teachThrash"}, {s="split"}, {10,8}, {20,8}},
+	{35, {11,35}, {c="a",a="Nugget Bridge"}, {11,32}, {s="talk",dir="Up"}, {s="hornAttackCaterpie"}, {10,32}, {10,29}, {s="potion",hp=12,yolo=10}, {s="talk",dir="Up"}, {11,29}, {11,27}, {s="rareCandyEarly",close=true}, {s="potion",hp=10,yolo=8,close=true}, {11,26}, {s="talk",dir="Up"}, {s="swapThrash"}, {10,26}, {10,24}, {s="teachThrash"}, {s="potion",hp=4}, {10,23}, {s="talk",dir="Up"}, {s="swapThrash"}, {11,23}, {11,21}, {s="teachThrash"}, {s="potionForMankey"}, {11,20}, {s="talk",dir="Up"}, {s="swapThrash"}, {s="redbarMankey"}, {10,20}, {10,19}, {s="teachThrash"}, {10,15}, {s="learnThrash"}, {s="swapThrash"}, {s="waitToFight"}, {s="teachThrash"}, {s="split"}, {10,8}, {20,8}},
 
 -- 6: NUGGET BRIDGE
 
@@ -445,7 +445,7 @@ local Paths = {
 	-- Blue
 	{120, {4,3}, {c="a",a="Blue"}, {s="blue"}, {3,0}},
 	-- Champion
-	{118, {4,2}, {s="champion"}}
+	{118, {4,2}, {c="a",a="Champion"}, {s="champion"}}
 
 }
 

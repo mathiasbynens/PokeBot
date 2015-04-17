@@ -15,6 +15,7 @@ local Player = require "util.player"
 local Shop = require "action.shop"
 local Utils = require "util.utils"
 
+local Data = require "data.data"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
@@ -37,15 +38,19 @@ function Strategies.getTimeRequirement(name)
 	return Strategies.timeRequirements[name]()
 end
 
-function Strategies.hardReset(message, extra, wait)
+function Strategies.hardReset(reason, message, extra, wait)
 	resetting = true
-	if Strategies.seed then
+	if Data.run.seed then
 		if extra then
-			extra = extra.." | "..Strategies.seed
+			extra = extra.." | "..Data.run.seed
 		else
-			extra = Strategies.seed
+			extra = Data.run.seed
 		end
 	end
+
+	local map, px, py = Memory.value("game", "map"), Player.position()
+	Data.reset(reason, Control.areaName, map, px, py)
+
 	Bridge.chat(message, extra)
 	if wait and INTERNAL and not STREAMING_MODE then
 		strategyFunctions.wait()
@@ -55,7 +60,7 @@ function Strategies.hardReset(message, extra, wait)
 	return true
 end
 
-function Strategies.reset(reason, extra, wait)
+function Strategies.reset(reason, explanation, extra, wait)
 	local time = Utils.elapsedTime()
 	local resetMessage = "reset"
 	if time then
@@ -68,25 +73,29 @@ function Strategies.reset(reason, extra, wait)
 	else
 		separator = ":"
 	end
-	resetMessage = resetMessage..separator.." "..reason
+	resetMessage = resetMessage..separator.." "..explanation
 	if status.tweeted then
 		Strategies.tweetProgress(resetMessage)
 	end
-	return Strategies.hardReset(resetMessage, extra, wait)
+	return Strategies.hardReset(reason, resetMessage, extra, wait)
 end
 
 function Strategies.death(extra)
-	local reason
+	local reason, explanation
 	if Control.missed then
-		reason = "Missed"
+		explanation = "Missed"
+		reason = "miss"
 	elseif Control.criticaled then
-		reason = "Critical'd"
+		explanation = "Critical'd"
+		reason = "critical"
 	elseif Control.yolo then
-		reason = "Yolo strats"
+		explanation = "Yolo strats"
+		reason = "yolo"
 	else
-		reason = "Died"
+		explanation = "Died"
+		reason = "death"
 	end
-	return Strategies.reset(reason, extra)
+	return Strategies.reset(reason, explanation, extra)
 end
 
 function Strategies.overMinute(min)
@@ -96,14 +105,14 @@ function Strategies.overMinute(min)
 	return Utils.igt() > (min * 60)
 end
 
-function Strategies.resetTime(timeLimit, reason, once)
+function Strategies.resetTime(timeLimit, explanation, once)
 	if Strategies.overMinute(timeLimit) then
-		reason = "Took too long to "..reason
+		explanation = "Took too long to "..explanation
 		if RESET_FOR_TIME then
-			return Strategies.reset(reason)
+			return Strategies.reset("time", explanation)
 		end
 		if once then
-			print(reason.." "..Utils.elapsedTime())
+			print(explanation.." "..Utils.elapsedTime())
 		end
 	end
 end
@@ -500,6 +509,8 @@ Strategies.functions = {
 	end,
 
 	split = function(data)
+		Data.increment("reset_split")
+
 		Bridge.split(data and data.finished)
 		if Strategies.replay then
 			splitNumber = splitNumber + 1
@@ -634,7 +645,7 @@ Strategies.functions = {
 			if not status.triedTeaching then
 				status.triedTeaching = true
 				if not Inventory.contains(itemName) then
-					return Strategies.reset("Unable to teach move "..itemName.." to "..data.poke, nil, true)
+					return Strategies.reset("error", "Unable to teach move "..itemName.." to "..data.poke, nil, true)
 				end
 			end
 			local replacement
@@ -1050,12 +1061,13 @@ Strategies.functions = {
 		if Battle.pp("horn_attack") == 0 then
 			print("ERR: Ran out of Horn Attacks")
 		end
-		if Control.moonEncounters then
+		local moonEncounters = Data.run.encounters_moon
+		if moonEncounters then
 			local catchPokemon = yellow and "sandshrew" or "paras"
 			local capsName = Utils.capitalize(catchPokemon)
 			local parasStatus
 			local conjunction = "but"
-			local goodEncounters = Control.moonEncounters < 10
+			local goodEncounters = moonEncounters < 10
 			local catchDescription
 			if Pokemon.inParty(catchPokemon) then
 				catchDescription = catchPokemon
@@ -1071,8 +1083,7 @@ Strategies.functions = {
 				parasStatus = "we didn't catch a "..capsName.." :("
 			end
 			Bridge.caught(catchDescription)
-			Bridge.chat(Control.moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
-			Control.moonEncounters = nil
+			Bridge.chat(moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
 		end
 
 		Strategies.resetTime("mt_moon", "complete Mt. Moon", true)
@@ -1555,7 +1566,7 @@ Strategies.functions = {
 		end
 		local px, py = Player.position()
 		if px > 7 then
-			return Strategies.reset("Accidentally walked on the island :(", px, true)
+			return Strategies.reset("error", "Accidentally walked on the island :(", px, true)
 		end
 		if Memory.value("player", "moving") == 0 then
 			Player.interact("Right")
@@ -1587,15 +1598,16 @@ Strategies.functions = {
 					victoryMessage = victoryMessage..", a new PB!"
 				end
 				Strategies.tweetProgress(victoryMessage)
-				if Strategies.seed then
-					print("v"..VERSION..": "..Utils.frames().." frames, with seed "..Strategies.seed)
+				if Data.run.seed then
+					Data.run.frames = Utils.frames()
+					print("v"..VERSION..": "..Data.run.frames.." frames, with seed "..Data.run.seed)
 
 					if STREAMING_MODE and not Strategies.replay then
 						print("Please save this seed number to share, if you would like proof of your run!")
 						print("A screenshot has been saved to the Gameboy\\Screenshots folder in BizHawk.")
 						gui.cleartext()
 						gui.text(0, 0, "PokeBot v"..VERSION)
-						gui.text(0, 7, "Seed: "..Strategies.seed)
+						gui.text(0, 7, "Seed: "..Data.run.seed)
 						gui.text(0, 14, "Name: "..Textbox.getNamePlaintext())
 						gui.text(0, 21, "Reset for time: "..tostring(RESET_FOR_TIME))
 						gui.text(0, 28, "Time: "..Utils.elapsedTime())
@@ -1609,7 +1621,7 @@ Strategies.functions = {
 			elseif status.frames == 500 then
 				Bridge.chat("beat the game in "..status.finishTime.."!")
 			elseif status.frames > 2000 then
-				return Strategies.hardReset("Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
+				return Strategies.hardReset("won", "Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
 			end
 			status.frames = status.frames + 1
 		elseif Memory.value("menu", "shop_current") == 252 then

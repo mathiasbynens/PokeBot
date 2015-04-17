@@ -79,6 +79,20 @@ function Utils.nextCircularIndex(index, direction, totalCount)
 	return nextIndex
 end
 
+function Utils.increment(amount)
+	if not amount then
+		return 1
+	end
+	return amount + 1
+end
+
+function Utils.multiplyString(string, times)
+	for i=1, times-1 do
+		string = string.." "..string
+	end
+	return string
+end
+
 -- GAME
 
 function Utils.canPotionWith(potion, forDamage, curr_hp, max_hp)

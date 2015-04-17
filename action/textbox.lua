@@ -4,6 +4,8 @@ local Input = require "util.input"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
 
+local Data = require "data.data"
+
 local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]ab-?!mf/.,"
 -- local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ *():;[]ポモ-?!♂♀/.,"
 
@@ -82,6 +84,7 @@ function Textbox.setName(name)
 		nidoIdx = name + 1
 		nidoName = getLetterAt(name)
 	end
+	Data.run.voted_name = nidoName
 end
 
 function Textbox.isActive()

@@ -9,6 +9,7 @@ local Memory = require "util.memory"
 local Paint = require "util.paint"
 local Utils = require "util.utils"
 
+local Data = require "data.data"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
@@ -19,11 +20,11 @@ local canDie, shouldFight, minExp
 local shouldCatch, attackIdx
 local extraEncounter, maxEncounters
 local battleYolo
+local encountersSection
 
 local yellow = YELLOW
 
 Control.areaName = "Unknown"
-Control.moonEncounters = nil
 Control.getMoonExp = true
 Control.yolo = false
 
@@ -82,8 +83,17 @@ local controlFunctions = {
 		shouldFight = {{name="rattata"}, {name="pidgey"}, {name="nidoran"}, {name="nidoranf",levels={2}}}
 	end,
 
+	trackEncounters = function(data)
+		local area = data.area
+		if area then
+			encountersSection = "encounters_"..area
+			Data.run[encountersSection] = 0
+		else
+			encountersSection = nil
+		end
+	end,
+
 	startMtMoon = function()
-		Control.moonEncounters = 0
 		Control.canDie(false)
 		Control.getMoonExp = not yellow
 	end,
@@ -203,7 +213,7 @@ function Control.canCatch(partySize)
 		if yellow and Pokemon.inParty("nidoran", "nidorino", "nidoking") and Pokemon.inParty("pidgey", "spearow") then
 			return false
 		end
-		Strategies.reset("Not enough PokeBalls", pokeballs)
+		Strategies.reset("pokeballs", "Not enough PokeBalls", pokeballs)
 		return false
 	end
 	return true
@@ -213,7 +223,7 @@ function Control.shouldCatch(partySize)
 	if maxEncounters and encounters > maxEncounters then
 		local extraCount = extraEncounter and Pokemon.inParty(extraEncounter)
 		if not extraCount or encounters > maxEncounters + 1 then
-			Strategies.reset("Too many encounters", encounters)
+			Strategies.reset("encounters", "Too many encounters", encounters)
 			return false
 		end
 	end
@@ -301,11 +311,13 @@ function Control.encounter(battleState)
 						Bridge.chat("gen 1 missed :( (1 in 256 chance)")
 					end
 					Control.missed = true
+					Data.increment("misses")
 				end
 			end
 		end
 		if isCritical ~= nil and isCritical ~= Control.criticaled then
 			Control.criticaled = isCritical
+			Data.increment("criticals")
 		end
 		if wildBattle then
 			local opponentAlive = Battle.opponentAlive()
@@ -316,11 +328,16 @@ function Control.encounter(battleState)
 					encounters = encounters + 1
 					Paint.wildEncounters(encounters)
 					Bridge.encounter()
-					if Control.moonEncounters then
-						if INTERNAL and STREAMING_MODE and Pokemon.isOpponent("zubat") then
-							Bridge.chat("NightBat")
+					if encountersSection then
+						Data.increment(encountersSection)
+
+						if Pokemon.isOpponent("zubat") then
+							local zubatCount = Data.increment("encounters_zubats")
+							Data.run.encounters_zubats = zubatCount
+							if INTERNAL and STREAMING_MODE then
+								Bridge.chat(Utils.multiplyString("NightBat", zubatCount))
+							end
 						end
-						Control.moonEncounters = Control.moonEncounters + 1
 					end
 				end
 			else

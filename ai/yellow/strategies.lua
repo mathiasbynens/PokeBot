@@ -257,7 +257,7 @@ strategyFunctions.catchNidoran = function()
 	local pokeballs = Inventory.count("pokeball")
 	local caught = Memory.value("player", "party_size") > 1
 	if pokeballs < (caught and 1 or 2) then
-		return Strategies.reset("Ran too low on PokeBalls", pokeballs)
+		return Strategies.reset("pokeballs", "Ran too low on PokeBalls", pokeballs)
 	end
 	if Battle.isActive() then
 		status.path = nil
@@ -332,7 +332,7 @@ strategyFunctions.checkNidoStats = function()
 		local resets = att < 15 or spd < 14 or scl < 12 --RISK
 		local nidoranStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 		if resets then
-			return Strategies.reset("Bad Nidoran - "..nidoranStatus)
+			return Strategies.reset("stats", "Bad Nidoran - "..nidoranStatus)
 		end
 		-- if def < 12 then
 		-- 	statDiff = statDiff + 1
