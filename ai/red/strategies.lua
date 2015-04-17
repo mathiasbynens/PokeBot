@@ -977,16 +977,16 @@ strategyFunctions.fightMisty = function()
 				status.sacrificed = true
 				local swapMessage = " Thrash didn't finish the kill :( "
 				if stats.nidoran.speedDV < 11 then
-					swapMessage = swapMessage.."We're slower than Misty, looks like it's over"
+					swapMessage = swapMessage.."We'll need to get lucky."
 					sacrifice = nil
 				elseif sacrifice then
 					if Control.yolo then
-						swapMessage = swapMessage.."Attempting to hit through Confusion to save time"
+						swapMessage = swapMessage.."Attempting to hit through Confusion to save time."
 					else
-						swapMessage = swapMessage.."Swapping out to cure Confusion"
+						swapMessage = swapMessage.."Swapping out to cure Confusion."
 					end
 				else
-					swapMessage = swapMessage.."We'll have to hit through Confusion here"
+					swapMessage = swapMessage.."We'll have to hit through Confusion here."
 				end
 				Bridge.chat(swapMessage)
 			end
