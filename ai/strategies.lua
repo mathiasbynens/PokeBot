@@ -1139,7 +1139,7 @@ Strategies.functions = {
 
 	learnThrash = function()
 		if Strategies.initialize() then
-			if Pokemon.hasMove("thrash") then
+			if Pokemon.info("nidoking", "level") ~= 22 then
 				return true
 			end
 		end
