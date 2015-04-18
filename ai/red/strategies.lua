@@ -484,8 +484,7 @@ strategyFunctions.equipForBrock = function(data)
 			return Strategies.reset("level8", "Did not reach level 8 before Brock", Pokemon.getExp(), true)
 		end
 		if data.anti then
-			local poisoned = Pokemon.info("squirtle", "status") > 0
-			if not poisoned then
+			if not Combat.isPoisoned("squirtle") then
 				return true
 			end
 			if not Inventory.contains("antidote") then

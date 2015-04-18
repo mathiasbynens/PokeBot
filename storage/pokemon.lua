@@ -198,7 +198,8 @@ function Pokemon.moveIndex(move, pokemon)
 end
 
 function Pokemon.info(name, offset)
-	return index(indexOf(name), offset)
+	local targetIndex = name and indexOf(name) or 0
+	return index(targetIndex, offset)
 end
 
 function Pokemon.getID(name)

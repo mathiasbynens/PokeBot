@@ -58,7 +58,7 @@ local function recover()
 			end
 		end
 	end
-	if Memory.value("battle", "paralyzed") == 64 then
+	if Combat.isParalyzed() then
 		local heals = Inventory.contains("paralyze_heal", "full_restore")
 		if heals then
 			Inventory.use(heals, nil, true)

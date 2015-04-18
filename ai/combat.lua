@@ -289,6 +289,18 @@ Combat.activePokemon = activePokemon
 
 -- STATUS
 
+local function checkStatus(target, value)
+	return bit.band(Pokemon.info(target, "status"), value) == value
+end
+
+function Combat.isPoisoned(target)
+	return checkStatus(target, 0x8)
+end
+
+function Combat.isParalyzed(target)
+	return checkStatus(target, 0x40)
+end
+
 local function isSleeping()
 	return Memory.raw(0x116F) > 1
 end

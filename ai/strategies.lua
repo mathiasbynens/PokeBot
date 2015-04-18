@@ -906,7 +906,7 @@ Strategies.functions = {
 					return false
 				end
 			else
-				if Pokemon.info("squirtle", "status") > 0 then
+				if Combat.isPoisoned("squirtle")then
 					Inventory.use("antidote", "squirtle")
 					return false
 				end
