@@ -12,8 +12,10 @@ Have you found a seed that results in a run of 1:51:30 or better using the bot‚Ä
 | 1:50:14 | 396,858 | `1428898417` | ,            | v1.4.2      | ThePok√©Bot                                   |
 | 1:50:22 | 397,345 |   `91852936` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:22 | 397,352 | `1428414915` | A            | v1.4.2      | [Gofigga](http://www.twitch.tv/gofigga)      |
+| 1:50:28 | 397,687 |    `1110064` | A            | v1.4.4      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:36 | 398,208 | `1428414915` | A            | v1.4.0      | [Gofigga](http://www.twitch.tv/gofigga)      |
 | 1:50:37 | 398,226 | `1428414915` | A            | v1.3.0      | [Gofigga](http://www.twitch.tv/gofigga)      |
+| 1:50:37 | 398,241 |    `1022054` | A            | v1.4.3      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:39 | 398,349 |   `91764336` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:41 | 398,509 | `1428873163` | A            | v1.4.1      | [Marcin1503](https://github.com/Marcin1503)  |
 | 1:50:51 | 399,076 | `1428414915` | A            | v1.4.1      | [Gofigga](http://www.twitch.tv/gofigga)      |
@@ -21,6 +23,7 @@ Have you found a seed that results in a run of 1:51:30 or better using the bot‚Ä
 | 1:50:55 | 399,355 | `1428801658` | A            | v1.4.0      | [Marcin1503](https://github.com/Marcin1503)  |
 | 1:51:01 | 399,694 |   `91807360` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:51:07 | 400,057 |   `91688624` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
+| 1:51:10 | 400,252 |    `1063732` | A            | v1.4.3      | [Mathias](https://mathiasbynens.be/)         |
 | 1:51:23 | 400,988 |   `91753768` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 
 To reproduce any of these runs, set [`CUSTOM_SEED` in `main.lua`](https://github.com/kylecoburn/PokeBot/blob/27aa1dcd2cec1bbe25607fa346836f63b349ad5f/main.lua#L5) to the seed number, `NIDORAN_NAME` to the matching name, and run the bot.
