@@ -20,7 +20,7 @@ local function sendButton(button, ab)
 	local inputTable = {[button] = true}
 	joypad.set(inputTable)
 	if debug then
-		Utils.drawText(0, 7, button.." "..remainingFrames)
+		Utils.drawText(0, 14, button.." "..remainingFrames)
 	end
 	if ab then
 		button = "A,B"

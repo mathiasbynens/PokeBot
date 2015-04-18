@@ -94,6 +94,13 @@ function Utils.multiplyString(string, times)
 	return result
 end
 
+function Utils.pluralize(amount, description)
+	if amount ~= 1 then
+		description = description.."s"
+	end
+	return amount.." "..description
+end
+
 -- GAME
 
 function Utils.canPotionWith(potion, forDamage, curr_hp, max_hp)
@@ -112,7 +119,10 @@ function Utils.ingame()
 	return Memory.raw(0x020E) > 0
 end
 
-function Utils.drawText(x, y, message)
+function Utils.drawText(x, y, message, right)
+	if right then
+		x = x - #message * 5
+	end
 	gui.text(x * EMP, y * EMP, message)
 end
 

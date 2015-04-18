@@ -6,14 +6,16 @@ local Utils = require "util.utils"
 
 local Pokemon = require "storage.pokemon"
 
+local RIGHT_EDGE, BOTTOM_EDGE = 158, 135
+
 local encounters = 0
 local elapsedTime = Utils.elapsedTime
 local drawText = Utils.drawText
 
 function Paint.draw(currentMap)
 	local px, py = Player.position()
-	drawText(0, 14, currentMap..": "..px.." "..py)
 	drawText(0, 0, elapsedTime())
+	drawText(0, 7, currentMap..": "..px.." "..py)
 
 	if Memory.value("battle", "our_id") > 0 then
 		local curr_hp = Pokemon.index(0, "hp")
@@ -24,68 +26,36 @@ function Paint.draw(currentMap)
 			hpStatus = "RED"
 		end
 		if hpStatus then
-			drawText(120, 7, hpStatus)
+			drawText(RIGHT_EDGE, 7, hpStatus, true)
 		end
 	end
 
-	local xPokemon = 125
-	local yPokemon = 15
-	drawText(xPokemon,yPokemon,"Pokemons: ")
-	local squirtx = Pokemon.indexOf("squirtle")
-	if squirtx ~= -1 then
-		drawText(xPokemon,yPokemon +5,"Squirtle")
+	local caughtPokemon = {
+		{"squirtle"},
+		{"nidoran", "nidorino", "nidoking"},
+		{"spearow", "pidgey"},
+		{"paras", "oddish", "sandshrew", "charmander"},
+	}
+	local partyY = BOTTOM_EDGE
+	for i,pokemonCategory in ipairs(caughtPokemon) do
+		local pokemon = Pokemon.inParty(unpack(pokemonCategory))
+		if pokemon then
+			drawText(RIGHT_EDGE, partyY, Utils.capitalize(pokemon), true)
+			partyY = partyY - 7
+		end
 	end
-	
-	
-	local pidgeyx = Pokemon.indexOf("pidgey")
-	if pidgeyx ~= -1 then
-		drawText(xPokemon,yPokemon+15,"Pidgey")
-	end
-	
-	local spearowx = Pokemon.indexOf("spearow")
-	if spearowx ~= -1 then
-		drawText(xPokemon,yPokemon+15,"Spearow")
-	end
-	
-	local parasx = Pokemon.indexOf("paras")
-	if parasx ~= -1 then
-		drawText(xPokemon,yPokemon+20,"Paras")
-	end
-	
-	local oddishx = Pokemon.indexOf("oddish")
-	if oddishx ~= -1 then
-		drawText(xPokemon,yPokemon+20,"Oddish")
-	end
-	
+
 	local nidx = Pokemon.indexOf("nidoran", "nidorino", "nidoking")
 	if nidx ~= -1 then
 		local att = Pokemon.index(nidx, "attack")
 		local def = Pokemon.index(nidx, "defense")
 		local spd = Pokemon.index(nidx, "speed")
 		local scl = Pokemon.index(nidx, "special")
-		drawText(60, 0,"Nido stats: "..att.." "..def.." "..spd.." "..scl)
+		drawText(RIGHT_EDGE, 0, att.." "..def.." "..spd.." "..scl, true)
 	end
-	nidx = Pokemon.indexOf("nidoran")
-	if nidx == -1 then
-		nidx = Pokemon.indexOf("nidorino")
-		if nidx == -1 then
-			nidx = Pokemon.indexOf("nidoking")
-			if nidx ~= -1 then
-				drawText(xPokemon,yPokemon+10,"Nidoking")
-			end
-		else
-			drawText(xPokemon,yPokemon+10,"Nidorino")
-		end
-	else
-		drawText(xPokemon,yPokemon+10,"Nidoran")
-	end
-	local enc = " encounter"
-	if encounters ~= 1 then
-		enc = enc.."s"
-	end
-	drawText(0, 116, Memory.value("battle", "critical"))
-	drawText(0, 125, Memory.value("player", "repel"))
-	drawText(0, 134, encounters..enc)
+
+	drawText(0, BOTTOM_EDGE-7, "Repel: "..Memory.value("player", "repel"))
+	drawText(0, BOTTOM_EDGE, Utils.pluralize(encounters, "encounter"))
 	return true
 end
 
