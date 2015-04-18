@@ -12,6 +12,7 @@ Have you found a seed that results in a run of 1:51:30 or better using the bot‚Ä
 | 1:50:14 | 396,858 | `1428898417` | ,            | v1.4.2      | ThePok√©Bot                                   |
 | 1:50:22 | 397,345 |   `91852936` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:22 | 397,352 | `1428414915` | A            | v1.4.2      | [Gofigga](http://www.twitch.tv/gofigga)      |
+| 1:50:28 | 397,687 |    `1110064` | A            | v1.4.4      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:36 | 398,208 | `1428414915` | A            | v1.4.0      | [Gofigga](http://www.twitch.tv/gofigga)      |
 | 1:50:37 | 398,226 | `1428414915` | A            | v1.3.0      | [Gofigga](http://www.twitch.tv/gofigga)      |
 | 1:50:37 | 398,241 |    `1022054` | A            | v1.4.3      | [Mathias](https://mathiasbynens.be/)         |
