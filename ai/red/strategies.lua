@@ -921,7 +921,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 		end
 	end
 	local healAmount = data.goldeen and 65 or 70
-	local canTwoHit = stats.nidoran.attackDV >= (Control.yolo and 6 or 8)
+	local canTwoHit = stats.nidoran.attackDV >= (Control.yolo and 8 or 9)
 	local canSpeedTie = stats.nidoran.speedDV >= 11
 	if Control.yolo then
 		if canTwoHit and stats.nidoran.speedDV >= 13 then
@@ -1180,7 +1180,7 @@ strategyFunctions.fightSurge = function()
 		status.canProgress = true
 		local forced
 		if Pokemon.isOpponent("voltorb") then
-			Combat.disableThrash = not Control.yolo or stats.nidoran.attackDV < 9 or Combat.inRedBar()
+			Combat.disableThrash = not Control.yolo or stats.nidoran.attackDV < 14 or Combat.inRedBar()
 			local __, enemyTurns = Combat.enemyAttack()
 			if not enemyTurns or enemyTurns > 2 then
 				forced = "bubblebeam"
