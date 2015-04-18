@@ -2,13 +2,13 @@
 
 RESET_FOR_TIME = false -- Set to false if you just want to see the bot finish a run
 
-local CUSTOM_SEED = nil -- Set to a known seed to replay it, or leave nil for random runs
+local CUSTOM_SEED  = nil -- Set to a known seed to replay it, or leave nil for random runs
 local NIDORAN_NAME = "A" -- Set this to the single character to name Nidoran (note, to replay a seed, it MUST match!)
-local PAINT_ON    = true -- Display contextual information while the bot runs
+local PAINT_ON     = true -- Display contextual information while the bot runs
 
 -- START CODE (hard hats on)
 
-VERSION = "1.4.3"
+VERSION = "1.4.4"
 YELLOW = memory.getcurrentmemorydomainsize() > 30000
 GAME_NAME = YELLOW and "yellow" or "red"
 
