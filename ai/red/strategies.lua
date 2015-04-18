@@ -744,7 +744,11 @@ strategyFunctions.rivalSandAttack = function(data)
 			if opponent == "pidgeotto" then
 				local __, turnsToKill = Combat.bestMove()
 				if turnsToKill == 1 then
-					sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "paras", "oddish", "squirtle")
+					if Pokemon.info("nidoking", "level") > 20 then
+						sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "paras", "oddish", "squirtle")
+					else
+						sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "paras")
+					end
 				end
 			elseif opponent == "raticate" then
 				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "oddish")
