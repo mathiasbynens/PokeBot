@@ -5,10 +5,12 @@ local Utils = require "util.utils"
 local Pokemon = require "storage.pokemon"
 
 local version = 0
-local vIndex = 2
-for segment in string.gmatch(VERSION, "([^.]+)") do
-	version = version + tonumber(segment) * 100 ^ vIndex
-	vIndex = vIndex - 1
+if VERSION then
+	local vIndex = 2
+	for segment in string.gmatch(VERSION, "([^.]+)") do
+		version = version + tonumber(segment) * 100 ^ vIndex
+		vIndex = vIndex - 1
+	end
 end
 
 Data = {

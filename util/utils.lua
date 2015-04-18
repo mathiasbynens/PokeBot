@@ -87,10 +87,11 @@ function Utils.increment(amount)
 end
 
 function Utils.multiplyString(string, times)
+	local result = string
 	for i=1, times-1 do
-		string = string.." "..string
+		result = result.." "..string
 	end
-	return string
+	return result
 end
 
 -- GAME

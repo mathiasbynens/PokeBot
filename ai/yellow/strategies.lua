@@ -309,7 +309,7 @@ strategyFunctions.leerCaterpies = function()
 	if not status.secondCaterpie and not Battle.opponentAlive() then
 		status.secondCaterpie = true
 	end
-	local leerAmount = status.secondCaterpie and 10 or 7
+	local leerAmount = status.secondCaterpie and 7 or 10
 	return strategyFunctions.leer({{"caterpie", leerAmount}})
 end
 

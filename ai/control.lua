@@ -308,7 +308,8 @@ function Control.encounter(battleState)
 				local isMiss = Memory.value("battle", "miss") == 1
 				if isMiss then
 					if not Control.ignoreMiss and Battle.accurateAttack and Memory.value("battle", "accuracy") == 7 then
-						Bridge.chat("gen 1 missed :( (1 in 256 chance)")
+						local exclaim = Strategies.deepRun and ";_; " or ""
+						Bridge.chat("gen 1 missed "..exclaim.."(1 in 256 chance)")
 					end
 					Control.missed = true
 					Data.increment("misses")
