@@ -174,24 +174,27 @@ local function calcBestHit(attacker, defender, ours, rng)
 			local minDmg, maxDmg = calcDamage(move, attacker, defender, rng)
 			if maxDmg then
 				local minTurns, maxTurns
+				local targetHP = defender.hp
 				if maxDmg <= 0 then
 					minTurns, maxTurns = 9001, 9001
 				else
-					minTurns = math.ceil(defender.hp / maxDmg)
-					maxTurns = math.ceil(defender.hp / minDmg)
+					minTurns = math.ceil(targetHP / maxDmg)
+					maxTurns = math.ceil(targetHP / minDmg)
 				end
 				if ours then
 					local replaces
 					if not ret or minTurns < bestMinTurns or maxTurns < bestTurns then
 						replaces = true
 					elseif maxTurns == bestTurns and move.name == "Thrash" then
-						replaces = defender.hp == Memory.double("battle", "opponent_max_hp")
+						replaces = targetHP == Memory.double("battle", "opponent_max_hp")
 					elseif maxTurns == bestTurns and ret.name == "Thrash" then
-						replaces = defender.hp ~= Memory.double("battle", "opponent_max_hp")
+						replaces = targetHP ~= Memory.double("battle", "opponent_max_hp")
 					elseif move.fast and not ret.fast then
 						replaces = maxTurns <= bestTurns
 					elseif ret.fast then
 						replaces = maxTurns < bestTurns
+					elseif move.multiple and ret.accuracy < 100 then
+						replaces = targetHP <= maxDmg * 0.5
 					elseif conservePP then
 						if maxTurns < 2 or maxTurns == bestMaxTurns then
 							if ret.name == "Earthquake" and (move.name == "Ice-Beam" or move.name == "Thunderbolt") then
