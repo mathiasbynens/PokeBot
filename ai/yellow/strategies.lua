@@ -22,7 +22,8 @@ local status = Strategies.status
 local stats = Strategies.stats
 
 local strategyFunctions = Strategies.functions
-Strategies.flareon = true
+
+Strategies.vaporeon = false
 
 -- TIME CONSTRAINTS
 
@@ -193,6 +194,9 @@ local function takeCenter(pp, startMap, entranceX, entranceY, finishX)
 	local px, py = Player.position()
 	local currentMap = Memory.value("game", "map")
 	local sufficientPP = Pokemon.pp(0, "horn_attack") > pp
+	if Strategies.initialize("reported") then
+		print(Pokemon.pp(0, "horn_attack").." / "..pp.." horn attacks")
+	end
 	if currentMap == startMap then
 		if not sufficientPP then
 			if px ~= entranceX then
@@ -249,7 +253,7 @@ end
 -- dodgePalletBoy
 
 strategyFunctions.shopViridianPokeballs = function()
-	return Shop.transaction{
+	return Shop.transaction {
 		buy = {{name="pokeball", index=0, amount=4}, {name="potion", index=1, amount=6}}
 	}
 end
@@ -422,7 +426,7 @@ strategyFunctions.centerMoon = function()
 end
 
 strategyFunctions.centerCerulean = function(data)
-	local ppRequired = 15
+	local ppRequired = 10
 	if data.first then
 		local hasSufficientPP = Pokemon.pp(0, "horn_attack") > ppRequired
 		if Strategies.initialize() then

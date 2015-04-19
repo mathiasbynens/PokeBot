@@ -1462,6 +1462,7 @@ Strategies.functions = {
 			if Strategies.closeMenuFor({close=true}) then
 				return true
 			end
+			return false
 		end
 		if Inventory.contains("carbos") then
 			return strategyFunctions.item({item="carbos",poke="nidoking",close=true})
@@ -1710,6 +1711,7 @@ function Strategies.softReset()
 	stats = {}
 	Strategies.stats = stats
 	Strategies.updates = {}
+	Strategies.disableThrash = false
 
 	splitNumber, splitTime = 0, 0
 	resetting = nil
