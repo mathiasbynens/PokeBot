@@ -133,7 +133,11 @@ local controlFunctions = {
 	end,
 
 	catchFlier = function()
-		shouldCatch = {{name="spearow",alt="pidgey",hp=15}, {name="pidgey",alt="spearow",hp=15}}
+		if Pokemon.inParty("pidgey", "spearow") then
+			shouldCatch = {{name="sandshrew"}}
+		else
+			shouldCatch = {{name="spearow",alt="pidgey",hp=15}, {name="pidgey",alt="spearow",hp=15}}
+		end
 	end,
 
 	catchParas = function()
@@ -156,8 +160,8 @@ local controlFunctions = {
 		oneHits = true
 	end,
 
-	catchSandshrew = function()
-		shouldCatch = {{name="sandshrew"}}
+	catchCutterYellow = function()
+		shouldCatch = {{name="sandshrew"}, {name="paras",levels={9,10,11,12}}}
 	end,
 
 }
