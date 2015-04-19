@@ -845,8 +845,7 @@ strategyFunctions.lorelei = function()
 		local opponentName = Battle.opponent()
 		if opponentName == "dewgong" then
 			if Memory.double("battle", "our_speed") < 121 then
-				if not status.speedFall then
-					status.speedFall = true
+				if Strategies.initialize("speedFall") then
 					Bridge.chat("got speed fall from Dewgong D: Attempting to recover with X Speed...")
 				end
 				if not Strategies.prepare("x_speed") then

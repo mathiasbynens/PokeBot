@@ -345,8 +345,7 @@ strategyFunctions.catchNidoran = function()
 	if Battle.isActive() then
 		local isNidoran = Pokemon.isOpponent("nidoran")
 		if isNidoran and Memory.value("battle", "opponent_level") > 2 then
-			if not status.polled then
-				status.polled = true
+			if Strategies.initialize("polled") then
 				Bridge.pollForName()
 			end
 		end
@@ -746,8 +745,7 @@ strategyFunctions.rivalSandAttack = function(data)
 				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "oddish")
 			end
 			if Battle.sacrifice(sacrifice) then
-				if not status.sacrificed then
-					status.sacrificed = true
+				if Strategies.initialize("sacrificed") then
 					Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore accuracy.")
 				end
 				return false
@@ -855,15 +853,15 @@ strategyFunctions.thrashGeodude = function()
 			end
 			if status.sacrificeSquirtle then
 				if Battle.sacrifice("squirtle") then
-					if not status.sacrificed then
-						status.sacrificed = true
+					if Strategies.initialize("sacrificed") then
 						Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety.")
 					end
 					return false
 				end
-			elseif not status.confused and Combat.isConfused() then
-				status.confused = true
-				Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle...")
+			elseif Combat.isConfused() then
+				if Strategies.initialize("confused") then
+					Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle...")
+				end
 			end
 		end
 		Battle.automate()
@@ -968,8 +966,8 @@ strategyFunctions.fightMisty = function()
 			end
 			status.swappedOut = false
 			local sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras")
-			if not status.sacrificed then
-				status.sacrificed = true
+
+			if Strategies.initialize("sacrificed") then
 				local swapMessage = " Thrash didn't finish the kill :( "
 				if stats.nidoran.speedDV < 11 then
 					swapMessage = swapMessage.."We'll need to get lucky."
@@ -1040,9 +1038,8 @@ strategyFunctions.catchOddish = function()
 	else
 		local path
 		if caught then
-			if not status.caught then
+			if Strategies.initialize("caught") then
 				Bridge.caught(Pokemon.inParty("oddish"))
-				status.caught = true
 			end
 			if py < 21 then
 				py = 21
@@ -1509,8 +1506,7 @@ strategyFunctions.potionBeforeHypno = function()
 
 	local healTarget
 	if healthUnderRedBar >= 0 then
-		if not status.warned then
-			status.warned = true
+		if Strategies.initialize("warned") then
 			Bridge.chat("Attempting to carry red-bar through Koga. Hypno has a 1 in 4 chance to end the run with Confusion here...")
 		end
 		healTarget = "HypnoHeadbutt"
@@ -1848,8 +1844,7 @@ strategyFunctions.lorelei = function()
 		if opponentName == "dewgong" then
 			local sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras", "oddish")
 			if Battle.sacrifice(sacrifice) then
-				if not status.sacrificed then
-					status.sacrificed = true
+				if Strategies.initialize("sacrificed") then
 					Bridge.chat(" Swapping out "..Utils.capitalize(sacrifice).." to tank Aurora Beam into turn 2 Rest. Only a problem if it misses...")
 				end
 				return false
@@ -1991,8 +1986,7 @@ strategyFunctions.blue = function()
 		if Memory.value("battle", "attack_turns") > 0 then
 			local skyDamage = Combat.healthFor("BlueSky")
 			local healCutoff = skyDamage * 0.825
-			if not status.skyAttacked then
-				status.skyAttacked = true
+			if Strategies.initialize("skyAttacked") then
 				if not Strategies.isPrepared("x_accuracy", status.xItem) then
 					local msg = " Uh oh... First-turn Sky Attack could end the run here, "
 					if Pokemon.index(0, "hp") > skyDamage then

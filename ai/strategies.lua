@@ -147,9 +147,12 @@ function Strategies.tweetProgress(message, progress)
 	Bridge.tweet(message)
 end
 
-function Strategies.initialize()
-	if not status.initialized then
-		status.initialized = true
+function Strategies.initialize(var)
+	if not var then
+		var = "initialized"
+	end
+	if not status[var] then
+		status[var] = true
 		return true
 	end
 end
@@ -642,8 +645,7 @@ Strategies.functions = {
 				return true
 			end
 		else
-			if not status.triedTeaching then
-				status.triedTeaching = true
+			if Strategies.initialize("triedTeaching") then
 				if not Inventory.contains(itemName) then
 					return Strategies.reset("error", "Unable to teach move "..itemName.." to "..data.poke, nil, true)
 				end
@@ -743,8 +745,7 @@ Strategies.functions = {
 			swapComplete = true
 		elseif status.firstIndex < 0 or status.lastIndex < 0 then
 			swapComplete = true
-			if not status.swapUnavailable then
-				status.swapUnavailable = true
+			if Strategies.initialize("swapUnavailable") then
 				p("Not available to swap", data.item, data.dest, itemIndex, destIndex)
 			end
 		elseif status.startedAt ~= Inventory.indexOf(status.checkItem) then
@@ -1309,8 +1310,7 @@ Strategies.functions = {
 				if not backupPokemon then
 					return Strategies.death()
 				end
-				if not status.died then
-					status.died = true
+				if Strategies.initialize("died") then
 					Bridge.chat(" Rock Slide missed BibleThump Trying to finish them off with Dig...")
 				end
 				if Menu.onPokemonSelect() then
