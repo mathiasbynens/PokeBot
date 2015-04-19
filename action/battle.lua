@@ -21,6 +21,9 @@ local function potionsForHit(potion, curr_hp, max_hp)
 	end
 	local ours, killAmount = Combat.inKillRange()
 	if ours then
+		if Control.yolo and killAmount > 4 and killAmount == curr_hp then
+			return false
+		end
 		return Utils.canPotionWith(potion, killAmount, curr_hp, max_hp)
 	end
 end
