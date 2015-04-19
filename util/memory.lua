@@ -36,6 +36,7 @@ local memoryNames = {
 		party_size = 0x1163,
 		inventory_count = 0x131D,
 		bicycle = 0x1700,
+		pikachu_x = 0x02F5,
 	},
 	game = {
 		map = 0x135E,
