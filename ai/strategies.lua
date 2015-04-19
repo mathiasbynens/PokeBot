@@ -1198,6 +1198,19 @@ Strategies.functions = {
 		end
 	end,
 
+	epicCutscene = function()
+		local messages = {
+			" CUTSCENE HYPE!",
+			" Please, sit back and enjoy the cutscene.",
+			"is enjoying the scenery Kappa b",
+			" Cutscenes DansGame",
+			" Your regularly scheduled run will continue in a moment.",
+			" Guys I think the game softlocked Kappa",
+		}
+		Bridge.chat(messages[math.random(1, #messages)])
+		return true
+	end,
+
 	announceFourTurn = function()
 		Bridge.chat("needs a 4-turn thrash (1 in 2 chance) to beat this dangerous trainer...")
 		return true

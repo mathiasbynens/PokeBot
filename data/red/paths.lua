@@ -156,7 +156,7 @@ local Paths = {
 	-- First deck out
 	{95, {2,6}, {2,7}, {26,7}, {26,-1}},
 	-- Departure
-	{94, {14,2}},
+	{94, {14,2}, {s="epicCutscene"}},
 	-- To Surge
 	{5, {18,29}, {18,26}, {30,26}, {30,14}, {15,14}, {15,17}, {s="potionBeforeSurge"}, {s="swap",item="repel",dest=0,chain=true}, {s="teach",move="cut",poke="oddish",alt="paras",chain=true}, {s="teach",move="dig",poke="paras",alt="squirtle",chain=true}, {s="skill",move="cut",done=0x0D4D}, {15,20}, {12,20}, {12,19}},
 	-- Trashcans
