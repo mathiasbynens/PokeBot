@@ -316,7 +316,7 @@ function Pokemon.use(move)
 			Input.press("B")
 		end
 	elseif main == Menu.pokemon then
-		Menu.select(pokeName, true)
+		Pokemon.select(pokeName)
 	elseif main == 228 then
 		Input.press("B")
 	else

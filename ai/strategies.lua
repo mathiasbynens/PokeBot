@@ -926,12 +926,14 @@ Strategies.functions = {
 				else
 					Input.press("B")
 				end
-			elseif main == Menu.pokemon then --TODO check loop
+			elseif main == Menu.pokemon then
+				local selectIndex
 				if Memory.value("menu", "selection_mode") == 1 then
-					Menu.select(nidoranIndex, true)
+					selectIndex = nidoranIndex
 				else
-					Menu.select(0, true)
+					selectIndex = 0
 				end
+				Pokemon.select(selectIndex)
 			else
 				Input.press("B")
 			end
