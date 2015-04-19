@@ -914,14 +914,7 @@ strategyFunctions.hikerElixer = function()
 	Walk.step(px, py)
 end
 
-strategyFunctions.lassEther = function()
-	if Strategies.initialize() then
-		if Inventory.contains("antidote") and Inventory.contains("elixer") then
-			return true
-		end
-	end
-	return strategyFunctions.interact({dir="Up"})
-end
+-- lassEther
 
 strategyFunctions.potionBeforeMisty = function(data)
 	if Strategies.initialize() then

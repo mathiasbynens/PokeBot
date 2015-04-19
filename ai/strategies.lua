@@ -1185,6 +1185,24 @@ Strategies.functions = {
 		end
 	end,
 
+	lassEther = function()
+		if Strategies.initialize() then
+			if yellow then
+				if not Strategies.vaporeon or not Strategies.needs1Carbos() then
+					return true
+				end
+				if Inventory.contains("pokeball") and Inventory.contains("potion") then
+					return true
+				end
+			else
+				if Inventory.contains("antidote") and Inventory.contains("elixer") then
+					return true
+				end
+			end
+		end
+		return strategyFunctions.interact({dir="Up"})
+	end,
+
 	jingleSkip = function()
 		if status.canProgress then
 			local px, py = Player.position()
@@ -1441,7 +1459,12 @@ Strategies.functions = {
 
 	tossInSafari = function()
 		if Inventory.count() <= (Inventory.contains("full_restore") and 18 or 17) then
-			return true
+			if Strategies.closeMenuFor({close=true}) then
+				return true
+			end
+		end
+		if Inventory.contains("carbos") then
+			return strategyFunctions.item({item="carbos",poke="nidoking",close=true})
 		end
 		return Strategies.tossItem("antidote", "tm34", "pokeball")
 	end,

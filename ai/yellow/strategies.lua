@@ -240,6 +240,10 @@ function Strategies.requiresE4Center()
 	return Combat.hp() < 100
 end
 
+function Strategies.needs1Carbos()
+	return stats.nidoran.speedDV >= 11
+end
+
 -- STRATEGIES
 
 -- dodgePalletBoy
@@ -484,9 +488,10 @@ strategyFunctions.shopVermilionMart = function()
 	if Strategies.initialize() then
 		Strategies.setYolo("vermilion")
 	end
+	local supers = Strategies.vaporeon and 7 or 8
 	return Shop.transaction {
 		sell = sellArray,
-		buy = {{name="super_potion",index=1,amount=8}, {name="repel",index=5,amount=3}}
+		buy = {{name="super_potion",index=1,amount=supers}, {name="repel",index=5,amount=3}}
 	}
 end
 
@@ -603,8 +608,8 @@ strategyFunctions.deptElevator = function()
 end
 
 strategyFunctions.shopBuffs = function()
-	local xAccs = Strategies.flareon and 10 or 11
-	local xSpeeds = Strategies.flareon and 7 or 6
+	local xAccs = Strategies.vaporeon and 11 or 10
+	local xSpeeds = Strategies.vaporeon and 6 or 7
 	return Shop.transaction{
 		direction = "Right",
 		sell = {{name="nugget"}},
@@ -646,7 +651,7 @@ end
 -- silphElevator
 
 strategyFunctions.silphCarbos = function(data)
-	if stats.nidoran.speedDV < 11 then
+	if not Strategies.needs1Carbos() then
 		if Strategies.closeMenuFor(data) then
 			return true
 		end
@@ -1006,8 +1011,6 @@ end
 function Strategies.resetGame()
 	status = Strategies.status
 	stats = Strategies.stats
-
-	Strategies.flareon = true
 end
 
 return Strategies
