@@ -582,22 +582,14 @@ strategyFunctions.fightBrock = function()
 						local superlative
 						local exclaim = "!"
 						if statDiff == 0 then
-							if def == 14 then
-								superlative = " god"
-								exclaim = "! Kreygasm"
-							else
-								superlative = " perfect"
-							end
+							superlative = " perfect"
+							exclaim = "! Kreygasm"
 						elseif att == 16 and spd == 15 then
 							if statDiff == 1 then
 								superlative = " great"
-							elseif statDiff == 2 then
-								superlative = " good"
 							else
-								superlative = "n okay"
+								superlative = " good"
 							end
-						elseif statDiff == 1 then
-							superlative = " good"
 						elseif statDiff <= 3 then
 							superlative = "n okay"
 							exclaim = "."
