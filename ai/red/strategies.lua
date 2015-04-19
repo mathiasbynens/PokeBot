@@ -47,10 +47,18 @@ Strategies.timeRequirements = {
 		return 2.25
 	end,
 
-	nidoran = function()
-		local timeLimit = 6.4
+	nidoran = function() --RESET
+		local timeLimit = 6.33
 		if Pokemon.inParty("spearow") then
-			timeLimit = timeLimit + 0.67
+			timeLimit = timeLimit + 0.6
+		end
+		return timeLimit
+	end,
+
+	brock = function()
+		local timeLimit = 11
+		if Pokemon.inParty("spearow") then
+			timeLimit = timeLimit + 0.5
 		end
 		return timeLimit
 	end,
@@ -610,11 +618,24 @@ strategyFunctions.fightBrock = function()
 	end
 end
 
+strategyFunctions.splitBrock = function()
+	Strategies.setYolo("brock")
+	strategyFunctions.split()
+	return true
+end
+
 -- 3: BROCK
 
 strategyFunctions.shopPewterMart = function()
+	local potions = 10
+	local pokeballs = Inventory.count("pokeball")
+	if pokeballs < (Pokemon.inParty("spearow") and 2 or 3) then
+		pokeballs = pokeballs + 1
+		potions = potions - 1
+	end
+
 	return Shop.transaction{
-		buy = {{name="potion", index=1, amount=10}}
+		buy = {{name="pokeball", index=0, amount=pokeballs}, {name="potion", index=1, amount=potions}}
 	}
 end
 
