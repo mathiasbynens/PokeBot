@@ -946,7 +946,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 	end
 	healAmount = healAmount - (stats.nidoran.special - 43)
 
-	if not status.healed then
+	if not data.goldeen and not status.healed then
 		status.healed = true
 		local message
 		local potionCount = Inventory.count("potion")
@@ -1567,33 +1567,34 @@ end
 strategyFunctions.fightKoga = function()
 	if Battle.isActive() then
 		local forced
-		local opponent = Battle.opponent()
-		local curr_hp = Combat.hp()
-		if Pokemon.isOpponent("weezing") then
-			local drillHp = (Pokemon.index(0, "level") > 40) and 12 or 9
-			if curr_hp > 0 and curr_hp < drillHp and Battle.pp("horn_drill") > 0 then
-				forced = "horn_drill"
-				if not status.drilling then
-					status.drilling = true
-					Bridge.chat("is at low enough HP to try Horn Drill on Weezing")
-				end
-				Control.ignoreMiss = true
-			elseif Strategies.opponentDamaged(2) then
-				Inventory.use("pokeflute", nil, true)
-				return false
-			else
-				if Combat.isDisabled(85) then
-					forced = "ice_beam"
+		if Battle.opponentAlive() then
+			local opponent = Battle.opponent()
+			local curr_hp = Combat.hp()
+			if Pokemon.isOpponent("weezing") then
+				local drillHp = (Pokemon.index(0, "level") > 40) and 12 or 9
+				if curr_hp > 0 and curr_hp < drillHp and Battle.pp("horn_drill") > 0 then
+					forced = "horn_drill"
+					if Strategies.initialize("drilling") then
+						Bridge.chat("is at low enough HP to try Horn Drill on Weezing")
+					end
+					Control.ignoreMiss = true
+				elseif Strategies.opponentDamaged(2) then
+					Inventory.use("pokeflute", nil, true)
+					return false
 				else
-					forced = "thunderbolt"
+					if Combat.isDisabled(85) then
+						forced = "ice_beam"
+					else
+						forced = "thunderbolt"
+					end
+					Control.canDie(true)
 				end
-				Control.canDie(true)
-			end
-		else
-			if Strategies.isPrepared("x_accuracy") then
-				forced = "horn_drill"
-			elseif curr_hp > 9 and not Strategies.prepare("x_accuracy") then
-				return false
+			else
+				if Strategies.isPrepared("x_accuracy") then
+					forced = "horn_drill"
+				elseif curr_hp > 9 and not Strategies.prepare("x_accuracy") then
+					return false
+				end
 			end
 		end
 		Battle.automate(forced)
