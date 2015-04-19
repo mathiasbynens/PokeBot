@@ -26,5 +26,6 @@ Have you found a seed that results in a run of 1:51:30 or better using the botâ€
 | 1:51:07 | 400,057 |   `91688624` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:51:10 | 400,252 |    `1063732` | A            | v1.4.3      | [Mathias](https://mathiasbynens.be/)         |
 | 1:51:23 | 400,988 |   `91753768` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
+| 1:51:27 | 401,235 |     `200075` | A            | v1.4.4      | [Mathias](https://mathiasbynens.be/)         |
 
 To reproduce any of these runs, set [`CUSTOM_SEED` in `main.lua`](https://github.com/kylecoburn/PokeBot/blob/27aa1dcd2cec1bbe25607fa346836f63b349ad5f/main.lua#L5) to the seed number, `NIDORAN_NAME` to the matching name, and run the bot.
