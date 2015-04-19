@@ -58,7 +58,7 @@ local controlFunctions = {
 	end,
 
 	thrash = function(data)
-		Combat.disableThrash = data.disable
+		Combat.setDisableThrash(data.disable)
 	end,
 
 	disableCatch = function()

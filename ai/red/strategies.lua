@@ -747,9 +747,11 @@ end
 
 strategyFunctions.rivalSandAttack = function(data)
 	if Battle.isActive() then
+		status.canProgress = true
 		if Battle.redeployNidoking() then
 			return false
 		end
+
 		local opponent = Battle.opponent()
 		if Memory.value("battle", "accuracy") < 7 then
 			local sacrifice
@@ -773,25 +775,25 @@ strategyFunctions.rivalSandAttack = function(data)
 			end
 		end
 
+		local disableThrash = false
 		if opponent == "pidgeotto" then
-			Combat.disableThrash = true
+			disableThrash = true
 		elseif opponent == "raticate" then
-			Combat.disableThrash = Strategies.opponentDamaged() or (not Control.yolo and Combat.hp() < 32) -- RISK
+			disableThrash = Strategies.opponentDamaged() or (not Control.yolo and Combat.hp() < 32) -- RISK
 		elseif opponent == "kadabra" then
-			Combat.disableThrash = Combat.hp() < 11
+			disableThrash = Combat.hp() < 11
 		elseif opponent == "ivysaur" then
 			if not Control.yolo and Strategies.damaged(5) and Inventory.contains("super_potion") then
 				Inventory.use("super_potion", nil, true)
 				return false
 			end
-			Combat.disableThrash = Strategies.opponentDamaged()
-		else
-			Combat.disableThrash = false
+			disableThrash = Strategies.opponentDamaged()
 		end
+		Combat.setDisableThrash(disableThrash)
+
 		Battle.automate()
-		status.canProgress = true
 	elseif status.canProgress then
-		Combat.disableThrash = false
+		Combat.setDisableThrash(false)
 		return true
 	else
 		Textbox.handle()
@@ -1186,8 +1188,9 @@ strategyFunctions.fightSurge = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		local forced
+		local disableThrash = false
 		if Pokemon.isOpponent("voltorb") then
-			Combat.disableThrash = not Control.yolo or stats.nidoran.attackDV < 14 or Combat.inRedBar()
+			disableThrash = not Control.yolo or stats.nidoran.attackDV < 14 or Combat.inRedBar()
 			local __, enemyTurns = Combat.enemyAttack()
 			if not enemyTurns or enemyTurns > 2 then
 				forced = "bubblebeam"
@@ -1198,9 +1201,8 @@ strategyFunctions.fightSurge = function()
 					forced = "bubblebeam"
 				end
 			end
-		else
-			Combat.disableThrash = false
 		end
+		Combat.setDisableThrash(disableThrash)
 		Battle.automate(forced)
 	elseif status.canProgress then
 		return true

@@ -419,6 +419,8 @@ local function nidokingStats()
 		specialDV = sclDV,
 	}
 
+	Combat.factorPP(false)
+
 	p(attDV, defDV, spdDV, sclDV)
 	print(statDesc)
 	Bridge.stats(statDesc)
@@ -1713,7 +1715,6 @@ function Strategies.softReset()
 	stats = {}
 	Strategies.stats = stats
 	Strategies.updates = {}
-	Strategies.disableThrash = false
 
 	splitNumber, splitTime = 0, 0
 	resetting = nil

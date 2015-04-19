@@ -44,6 +44,7 @@ types[26] = "dragon"
 
 local savedEncounters = {}
 local conservePP = false
+local disableThrash = false
 
 local floor = math.floor
 
@@ -65,7 +66,7 @@ local function calcDamage(move, attacker, defender, rng)
 		end
 		return 0, 0
 	end
-	if move.name == "Thrash" and Combat.disableThrash then
+	if disableThrash and move.name == "Thrash" then
 		return 0, 0
 	end
 
@@ -326,6 +327,10 @@ function Combat.inRedBar()
 end
 
 -- COMBAT
+
+function Combat.setDisableThrash(disable)
+	disableThrash = disable
+end
 
 function Combat.factorPP(enabled)
 	conservePP = enabled
