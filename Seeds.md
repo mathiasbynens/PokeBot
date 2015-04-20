@@ -9,6 +9,7 @@ Have you found a seed that results in a run of 1:51:30 or better using the bot‚Ä
 | 1:48:55 | 392,144 | `1428943783` | A            | v1.4.2      | [KriPet](https://github.com/KriPet)          |
 | 1:49:45 | 395,108 |   `91780872` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:49:52 | 395,566 | `1429090390` | A            | v1.4.2      | [Marcin1503](https://github.com/Marcin1503)  |
+| 1:49:57 | 395,877 |     `366727` | A            | v1.4.4      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:14 | 396,858 | `1428898417` | ,            | v1.4.2      | ThePok√©Bot                                   |
 | 1:50:19 | 397,161 |     `192969` | A            | v1.4.4      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:22 | 397,345 |   `91852936` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
