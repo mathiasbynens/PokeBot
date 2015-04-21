@@ -2,7 +2,7 @@
 
 PokéBot comes with a built-in run recording feature that takes advantage of random number seeding to reproduce runs in their entirety. Any time the bot resets or beats the game, it logs a number to the Lua console that is the seed for the run. This seed allows you to easily share the run with others. A screenshot is also saved to the `Gameboy\Screenshots` folder in the `Bizhawk` directory.
 
-Have you found a seed that results in a run of 1:51:30 or better using the bot’s default settings, on the latest version? [Let us know](https://github.com/kylecoburn/PokeBot/issues/4), and we’ll add it to the list!
+Have you found a seed that results in a run of 1:50:30 or better using the bot’s default settings, on the latest version? [Let us know](https://github.com/kylecoburn/PokeBot/issues/4), and we’ll add it to the list!
 
 | Time    | Frames  | Seed         | Nidoran name | Bot version | Found by                                     |
 |---------|---------|--------------|--------------|-------------|----------------------------------------------|
