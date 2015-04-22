@@ -799,6 +799,37 @@ strategyFunctions.fightGiovanni = function()
 	end
 end
 
+strategyFunctions.useViridianEther = function()
+	if Strategies.initialize() then
+		if not Strategies.vaporeon or not Inventory.contains("ether", "max_ether") then
+			return true
+		end
+	end
+	return strategyFunctions.ether({chain=true})
+end
+
+strategyFunctions.fightViridianRival = function()
+	if Battle.isActive() then
+		status.canProgress = true
+		local xItem1, xItem2
+		if Strategies.vaporeon then
+			xItem1 = "x_accuracy"
+			if Battle.pp("horn_drill") < 3 then
+				xItem2 = "x_special"
+			end
+		else
+			xItem1 = "x_special"
+		end
+		if Strategies.prepare(xItem1, xItem2) then
+			Battle.automate()
+		end
+	elseif status.canProgress then
+		return true
+	else
+		Textbox.handle()
+	end
+end
+
 strategyFunctions.depositPokemon = function()
 	if Memory.value("player", "party_size") == 1 then
 		if Menu.close() then
