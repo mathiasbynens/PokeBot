@@ -41,6 +41,13 @@ local function timeForStats()
 	return timeBonus
 end
 
+local function timeSaveFor(pokemon)
+	if Pokemon.inParty(pokemon) then
+		return pokemon == "paras" and 0.75 or 0.5
+	end
+	return 0
+end
+
 Strategies.timeRequirements = {
 
 	bulbasaur = function()
@@ -53,6 +60,10 @@ Strategies.timeRequirements = {
 			timeLimit = timeLimit + 0.6
 		end
 		return timeLimit
+	end,
+
+	oldMan = function()
+		return 6.75 + timeSaveFor("spearow")
 	end,
 
 	brock = function()
@@ -421,7 +432,7 @@ end
 
 strategyFunctions.grabTreePotion = function()
 	if Strategies.initialize() then
-		if Pokemon.info("squirtle", "hp") > 16 then
+		if Strategies.setYolo("oldMan") or Pokemon.info("squirtle", "hp") > 16 then
 			return true
 		end
 	end
