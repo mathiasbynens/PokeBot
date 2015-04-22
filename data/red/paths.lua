@@ -158,7 +158,7 @@ local Paths = {
 	-- Departure
 	{94, {14,2}, {s="epicCutscene"}},
 	-- To Surge
-	{5, {18,29}, {18,26}, {30,26}, {30,14}, {15,14}, {15,17}, {s="potionBeforeSurge"}, {s="swap",item="repel",dest=0,chain=true}, {s="teach",move="cut",poke="oddish",alt="paras",chain=true}, {s="teach",move="dig",poke="paras",alt="squirtle",chain=true}, {s="skill",move="cut",done=0x0D4D}, {15,20}, {12,20}, {12,19}},
+	{5, {18,29}, {18,26}, {30,26}, {30,14}, {15,14}, {15,17}, {s="potionBeforeSurge"}, {s="swap",item="repel",dest=0,chain=true}, {s="teach",move="cut",poke={"oddish","paras"},chain=true}, {s="teach",move="dig",poke={"paras","squirtle"},chain=true}, {s="skill",move="cut",done=0x0D4D}, {15,20}, {12,20}, {12,19}},
 	-- Trashcans
 	{92, {4,17}, {c="a",a="Surge's Gym"}, {4,16}, {2,16}, {2,11}, {s="trashcans"}, {4,6}, {4,3}, {5,3}, {5,2}, {s="talk",dir="Up"}, {s="fightSurge"}, {s="split"}, {s="tweetSurge"}, {4,2}, {4,13}, {5,13}, {5,18}},
 
@@ -236,7 +236,7 @@ local Paths = {
 -- 9: FLY
 
 	-- Fly to Lavender
-	{27, {7,6}, {s="swap",item="super_repel",dest=1,chain=true}, {s="potion",hp=10,chain=true}, {s="teach",move="horn_drill",replace="bubblebeam",chain=true}, {s="item",item="super_repel",chain=true}, {s="swap",item="x_accuracy",dest=2,chain=true}, {s="teach",move="fly",poke="spearow",alt="pidgey",chain=true}, {s="teach",move="rock_slide",replace="poison_sting",chain=true}, {s="fly",dest="lavender",map=4}},
+	{27, {7,6}, {s="swap",item="super_repel",dest=1,chain=true}, {s="potion",hp=10,chain=true}, {s="teach",move="horn_drill",replace="bubblebeam",chain=true}, {s="item",item="super_repel",chain=true}, {s="swap",item="x_accuracy",dest=2,chain=true}, {s="teach",move="fly",poke={"spearow","pidgey"},chain=true}, {s="teach",move="rock_slide",replace="poison_sting",chain=true}, {s="fly",dest="lavender",map=4}},
 	-- To the tower
 	{4, {3,6}, {c="a",a="Pokemon Tower"}, {14,6}, {14,5}},
 	-- Pokemon Tower

@@ -144,7 +144,7 @@ local function fieldMoveIndex(move)
 				moveIndex = 1
 			end
 		elseif move == "dig" then
-			if Pokemon.inParty("sandshrew") then
+			if not Pokemon.inParty("charmander") then
 				moveIndex = 1
 			end
 		elseif move == "surf" then

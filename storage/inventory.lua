@@ -92,7 +92,7 @@ end
 
 -- Actions
 
-function Inventory.teach(item, poke, replaceIdx, altPoke)
+function Inventory.teach(item, poke, replaceIdx)
 	local main = Memory.value("menu", "main")
 	local column = Menu.getCol()
 	if main == 144 then
@@ -121,7 +121,11 @@ function Inventory.teach(item, poke, replaceIdx, altPoke)
 		else
 			local teachIndex = 0
 			if poke then
-				teachIndex = Pokemon.indexOf(poke, altPoke)
+				if type(poke) == "table" then
+					teachIndex = Pokemon.indexOf(unpack(poke))
+				else
+					teachIndex = Pokemon.indexOf(poke)
+				end
 			end
 			Pokemon.select(teachIndex)
 		end

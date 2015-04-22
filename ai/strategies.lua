@@ -658,7 +658,7 @@ Strategies.functions = {
 			else
 				replacement = 0
 			end
-			if Inventory.teach(itemName, data.poke, replacement, data.alt) then
+			if Inventory.teach(itemName, data.poke, replacement) then
 				status.menuOpened = true
 			else
 				Menu.pause()
