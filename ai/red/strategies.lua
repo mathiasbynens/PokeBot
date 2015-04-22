@@ -716,8 +716,28 @@ strategyFunctions.shortsKid = function()
 			status.wrappedAt = nil
 		end
 	end
-	Control.battlePotion(fightingEkans or Strategies.damaged(2))
-	return strategyFunctions.leer({{"rattata",9}, {"ekans",10}})
+
+	local disablePotion = false
+	local forced
+	if fightingEkans then
+		if stats.nidoran.attack == 16 and stats.nidoran.speed == 15 then
+			forced = "horn_attack"
+		end
+	else
+		if stats.nidoran.speed == 15 then
+			forced = "horn_attack"
+		end
+		if Inventory.count("potion") < 8 then
+			if not Strategies.opponentDamaged() and Strategies.damaged(2) and Strategies.initialize("looper") then
+				Bridge.chat("Stuck in a heal loop, we're just going to have to risk it.")
+			end
+			disablePotion = true
+		else
+			disablePotion = Control.yolo and Strategies.damaged(2)
+		end
+	end
+	Control.battlePotion(not disablePotion)
+	return strategyFunctions.leer({{"rattata",9}, {"ekans",10}, forced=forced})
 end
 
 strategyFunctions.potionBeforeCocoons = function()
@@ -852,15 +872,17 @@ end
 
 strategyFunctions.potionForMankey = function()
 	if Strategies.initialize() then
+		Strategies.setYolo("mankey")
 		if Pokemon.info("nidoking", "level") > 20 then
 			return true
 		end
 	end
-	return strategyFunctions.potion({hp=18, yolo=8})
+	local healForDefense = 15 + (48 - stats.nidoran.defense)
+	return strategyFunctions.potion({hp=healForDefense, yolo=8})
 end
 
 strategyFunctions.redbarMankey = function()
-	if not Strategies.setYolo("mankey") then
+	if Control.yolo then
 		return true
 	end
 	local curr_hp, red_hp = Combat.hp(), Combat.redHP()

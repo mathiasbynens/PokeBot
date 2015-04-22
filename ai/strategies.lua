@@ -872,7 +872,7 @@ Strategies.functions = {
 			elseif status.canProgress then
 				return true
 			end
-			Battle.automate()
+			Battle.automate(data.forced)
 			return false
 		end
 		local opp = Battle.opponent()
