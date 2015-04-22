@@ -279,14 +279,17 @@ end
 strategyFunctions.tweetSurge = function()
 	Control.preferredPotion = "super"
 
-	if not Strategies.updates.misty and not Control.yolo then
-		local elt = Utils.elapsedTime()
-		local pbn = ""
-		local pbPace = Strategies.getTimeRequirement("trash") + 1
-		if not Strategies.overMinute(pbPace) then
-			pbn = " (PB pace)"
+	if not Strategies.updates.misty then
+		local timeLimit = Strategies.getTimeRequirement("trash")
+		if not Strategies.overMinute(timeLimit + 0.75) then
+			local elt = Utils.elapsedTime()
+			local pbn = ""
+
+			if not Strategies.overMinute(timeLimit + 0.25) then
+				pbn = " (PB pace)"
+			end
+			Strategies.tweetProgress("Got a run going, just beat Surge "..elt.." in"..pbn, "surge")
 		end
-		Strategies.tweetProgress("Got a run going, just beat Surge "..elt.." in"..pbn, "surge")
 	end
 	return true
 end
@@ -333,7 +336,7 @@ end
 -- dodgePalletBoy
 
 strategyFunctions.shopViridianPokeballs = function()
-	return Shop.transaction{
+	return Shop.transaction {
 		buy = {{name="pokeball", index=0, amount=8}}
 	}
 end
@@ -631,10 +634,12 @@ strategyFunctions.shopPewterMart = function()
 	local pokeballs = Inventory.count("pokeball")
 	if pokeballs < (Pokemon.inParty("spearow") and 2 or 3) then
 		pokeballs = pokeballs + 1
-		potions = potions - 1
+		if not Inventory.contains("potion") then
+			potions = potions - 1
+		end
 	end
 
-	return Shop.transaction{
+	return Shop.transaction {
 		buy = {{name="pokeball", index=0, amount=pokeballs}, {name="potion", index=1, amount=potions}}
 	}
 end
@@ -749,6 +754,10 @@ strategyFunctions.rivalSandAttack = function(data)
 	if Battle.isActive() then
 		status.canProgress = true
 		if Battle.redeployNidoking() then
+			local sacrifice = Battle.deployed()
+			if sacrifice and Strategies.initialize("sacrificed") then
+				Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore accuracy.")
+			end
 			return false
 		end
 
@@ -767,27 +776,35 @@ strategyFunctions.rivalSandAttack = function(data)
 			elseif opponent == "raticate" then
 				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "oddish")
 			end
-			if Battle.sacrifice(sacrifice) then
-				if Strategies.initialize("sacrificed") then
-					Bridge.chat("got Sand-Attacked... Swapping out "..Utils.capitalize(sacrifice).." to restore accuracy.")
-				end
+			if sacrifice and Battle.sacrifice(sacrifice) then
 				return false
 			end
 		end
 
+		local hasHornAttack = Battle.pp("horn_attack") > 0
 		local disableThrash = false
 		if opponent == "pidgeotto" then
 			disableThrash = true
 		elseif opponent == "raticate" then
 			disableThrash = Strategies.opponentDamaged() or (not Control.yolo and Combat.hp() < 32) -- RISK
 		elseif opponent == "kadabra" then
-			disableThrash = Combat.hp() < 11
+			disableThrash = hasHornAttack and not Control.yolo and Combat.hp() < 11
 		elseif opponent == "ivysaur" then
-			if not Control.yolo and Strategies.damaged(5) and Inventory.contains("super_potion") then
-				Inventory.use("super_potion", nil, true)
-				return false
+			if not Control.yolo and Strategies.damaged(5) then
+				local potion
+				if Inventory.count("potion") <= 1 then
+					potion = Inventory.contains("super_potion")
+				elseif Combat.isConfused() then
+					potion = Inventory.contains("super_potion", "potion")
+				else
+					potion = Inventory.contains("potion", "super_potion")
+				end
+				if potion then
+					Inventory.use(potion, nil, true)
+					return false
+				end
 			end
-			disableThrash = Strategies.opponentDamaged()
+			disableThrash = hasHornAttack and Strategies.opponentDamaged()
 		end
 		Combat.setDisableThrash(disableThrash)
 
@@ -870,19 +887,14 @@ end
 strategyFunctions.thrashGeodude = function()
 	if Battle.isActive() then
 		status.canProgress = true
-		if Pokemon.isOpponent("geodude") and Battle.opponentAlive() and Pokemon.isDeployed("nidoking") then
+		if Pokemon.isDeployed("squirtle") then
+			if Strategies.initialize("sacrificed") then
+				Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety.")
+			end
+		elseif Pokemon.isOpponent("geodude") and Battle.opponentAlive() and Combat.isConfused() then
 			if Strategies.initialize() then
 				status.sacrificeSquirtle = not Control.yolo or Combat.inRedBar()
-			end
-			if status.sacrificeSquirtle then
-				if Battle.sacrifice("squirtle") then
-					if Strategies.initialize("sacrificed") then
-						Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety.")
-					end
-					return false
-				end
-			elseif Combat.isConfused() then
-				if Strategies.initialize("confused") then
+				if not status.sacrificeSquirtle then
 					Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle...")
 				end
 			end
@@ -969,37 +981,27 @@ strategyFunctions.fightMisty = function()
 	if Battle.isActive() then
 		status.canProgress = true
 		if Battle.redeployNidoking() then
-			if status.swappedOut == false then
-				status.swappedOut = true
-			end
 			return false
 		end
 		local forced
-		if not status.swappedOut and Battle.opponentAlive() and Combat.isConfused() then
-			if status.swappedOut == nil and Control.yolo then
-				status.swappedOut = true
-				return false
+		if Battle.opponentAlive() and Combat.isConfused() then
+			local sacrifice
+			if not Control.yolo and stats.nidoran.speedDV >= 11 then
+				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras")
 			end
-			status.swappedOut = false
-			local sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras")
 
 			if Strategies.initialize("sacrificed") then
 				local swapMessage = " Thrash didn't finish the kill :( "
-				if stats.nidoran.speedDV < 11 then
-					swapMessage = swapMessage.."We'll need to get lucky."
-					sacrifice = nil
-				elseif sacrifice then
-					if Control.yolo then
-						swapMessage = swapMessage.."Attempting to hit through Confusion to save time."
-					else
-						swapMessage = swapMessage.."Swapping out to cure Confusion."
-					end
+				if sacrifice then
+					swapMessage = swapMessage.."Swapping out to cure Confusion."
+				elseif Control.yolo then
+					swapMessage = swapMessage.."Attempting to hit through Confusion to save time."
 				else
 					swapMessage = swapMessage.."We'll have to hit through Confusion here."
 				end
 				Bridge.chat(swapMessage)
 			end
-			if sacrifice and not Control.yolo and Battle.sacrifice(sacrifice) then
+			if sacrifice and Battle.sacrifice(sacrifice) then
 				return false
 			end
 		end
@@ -1285,7 +1287,8 @@ strategyFunctions.shopBuffs = function()
 	elseif stats.nidoran.special < 46 then
 		-- xspecAmt = xspecAmt - 1
 	end
-	return Shop.transaction{
+
+	return Shop.transaction {
 		direction = "Up",
 		buy = {{name="x_accuracy", index=0, amount=10}, {name="x_speed", index=5, amount=4}, {name="x_special", index=6, amount=xspecAmt}}
 	}
@@ -1860,7 +1863,7 @@ strategyFunctions.lorelei = function()
 		local opponentName = Battle.opponent()
 		if opponentName == "dewgong" then
 			local sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras", "oddish")
-			if Battle.sacrifice(sacrifice) then
+			if sacrifice and Battle.sacrifice(sacrifice) then
 				if Strategies.initialize("sacrificed") then
 					Bridge.chat(" Swapping out "..Utils.capitalize(sacrifice).." to tank Aurora Beam into turn 2 Rest. Only a problem if it misses...")
 				end

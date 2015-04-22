@@ -155,6 +155,10 @@ function Battle.opponent()
 	return Pokemon.getName(Memory.value("battle", "opponent_id"))
 end
 
+function Battle.deployed()
+	return Pokemon.getName(Memory.value("battle", "our_id"))
+end
+
 function Battle.opponentAlive()
 	return Memory.double("battle", "opponent_hp") > 0
 end
