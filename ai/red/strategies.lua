@@ -62,7 +62,7 @@ Strategies.timeRequirements = {
 		return timeLimit
 	end,
 
-	oldMan = function()
+	old_man = function()
 		return 6.75 + timeSaveFor("spearow")
 	end,
 
@@ -336,8 +336,17 @@ strategyFunctions.fightBulbasaur = function()
 			status.tries = status.tries + 1
 		end
 	end
-	if Battle.isActive() and Battle.opponentAlive() and Strategies.resetTime("bulbasaur", "beat Bulbasaur") then
-		return true
+	if Battle.isActive() and Battle.opponentAlive() then
+		local resetMessage, customReason
+		if Memory.double("battle", "our_attack") < 3 then
+			resetMessage = "Growled to death."
+			customReason = true
+		else
+			resetMessage = "beat Bulbasaur"
+		end
+		if Strategies.resetTime("bulbasaur", resetMessage, customReason) then
+			return true
+		end
 	end
 	return Strategies.buffTo("tail_whip", 6)
 end
@@ -359,14 +368,15 @@ strategyFunctions.catchNidoran = function()
 	if not Control.canCatch() then
 		return true
 	end
+	local catchableNidoran = Pokemon.isOpponent("nidoran") and Memory.value("battle", "opponent_level") > 2
 	local pokeballs = Inventory.count("pokeball")
 	local caught = Memory.value("player", "party_size") - 1
-	if pokeballs < 5 - caught * 2 then
+	if pokeballs < (catchableNidoran and 5 or 6) - caught * 2 then
 		return Strategies.reset("pokeballs", "Ran too low on PokeBalls", pokeballs)
 	end
+
 	if Battle.isActive() then
-		local isNidoran = Pokemon.isOpponent("nidoran")
-		if isNidoran and Memory.value("battle", "opponent_level") > 2 then
+		if catchableNidoran then
 			if Strategies.initialize("polled") then
 				Bridge.pollForName()
 			end
@@ -375,7 +385,7 @@ strategyFunctions.catchNidoran = function()
 		if Memory.value("menu", "text_input") == 240 then
 			Textbox.name()
 		elseif Menu.hasTextbox() then
-			if isNidoran then
+			if catchableNidoran then
 				Input.press("A")
 			else
 				Input.cancel()
@@ -432,7 +442,7 @@ end
 
 strategyFunctions.grabTreePotion = function()
 	if Strategies.initialize() then
-		if Strategies.setYolo("oldMan") or Pokemon.info("squirtle", "hp") > 16 then
+		if Strategies.setYolo("old_man") or Pokemon.info("squirtle", "hp") > 16 then
 			return true
 		end
 	end
@@ -724,7 +734,7 @@ strategyFunctions.shortsKid = function()
 			forced = "horn_attack"
 		end
 	else
-		if stats.nidoran.speed == 15 then
+		if Strategies.damaged(2) and stats.nidoran.speed == 15 then
 			forced = "horn_attack"
 		end
 		if Inventory.count("potion") < 8 then

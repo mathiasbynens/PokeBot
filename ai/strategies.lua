@@ -88,7 +88,7 @@ function Strategies.death(extra)
 	elseif Control.criticaled then
 		explanation = "Critical'd"
 		reason = "critical"
-	elseif Control.yolo then
+	elseif Control.yolo and stats.nidoran then
 		explanation = "Yolo strats"
 		reason = "yolo"
 	else
@@ -105,14 +105,13 @@ function Strategies.overMinute(min)
 	return Utils.igt() > (min * 60)
 end
 
-function Strategies.resetTime(timeLimit, explanation, once)
+function Strategies.resetTime(timeLimit, explanation, custom)
 	if Strategies.overMinute(timeLimit) then
-		explanation = "Took too long to "..explanation
+		if not custom then
+			explanation = "Took too long to "..explanation.."."
+		end
 		if RESET_FOR_TIME then
 			return Strategies.reset("time", explanation)
-		end
-		if once then
-			print(explanation.." "..Utils.elapsedTime())
 		end
 	end
 end
@@ -1091,7 +1090,7 @@ Strategies.functions = {
 			Bridge.chat(moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
 		end
 
-		Strategies.resetTime("mt_moon", "complete Mt. Moon", true)
+		Strategies.resetTime("mt_moon", "complete Mt. Moon")
 		return true
 	end,
 
