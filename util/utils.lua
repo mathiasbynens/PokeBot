@@ -101,6 +101,10 @@ function Utils.pluralize(amount, description)
 	return amount.." "..description
 end
 
+function Utils.random(items)
+	return items[math.random(1, #items)]
+end
+
 -- GAME
 
 function Utils.canPotionWith(potion, forDamage, curr_hp, max_hp)

@@ -1225,11 +1225,13 @@ Strategies.functions = {
 			" CUTSCENE HYPE!",
 			" Please, sit back and enjoy the cutscene.",
 			"is enjoying the scenery Kappa b",
+			" Remind me to get Mew after this ship leaves!",
 			" Cutscenes DansGame",
-			" Your regularly scheduled run will continue in a moment.",
+			" Your regularly scheduled run will continue in just a moment.",
 			" Guys I think the game softlocked Kappa",
+			" Perfect, I needed a quick bathroom break.",
 		}
-		Bridge.chat(messages[math.random(1, #messages)])
+		Bridge.chat(Utils.random(messages))
 		return true
 	end,
 
@@ -1272,8 +1274,19 @@ Strategies.functions = {
 	end,
 
 	announceOddish = function()
-		if Pokemon.info("nidoking", "level") < 30 then
-			Bridge.chat("needs a good damage range to 1-shot this Oddish, which can paralyze.")
+		if Battle.isActive() then
+			status.canProgress = true
+			if Pokemon.isOpponent("oddish") then
+				local __, turnsToKill = Combat.bestMove()
+				if turnsToKill and turnsToKill > 1 and Strategies.initialize() then
+					Bridge.chat("needs a good damage range to 1-shot this Oddish, which can paralyze.")
+				end
+			end
+			Battle.automate()
+		elseif status.canProgress then
+			return true
+		else
+			Battle.automate()
 		end
 		return true
 	end,
