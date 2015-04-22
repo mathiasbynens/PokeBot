@@ -26,8 +26,7 @@ function Data.increment(key)
 end
 
 function Data.reset(reason, areaName, map, px, py)
-	-- if INTERNAL and STREAMING_MODE then --TODO
-	if INTERNAL then
+	if STREAMING_MODE then
 		local report = Data.run
 		report.cutter = Pokemon.inParty("paras", "oddish", "sandshrew", "charmander")
 

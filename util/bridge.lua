@@ -54,7 +54,7 @@ function Bridge.init()
 end
 
 function Bridge.tweet(message)
-	if INTERNAL and STREAMING_MODE then
+	if STREAMING_MODE then
 		print("tweet::"..message)
 		return send("tweet", message)
 	end
@@ -135,7 +135,7 @@ function Bridge.encounter()
 end
 
 function Bridge.report(report)
-	if not STREAMING_MODE then
+	if INTERNAL and not STREAMING_MODE then
 		print(json.encode(report))
 	end
 	send("report", json.encode(report))

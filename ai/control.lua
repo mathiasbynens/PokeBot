@@ -333,7 +333,7 @@ function Control.encounter(battleState)
 						if Pokemon.isOpponent("zubat") then
 							local zubatCount = Data.increment("encounters_zubats")
 							Data.run.encounters_zubats = zubatCount
-							if INTERNAL and STREAMING_MODE then
+							if STREAMING_MODE then
 								Bridge.chat(Utils.multiplyString("NightBat", zubatCount))
 							end
 						end

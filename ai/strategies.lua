@@ -1656,7 +1656,7 @@ Strategies.functions = {
 					Data.run.frames = Utils.frames()
 					print("v"..VERSION..": "..Data.run.frames.." frames, with seed "..Data.run.seed)
 
-					if STREAMING_MODE and not Strategies.replay then
+					if (yellow or not INTERNAL or RESET_FOR_TIME) and not Strategies.replay then
 						print("Please save this seed number to share, if you would like proof of your run!")
 						print("A screenshot has been saved to the Gameboy\\Screenshots folder in BizHawk.")
 						gui.cleartext()
@@ -1712,9 +1712,7 @@ function Strategies.execute(data)
 end
 
 function Strategies.init(midGame)
-	if not STREAMING_MODE then
-		splitTime = Utils.timeSince(0)
-	end
+	splitTime = Utils.timeSince(0)
 	if midGame then
 		Control.preferredPotion = "super"
 		Combat.factorPP(true)

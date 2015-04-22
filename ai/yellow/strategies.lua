@@ -1017,7 +1017,7 @@ end
 -- PROCESS
 
 function Strategies.initGame(midGame)
-	if not STREAMING_MODE then
+	if midGame then
 		-- Strategies.setYolo("")
 		if Pokemon.inParty("nidoking") then
 			local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("nidoking")

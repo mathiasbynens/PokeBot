@@ -2093,8 +2093,8 @@ end
 -- PROCESS
 
 function Strategies.initGame(midGame)
-	if not STREAMING_MODE then
-		-- Strategies.setYolo("bulbasaur")
+	if midGame then
+		Strategies.setYolo("bulbasaur")
 		stats.squirtle = {
 			attack = 11,
 			defense = 11,
