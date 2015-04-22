@@ -71,7 +71,7 @@ function Bridge.chat(message, extra, newLine)
 	else
 		p(message, newLine)
 	end
-	return send("msg", "/me "..message)
+	return send("msg", message)
 end
 
 function Bridge.time(message)

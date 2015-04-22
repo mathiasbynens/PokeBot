@@ -30,11 +30,11 @@ Strategies.vaporeon = false
 Strategies.timeRequirements = {
 
 	nidoran = function()
-		return 10
+		return 15
 	end,
 
 	mt_moon = function()
-		local timeLimit = 30
+		local timeLimit = 35
 		if stats.nidoran.attack > 15 and stats.nidoran.speed > 14 then
 			timeLimit = timeLimit + 0.25
 		end
@@ -45,19 +45,19 @@ Strategies.timeRequirements = {
 	end,
 
 	trash = function()
-		return 55
+		return 60
 	end,
 
 	safari_carbos = function()
-		return 80
+		return 90
 	end,
 
 	victory_road = function() --PB
-		return 105
+		return 110
 	end,
 
 	champion = function() --PB
-		return 120
+		return 125
 	end,
 
 }
@@ -620,7 +620,8 @@ end
 strategyFunctions.shopBuffs = function()
 	local xAccs = Strategies.vaporeon and 11 or 10
 	local xSpeeds = Strategies.vaporeon and 6 or 7
-	return Shop.transaction{
+
+	return Shop.transaction {
 		direction = "Right",
 		sell = {{name="nugget"}},
 		buy = {{name="x_accuracy", index=0, amount=xAccs}, {name="x_attack", index=3, amount=3}, {name="x_speed", index=5, amount=xSpeeds}, {name="x_special", index=6, amount=5}},
@@ -879,7 +880,7 @@ strategyFunctions.centerSkip = function()
 end
 
 strategyFunctions.shopE4 = function()
-	return Shop.transaction{
+	return Shop.transaction {
 		buy = {{name="full_restore", index=2, amount=3}}
 	}
 end

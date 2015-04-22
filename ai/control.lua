@@ -179,12 +179,6 @@ function Control.canDie(enabled)
 	canDie = enabled
 end
 
-local function isNewFight()
-	if Memory.double("battle", "opponent_hp") == Memory.double("battle", "opponent_max_hp") then
-		return true
-	end
-end
-
 function Control.shouldFight()
 	if not shouldFight then
 		return false
