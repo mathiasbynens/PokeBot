@@ -28,6 +28,7 @@ local pokeIDs = {
 	kadabra = 38,
 	hitmonchan = 44,
 	magneton = 54,
+	koffing = 55,
 	venonat = 65,
 	jinx = 72,
 	meowth = 77,

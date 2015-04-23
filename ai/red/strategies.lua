@@ -1597,8 +1597,8 @@ strategyFunctions.fightKoga = function()
 		if Battle.opponentAlive() then
 			local opponent = Battle.opponent()
 			local curr_hp = Combat.hp()
-			if Pokemon.isOpponent("weezing") then
-				local drillHp = (Pokemon.index(0, "level") > 40) and 12 or 9
+			if opponent == "weezing" then
+				local drillHp = (Pokemon.index(0, "level") >= 41) and 12 or 9
 				if curr_hp > 0 and curr_hp < drillHp and Battle.pp("horn_drill") > 0 then
 					forced = "horn_drill"
 					if Strategies.initialize("drilling") then
@@ -1617,10 +1617,16 @@ strategyFunctions.fightKoga = function()
 					Control.canDie(true)
 				end
 			else
+				if opponent == "koffing" then
+					local __, enemyTurns = Combat.enemyAttack()
+					if enemyTurns > 1 then
+						if not Strategies.prepare("x_accuracy") then
+							return false
+						end
+					end
+				end
 				if Strategies.isPrepared("x_accuracy") then
 					forced = "horn_drill"
-				elseif curr_hp > 9 and not Strategies.prepare("x_accuracy") then
-					return false
 				end
 			end
 		end
