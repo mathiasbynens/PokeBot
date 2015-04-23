@@ -558,10 +558,21 @@ strategyFunctions.fightBrock = function()
 				end
 				if turnsToKill then
 					local forced
-					if turnsToDie < 2 or turnsToKill < 2 or status.startBide - bideTurns > 1 then
+					if status.startBide - bideTurns >= 2 or turnsToKill <= 1 then
+						-- Bubble
 					-- elseif turnsToKill < 3 and status.startBide == bideTurns then
 					elseif onixHP == status.canProgress then
-						forced = "tail_whip"
+						if turnsToDie == 1 then
+							if Strategies.initialize("biding") then
+								Bridge.chat("is in range to die to a Tackle. Attempting to finish off Onix before Bide hits...")
+							end
+						else
+							forced = "tail_whip"
+						end
+					else
+						if Strategies.initialize("biding") then
+							Bridge.chat("used Bubble the same turn as Bide. It'll need to last 3 turns for us to finish him first...")
+						end
 					end
 					Battle.fight(forced)
 				else
