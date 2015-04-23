@@ -338,7 +338,7 @@ strategyFunctions.fightBulbasaur = function()
 	end
 	if Battle.isActive() and Battle.opponentAlive() then
 		local resetMessage, customReason
-		if Memory.double("battle", "our_attack") < 3 then
+		if Memory.double("battle", "our_attack") < 2 then
 			resetMessage = "Growled to death."
 			customReason = true
 		else
@@ -417,14 +417,17 @@ strategyFunctions.catchNidoran = function()
 			enableDSum = false
 		end
 
-		local resetMessage
+		local resetMessage, customReason
 		if hasNidoran then
 			resetMessage = "get an encounter for experience before Brock"
+		elseif Data.run.encounters_rattata and Data.run.encounters_rattata > 4 then
+			resetMessage = "Death by Rattata"
+			customReason = true
 		else
 			resetMessage = "find a suitable Nidoran"
 		end
 		local resetLimit = Strategies.getTimeRequirement("nidoran")
-		if Strategies.resetTime(resetLimit, resetMessage) then
+		if Strategies.resetTime(resetLimit, resetMessage, customReason) then
 			return true
 		end
 		if enableDSum then
@@ -756,7 +759,7 @@ strategyFunctions.shortsKid = function()
 			end
 			disablePotion = true
 		else
-			disablePotion = Control.yolo and Strategies.damaged(2)
+			disablePotion = Control.yolo and not Strategies.damaged(2)
 		end
 	end
 	Control.battlePotion(not disablePotion)
