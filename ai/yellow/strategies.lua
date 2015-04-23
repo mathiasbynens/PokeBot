@@ -388,8 +388,7 @@ strategyFunctions.fightBrock = function()
 	if curr_hp == 0 then
 		return Strategies.death()
 	end
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local __, turnsToKill, turnsToDie = Combat.bestMove()
 		if turnsToDie and turnsToDie < 2 and Inventory.contains("potion") then
 			Inventory.use("potion", "nidoran", true)
@@ -417,10 +416,8 @@ strategyFunctions.fightBrock = function()
 				strategyFunctions.leer({{"onix", 13}})
 			end
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	elseif Textbox.handle() then
-		Player.interact("Up")
 	end
 end
 
@@ -638,15 +635,12 @@ end
 -- shopRepels
 
 strategyFunctions.lavenderRival = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Strategies.prepare("x_accuracy") then
 			Battle.automate()
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Input.cancel()
 	end
 end
 
@@ -671,11 +665,7 @@ strategyFunctions.silphCarbos = function(data)
 end
 
 strategyFunctions.silphRival = function()
-	if Battle.isActive() then
-		if Strategies.initialize() then
-			status.canProgress = true
-		end
-
+	if Strategies.trainerBattle() then
 		if Strategies.prepare("x_accuracy") then
 			-- Strategies.prepare("x_speed")
 			local forced, prepare
@@ -696,11 +686,9 @@ strategyFunctions.silphRival = function()
 				Battle.automate(forced)
 			end
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		Control.ignoreMiss = false
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -716,9 +704,8 @@ strategyFunctions.tossTM34 = function()
 end
 
 strategyFunctions.fightKoga = function()
-	if Battle.isActive() then
+	if Strategies.trainerBattle() then
 		if Strategies.prepare("x_accuracy") then
-			status.canProgress = true
 			local forced = "horn_drill"
 			local opponent = Battle.opponent()
 			if opponent == "venonat" then
@@ -733,18 +720,15 @@ strategyFunctions.fightKoga = function()
 			end
 			Battle.automate(forced)
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		Strategies.deepRun = true
 		Control.ignoreMiss = false
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 strategyFunctions.fightSabrina = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Strategies.prepare("x_accuracy", "x_speed") then
 			-- local forced = "horn_drill"
 			-- local opponent = Battle.opponent()
@@ -752,12 +736,10 @@ strategyFunctions.fightSabrina = function()
 			-- end
 			Battle.automate(forced)
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		Strategies.deepRun = true
 		Control.ignoreMiss = false
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -768,9 +750,8 @@ end
 -- waitToReceive
 
 strategyFunctions.fightGiovanni = function()
-	if Battle.isActive() then
+	if Strategies.trainerBattle() then
 		if Strategies.initialize() then
-			status.canProgress = true
 			Bridge.chat(" Giovanni can end the run here with Dugtrio's high chance to critical...")
 		end
 		if Strategies.prepare("x_speed") then
@@ -794,12 +775,10 @@ strategyFunctions.fightGiovanni = function()
 				Battle.automate(forced)
 			end
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		Strategies.deepRun = true
 		Control.ignoreMiss = false
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -813,8 +792,7 @@ strategyFunctions.useViridianEther = function()
 end
 
 strategyFunctions.fightViridianRival = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local xItem1, xItem2
 		if Strategies.vaporeon then
 			xItem1 = "x_accuracy"
@@ -827,10 +805,8 @@ strategyFunctions.fightViridianRival = function()
 		if Strategies.prepare(xItem1, xItem2) then
 			Battle.automate()
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -883,9 +859,7 @@ strategyFunctions.shopE4 = function()
 end
 
 strategyFunctions.lorelei = function()
-	if Battle.isActive() then
-		status.canProgress = true
-
+	if Strategies.trainerBattle() then
 		local opponentName = Battle.opponent()
 		if opponentName == "dewgong" then
 			if Memory.double("battle", "our_speed") < 121 then
@@ -900,17 +874,13 @@ strategyFunctions.lorelei = function()
 		if Strategies.prepare("x_accuracy") then
 			Battle.automate()
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 strategyFunctions.bruno = function()
-	if Battle.isActive() then
-		status.canProgress = true
-
+	if Strategies.trainerBattle() then
 		local forced
 		local opponentName = Battle.opponent()
 		if opponentName == "onix" then
@@ -921,16 +891,13 @@ strategyFunctions.bruno = function()
 			end
 		end
 		Battle.automate(forced)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 strategyFunctions.agatha = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Combat.isSleeping() then
 			Inventory.use("pokeflute", nil, true)
 			return false
@@ -946,16 +913,13 @@ strategyFunctions.agatha = function()
 			end
 		end
 		Battle.automate()
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 strategyFunctions.lance = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local xItem
 		if Pokemon.isOpponent("dragonair") then
 			xItem = "x_speed"
@@ -975,16 +939,13 @@ strategyFunctions.lance = function()
 		if Strategies.prepare(xItem) then
 			Battle.automate()
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 strategyFunctions.blue = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local xItem
 		if Pokemon.isOpponent("exeggutor") then
 			if Combat.isSleeping() then
@@ -1004,10 +965,8 @@ strategyFunctions.blue = function()
 		if Strategies.prepare(xItem) then
 			Battle.automate()
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 

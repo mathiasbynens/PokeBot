@@ -498,13 +498,12 @@ strategyFunctions.grabForestPotion = function()
 end
 
 strategyFunctions.fightWeedle = function()
-	if Battle.isTrainer() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Memory.value("battle", "our_status") > 0 and not Inventory.contains("antidote") then
 			return Strategies.reset("antidote", "Poisoned, but we skipped the antidote")
 		end
 		return Strategies.buffTo("tail_whip", 5)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
 	end
 end
@@ -571,6 +570,7 @@ strategyFunctions.fightBrock = function()
 				status.canProgress = false
 				Battle.fight()
 			end
+
 			if status.tries < 9000 then
 				local nidx = Pokemon.indexOf("nidoran")
 				if Pokemon.index(nidx, "level") == 8 then
@@ -703,8 +703,7 @@ strategyFunctions.battleModeSet = function()
 end
 
 strategyFunctions.bugCatcher = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local isWeedle = Pokemon.isOpponent("weedle")
 		if isWeedle and not status.secondCaterpie then
 			status.secondCaterpie = true
@@ -717,10 +716,8 @@ strategyFunctions.bugCatcher = function()
 			end
 		end
 		strategyFunctions.leer({{"caterpie",8}, {"weedle",7}})
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Battle.automate()
 	end
 end
 
@@ -776,16 +773,13 @@ end
 -- swapHornAttack
 
 strategyFunctions.fightMetapod = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Battle.opponentAlive() and Pokemon.isOpponent("metapod") then
 			return true
 		end
 		Battle.automate()
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Battle.automate()
 	end
 end
 
@@ -808,8 +802,7 @@ end
 -- dodgeCerulean
 
 strategyFunctions.rivalSandAttack = function(data)
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Battle.redeployNidoking() then
 			local sacrifice = Battle.deployed()
 			if sacrifice and Strategies.initialize("sacrificed") then
@@ -866,11 +859,9 @@ strategyFunctions.rivalSandAttack = function(data)
 		Combat.setDisableThrash(disableThrash)
 
 		Battle.automate()
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		Combat.setDisableThrash(false)
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -880,16 +871,15 @@ strategyFunctions.hornAttackCaterpie = function()
 			return true
 		end
 	end
-	local forced
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
+		local forced
 		if not Strategies.opponentDamaged() then
 			forced = "horn_attack"
 		end
-	elseif status.canProgress then
+		Battle.automate(forced)
+	elseif status.foughtTrainer then
 		return true
 	end
-	Battle.automate(forced)
 end
 
 -- rareCandyEarly
@@ -915,8 +905,7 @@ strategyFunctions.redbarMankey = function()
 	if curr_hp <= red_hp then
 		return true
 	end
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local enemyMove, enemyTurns = Combat.enemyAttack()
 		if enemyTurns then
 			if enemyTurns < 2 then
@@ -928,10 +917,8 @@ strategyFunctions.redbarMankey = function()
 			end
 		end
 		Battle.automate("poison_sting")
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 	if Strategies.initialize() then
 		if Pokemon.info("nidoking", "level") < 23 or Inventory.count("potion") < 4 then -- RISK
@@ -944,8 +931,7 @@ end
 -- 6: NUGGET BRIDGE
 
 strategyFunctions.thrashGeodude = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Pokemon.isDeployed("squirtle") then
 			if Strategies.initialize("sacrificed") then
 				Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety.")
@@ -959,10 +945,8 @@ strategyFunctions.thrashGeodude = function()
 			end
 		end
 		Battle.automate()
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1037,8 +1021,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 end
 
 strategyFunctions.fightMisty = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Battle.redeployNidoking() then
 			return false
 		end
@@ -1065,10 +1048,8 @@ strategyFunctions.fightMisty = function()
 			end
 		end
 		Battle.automate(forced)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1246,8 +1227,7 @@ strategyFunctions.potionBeforeSurge = function()
 end
 
 strategyFunctions.fightSurge = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local forced
 		local disableThrash = false
 		if Pokemon.isOpponent("voltorb") then
@@ -1265,10 +1245,8 @@ strategyFunctions.fightSurge = function()
 		end
 		Combat.setDisableThrash(disableThrash)
 		Battle.automate(forced)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1368,8 +1346,7 @@ end
 -- 9: FLY
 
 strategyFunctions.lavenderRival = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local forced
 		if stats.nidoran.special > 44 then -- RISK
 			local __, enemyTurns = Combat.enemyAttack()
@@ -1381,10 +1358,8 @@ strategyFunctions.lavenderRival = function()
 		if Pokemon.isOpponent("gyarados") or Strategies.prepare("x_accuracy") then
 			Battle.automate()
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Input.cancel()
 	end
 end
 
@@ -1421,16 +1396,13 @@ end
 -- silphElevator
 
 strategyFunctions.fightSilphMachoke = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Control.yolo and stats.nidoran.special > 44 then
 			return Strategies.prepare("x_accuracy")
 		end
 		Battle.automate("thrash")
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1447,13 +1419,12 @@ strategyFunctions.swapXSpecials = function()
 end
 
 strategyFunctions.silphRival = function()
-	if Battle.isActive() then
+	if Strategies.trainerBattle() then
 		if Strategies.initialize() then
 			if Control.yolo then
 				status.gyaradosDamage = Combat.healthFor("RivalGyarados")
 				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!", status.gyaradosDamage.." "..Combat.redHP())
 			end
-			status.canProgress = true
 		end
 
 		if Strategies.prepare("x_accuracy", "x_speed") then
@@ -1518,11 +1489,9 @@ strategyFunctions.silphRival = function()
 			end
 			Battle.automate(forced)
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		Control.ignoreMiss = false
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1541,8 +1510,7 @@ strategyFunctions.rareCandyGiovanni = function()
 end
 
 strategyFunctions.fightSilphGiovanni = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local forced
 		local opponentName = Battle.opponent()
 		if opponentName == "nidorino" then
@@ -1567,10 +1535,8 @@ strategyFunctions.fightSilphGiovanni = function()
 			end
 		end
 		Battle.automate(forced)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1608,7 +1574,7 @@ strategyFunctions.potionBeforeHypno = function()
 end
 
 strategyFunctions.fightHypno = function()
-	if Battle.isActive() then
+	if Strategies.trainerBattle() then
 		local forced
 		if Pokemon.isOpponent("hypno") and not Strategies.damaged() then
 			if Pokemon.info("nidoking", "hp") > Combat.healthFor("KogaWeezing") * 0.9 then
@@ -1620,16 +1586,13 @@ strategyFunctions.fightHypno = function()
 			end
 		end
 		Battle.automate(forced)
-		status.canProgress = true
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 strategyFunctions.fightKoga = function()
-	if Battle.isActive() then
+	if Strategies.trainerBattle() then
 		local forced
 		if Battle.opponentAlive() then
 			local opponent = Battle.opponent()
@@ -1662,13 +1625,10 @@ strategyFunctions.fightKoga = function()
 			end
 		end
 		Battle.automate(forced)
-		status.canProgress = true
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		Strategies.deepRun = true
 		Control.ignoreMiss = false
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1679,8 +1639,7 @@ end
 -- cinnabarCarbos
 
 strategyFunctions.fightErika = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local forced
 		if Control.yolo then
 			local curr_hp, red_hp = Combat.hp(), Combat.redHP()
@@ -1696,10 +1655,8 @@ strategyFunctions.fightErika = function()
 			end
 		end
 		Battle.automate(forced)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1730,8 +1687,7 @@ strategyFunctions.fightGiovanniMachoke = function()
 			status.skipSpecial = true
 		end
 	end
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Pokemon.isOpponent("machop") then
 			status.killedMachoke = true
 		elseif not status.killedMachoke then
@@ -1744,10 +1700,8 @@ strategyFunctions.fightGiovanniMachoke = function()
 			end
 		end
 		Battle.automate()
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1776,10 +1730,9 @@ strategyFunctions.checkGiovanni = function()
 end
 
 strategyFunctions.fightGiovanni = function()
-	if Battle.isActive() then
+	if Strategies.trainerBattle() then
 		if Strategies.initialize() then
 			status.needsXSpecial = not Combat.inRedBar() or Battle.pp("earthquake") <= (riskGiovanni and 4 or 2)
-			status.canProgress = true
 		end
 		local forced
 		if riskGiovanni then
@@ -1795,18 +1748,15 @@ strategyFunctions.fightGiovanni = function()
 			return false
 		end
 		Battle.automate(forced)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 -- 16: GIOVANNI
 
 strategyFunctions.viridianRival = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Strategies.prepare("x_accuracy", "x_special") then
 			local forced
 			if Pokemon.isOpponent("pidgeot") then
@@ -1822,10 +1772,8 @@ strategyFunctions.viridianRival = function()
 			end
 			Battle.automate(forced)
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -1913,8 +1861,7 @@ strategyFunctions.centerSkip = function()
 end
 
 strategyFunctions.lorelei = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Battle.redeployNidoking() then
 			return false
 		end
@@ -1936,19 +1883,15 @@ strategyFunctions.lorelei = function()
 		if Strategies.prepare("x_accuracy") then
 			Battle.automate(forced)
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 -- 17: LORELEI
 
 strategyFunctions.bruno = function()
-	if Battle.isActive() then
-		status.canProgress = true
-
+	if Strategies.trainerBattle() then
 		if Strategies.prepare("x_accuracy") then
 			local forced
 			if Pokemon.isOpponent("onix") then
@@ -1956,16 +1899,13 @@ strategyFunctions.bruno = function()
 			end
 			Battle.automate(forced)
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 strategyFunctions.agatha = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		if Combat.isSleeping() then
 			Inventory.use("pokeflute", nil, true)
 			return false
@@ -1990,18 +1930,15 @@ strategyFunctions.agatha = function()
 			end
 		end
 		Battle.automate()
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
 -- prepareForLance
 
 strategyFunctions.lance = function()
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local xItem
 		if Pokemon.isOpponent("dragonair") then
 			xItem = "x_speed"
@@ -2011,10 +1948,8 @@ strategyFunctions.lance = function()
 		if Strategies.prepare(xItem) then
 			Battle.automate()
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 
@@ -2040,9 +1975,8 @@ strategyFunctions.prepareForBlue = function()
 end
 
 strategyFunctions.blue = function()
-	if Battle.isActive() then
-		if not status.canProgress then
-			status.canProgress = true
+	if Strategies.trainerBattle() then
+		if Strategies.initialize() then
 			if stats.nidoran.specialDV >= 8 and stats.nidoran.speedDV >= 12 and Inventory.contains("x_special") then
 				status.xItem = "x_special"
 			else
@@ -2109,10 +2043,8 @@ strategyFunctions.blue = function()
 				Battle.automate(forced)
 			end
 		end
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Textbox.handle()
 	end
 end
 

@@ -184,6 +184,18 @@ function Strategies.damaged(factor)
 	return Pokemon.index(0, "hp") * factor < Pokemon.index(0, "max_hp")
 end
 
+function Strategies.trainerBattle()
+	if Battle.isActive() then
+		if not status.foughtTrainer then
+			if Battle.handleWild() then
+				status.foughtTrainer = true
+			end
+		end
+		return true
+	end
+	Textbox.handle()
+end
+
 function Strategies.opponentDamaged(factor)
 	if not factor then
 		factor = 1
@@ -210,17 +222,14 @@ local function interact(direction, extended)
 end
 
 function Strategies.buffTo(buff, defLevel)
-	if Battle.isActive() then
-		status.canProgress = true
+	if Strategies.trainerBattle() then
 		local forced
 		if defLevel and Memory.double("battle", "opponent_defense") > defLevel then
 			forced = buff
 		end
 		Battle.automate(forced, true)
-	elseif status.canProgress then
+	elseif status.foughtTrainer then
 		return true
-	else
-		Battle.automate()
 	end
 end
 
@@ -866,12 +875,11 @@ Strategies.functions = {
 	leer = function(data)
 		local bm = Combat.bestMove()
 		if not bm or bm.minTurns < 3 then
-			if Battle.isActive() then
-				status.canProgress = true
-			elseif status.canProgress then
+			if Strategies.trainerBattle() then
+				Battle.automate(data.forced)
+			elseif status.foughtTrainer then
 				return true
 			end
-			Battle.automate(data.forced)
 			return false
 		end
 		local opp = Battle.opponent()
@@ -1039,9 +1047,8 @@ Strategies.functions = {
 				end
 			end
 			if usedMoonStone then
-				if not status.canProgress then
+				if Strategies.initialize("evolved") then
 					Bridge.caught("nidoking")
-					status.canProgress = true
 				end
 				if Menu.close() then
 					return true
@@ -1147,8 +1154,7 @@ Strategies.functions = {
 				return true
 			end
 		end
-		if Battle.isActive() then
-			status.canProgress = true
+		if Strategies.trainerBattle() then
 			if Pokemon.moveIndex("thrash", "nidoking") then
 				nidokingStats()
 				return true
@@ -1171,10 +1177,10 @@ Strategies.functions = {
 					return false
 				end
 			end
-		elseif status.canProgress then
+			Battle.automate()
+		elseif status.foughtTrainer then
 			return true
 		end
-		Battle.automate()
 	end,
 
 	swapThrash = function()
@@ -1240,9 +1246,8 @@ Strategies.functions = {
 	end,
 
 	redbarCubone = function()
-		if Battle.isActive() then
+		if Strategies.trainerBattle() then
 			local forced
-			status.canProgress = true
 			if Pokemon.isOpponent("cubone") then
 				local enemyMove, enemyTurns = Combat.enemyAttack()
 				if enemyTurns then
@@ -1265,16 +1270,13 @@ Strategies.functions = {
 				Control.ignoreMiss = forced ~= nil
 			end
 			Battle.automate(forced)
-		elseif status.canProgress then
+		elseif status.foughtTrainer then
 			return true
-		else
-			Battle.automate()
 		end
 	end,
 
 	announceOddish = function()
-		if Battle.isActive() then
-			status.canProgress = true
+		if Strategies.trainerBattle() then
 			if Pokemon.isOpponent("oddish") then
 				local __, turnsToKill = Combat.bestMove()
 				if turnsToKill and turnsToKill > 1 and Strategies.initialize() then
@@ -1282,12 +1284,9 @@ Strategies.functions = {
 				end
 			end
 			Battle.automate()
-		elseif status.canProgress then
+		elseif status.foughtTrainer then
 			return true
-		else
-			Battle.automate()
 		end
-		return true
 	end,
 
 	shopTM07 = function()
@@ -1349,8 +1348,7 @@ Strategies.functions = {
 				Bridge.chat("is using Rock Slide to one-hit these Ghastlies in red-bar (each is 1 in 10 to miss).")
 			end
 		end
-		if Battle.isActive() then
-			status.canProgress = true
+		if Strategies.trainerBattle() then
 			local currentlyDead = Memory.double("battle", "our_hp") == 0
 			if currentlyDead then
 				local backupPokemon = Pokemon.getSacrifice("paras", "squirtle", "sandshrew", "charmander")
@@ -1368,10 +1366,8 @@ Strategies.functions = {
 			else
 				Battle.automate()
 			end
-		elseif status.canProgress then
+		elseif status.foughtTrainer then
 			return true
-		else
-			Textbox.handle()
 		end
 	end,
 
