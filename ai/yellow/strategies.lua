@@ -71,27 +71,27 @@ local function nidoranDSum(enabled)
 		local opponentLevel = Memory.value("battle", "opponent_level")
 		if opponentName == "rattata" then
 			if opponentLevel == 3 then
-				status.path = {0, 1, 11}
+				status.path = {0, 1, 11, 2, 11}
 			elseif opponentLevel == 4 then
-				status.path = {9, 2, 11}
+				status.path = {9, 2, 11, 2, 11}
 			end
 		elseif opponentName == "pidgey" then
 			if opponentLevel == 3 then
-				status.path = {9, 2, 11}
+				status.path = {9, 2, 11, 2, 11}
 			elseif opponentLevel == 5 then
-				status.path = {3, 2, 11}
+				status.path = {3, 2, 11, 2, 11}
 			elseif opponentLevel == 7 then
-				status.path = {0, 3, 11}
+				status.path = {0, 3, 11, 2, 11}
 			end
 		elseif opponentName == "nidoran" then
 			if opponentLevel == 4 then
-				status.path = {5, 2, 11}
+				status.path = {5, 2, 11, 2, 11}
 			end
 		elseif opponentName == "nidoranf" then
 			if opponentLevel == 4 then
-				status.path = {1, 2, 11}
+				status.path = {1, 2, 11, 2, 11}
 			elseif opponentLevel == 6 then
-				status.path = {1, 2, 11}
+				status.path = {1, 2, 11, 2, 11}
 			end
 		end
 		if status.path then
@@ -104,33 +104,31 @@ local function nidoranDSum(enabled)
 
 	local dx, dy = px, py
 	local cornerBonk = true
+	local encounterlessSteps = Memory.value("game", "encounterless")
 	if enabled and status.path ~= 0 then
 		local duration = status.path[status.pathIndex]
 		local currentTime = Utils.frames()
 		if (currentTime - status.startTime) / 60 > duration then
 			status.startTime = currentTime
-			if status.pathIndex >= 3 then
+			if status.pathIndex >= #status.path then
 				status.path = 0
+				print("done")
 			else
 				status.pathIndex = status.pathIndex + 1
+				p(status.pathIndex, (status.pathIndex - 1) % 2)
 			end
 			return nidoranDSum()
 		end
-		if status.pathIndex ~= 2 then
+		local walkOutside = (status.pathIndex - 1) % 2 == 1
+		if walkOutside then
 			cornerBonk = false
-			dx = 3
-			if px == dx then
-				if Player.isFacing("Up") then
-					if py > 48 then
-						dy = 48
+			if encounterlessSteps > 0 then
+				dx = 3
+				if px == dx then
+					if py == 48 then
+						dy = 49
 					else
-						dy = 51
-					end
-				else
-					if py > 50 then
-						dy = 48
-					else
-						dy = 51
+						dy = 58
 					end
 				end
 			end
@@ -141,8 +139,7 @@ local function nidoranDSum(enabled)
 		if px == 4 and py == 48 and pikachuX >= px then
 			dx = px + 1
 		elseif px >= 4 and py == 48 then
-			local encounterless = Memory.value("game", "encounterless")
-			if encounterless == 0 then
+			if encounterlessSteps == 0 then
 				if not status.bonkWait then
 					local direction
 					if Player.isFacing("Up") then
@@ -155,7 +152,7 @@ local function nidoranDSum(enabled)
 				status.bonkWait = not status.bonkWait
 				return
 			end
-			if encounterless < 2 then
+			if encounterlessSteps < 2 then
 				dx = 3
 			else
 				dy = 49
