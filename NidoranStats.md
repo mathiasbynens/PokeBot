@@ -14,7 +14,7 @@ The minimum stats at level 8 are **25** HP, **14** attack, **11** defense, **12*
 
 The maximum stats at level 8 are **27** HP, **16** attack, **14** defense, **15** speed, **13** special.
 
-HP and defense are almost irrelevant to the route. Having better than 11 defense is helpful for Shorts Kid's Ratatta - as we are in the process of catching up Nidoran's level, and he has high attack, this fight is quite dangerous.
+HP and defense are almost irrelevant to the route. Having better than 11 defense is helpful for Shorts Kid's Rattata - as we are in the process of catching up Nidoran's level, and he has high attack, this fight is quite dangerous.
 
 ### Requirements
 

@@ -8,7 +8,7 @@ local PAINT_ON     = true -- Display contextual information while the bot runs
 
 -- START CODE (hard hats on)
 
-VERSION = "1.4.4"
+VERSION = "1.4.5"
 YELLOW = memory.getcurrentmemorydomainsize() > 30000
 GAME_NAME = YELLOW and "yellow" or "red"
 
@@ -68,6 +68,9 @@ p("Welcome to PokeBot "..GAME_NAME.." version "..VERSION, true)
 Control.init()
 
 STREAMING_MODE = not Walk.init() and INTERNAL
+if STREAMING_MODE then
+	RESET_FOR_TIME = true
+end
 
 if CUSTOM_SEED then
 	client.reboot_core()
@@ -75,11 +78,11 @@ else
 	hasAlreadyStartedPlaying = Utils.ingame()
 end
 
-Strategies.init(hasAlreadyStartedPlaying)
-if RESET_FOR_TIME and hasAlreadyStartedPlaying then
+if hasAlreadyStartedPlaying and RESET_FOR_TIME then
 	RESET_FOR_TIME = false
 	p("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.", true)
 end
+
 if STREAMING_MODE then
 	if not CUSTOM_SEED then
 		RESET_FOR_TIME = true
@@ -88,6 +91,8 @@ if STREAMING_MODE then
 elseif PAINT_ON then
 	Input.setDebug(true)
 end
+
+Strategies.init(hasAlreadyStartedPlaying)
 
 -- Main loop
 
