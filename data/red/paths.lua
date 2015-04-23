@@ -22,7 +22,7 @@ local Paths = {
 	-- Backtracking
 	{1, {29,20}, {c="encounters",limit=5}, {29,21}, {26,21}, {26,30}, {20,30}, {20,36}},
 	-- Parkour
-	{12, {10, 0}, {10,3}, {8,3}, {8,18}, {9,18}, {9,22}, {12,22}, {12,24}, {10,24}, {10,36}},
+	{12, {10, 0}, {10,3}, {8,3}, {8,18}, {9,18}, {9,21}, {12,21}, {12,24}, {10,24}, {10,36}},
 	-- To Oak's lab
 	{0, {10,0}, {10,7}, {9,7}, {9,12}, {12,12}, {12,11}},
 	-- Parcel delivery
@@ -43,7 +43,7 @@ local Paths = {
 -- 2: NIDORAN
 
 	-- Out of Viridian City
-	{1, {0,17}, {c="encounters",limit=10,extra="spearow"}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17,4}, {s="grabTreePotion"}, {17,4}, {17, 0}, {17, -1}},
+	{1, {0,17}, {c="a",a="Tree Potion"}, {c="encounters",limit=10,extra="spearow"}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17,4}, {s="grabTreePotion"}, {17,4}, {17, 0}, {17, -1}},
 	-- To the Forest
 	{13, {7,71}, {7,57}, {4,57}, {4,52}, {10,52}, {10,44}, {3,44}, {3,43}},
 	-- Forest entrance
