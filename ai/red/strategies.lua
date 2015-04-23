@@ -991,28 +991,26 @@ strategyFunctions.potionBeforeMisty = function(data)
 	if Strategies.initialize() then
 		if data.goldeen then
 			Strategies.setYolo("goldeen")
-			local curr_hp, red_hp = Combat.hp(), Combat.redHP()
-			if Control.yolo or (not Combat.inRedBar() and curr_hp < red_hp + 6) then
-				if curr_hp > 7 then
-					return true
-				end
+			if Control.yolo and Combat.hp() > 7 then
+				return true
 			end
 		end
 	end
-	local healAmount = data.goldeen and 65 or 70
+
+	local healAmount = data.goldeen and 66 or 72
 	local canTwoHit = stats.nidoran.attackDV >= (Control.yolo and 8 or 9)
 	local canSpeedTie = stats.nidoran.speedDV >= 11
 	if Control.yolo then
 		if canTwoHit and stats.nidoran.speedDV >= 13 then
-			healAmount = 45
+			healAmount = 48
 		elseif canTwoHit or canSpeedTie then
-			healAmount = 65
+			healAmount = 66
 		end
 	else
 		if canTwoHit and stats.nidoran.speedDV >= 13 then
-			healAmount = 45
+			healAmount = 48
 		elseif canTwoHit and canSpeedTie then
-			healAmount = 65
+			healAmount = 66
 		end
 	end
 	healAmount = healAmount - (stats.nidoran.special - 43)
