@@ -1,6 +1,6 @@
 -- OPTIONS
 
-RESET_FOR_TIME = false -- Set to false if you just want to see the bot finish a run
+RESET_FOR_TIME = false -- Set to true if you're trying to break the record, not just finish a run
 
 local CUSTOM_SEED  = nil -- Set to a known seed to replay it, or leave nil for random runs
 local NIDORAN_NAME = "A" -- Set this to the single character to name Nidoran (note, to replay a seed, it MUST match!)

@@ -30,7 +30,7 @@ Running the PokéBot on your own machine is easy. You will need a Windows enviro
 
 5. Open BizHawk.exe, then drag your ROM file onto the window, and Pokémon Red should start up.
 
-6. If you want to test the full run, set [`RESET_FOR_TIME` in `main.lua`](https://github.com/kylecoburn/PokeBot/blob/0fd1258ca17f7d74edbac72fa0afc2b5c6d58bb3/main.lua#L3) to `false` instead of `true`.
+6. By default, the bot completes every run it can, without resetting if it gets too far behind its best run time. Set [`RESET_FOR_TIME` in `main.lua`](https://github.com/kylecoburn/PokeBot/blob/v1.4.4/main.lua#L3) to `true` instead of `false` to reset more aggressively, i.e. if you’re trying to get a new record.
 
 7. Under the _Tools_ menu, select _Lua Console_. Press the “open folder” button, and navigate to the PokéBot folder you downloaded. Select `main.lua` and press “open”. The bot should start running!
 
