@@ -196,8 +196,11 @@ function Battle.handle()
 	end
 end
 
-function Battle.handleWild()
-	if Memory.value("game", "battle") ~= 1 then
+function Battle.handleWild(battleStatus)
+	if not battleStatus then
+		battleStatus = Memory.value("game", "battle")
+	end
+	if battleStatus ~= 1 then
 		return true
 	end
 	Battle.handle()

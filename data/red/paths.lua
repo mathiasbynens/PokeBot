@@ -68,7 +68,7 @@ local Paths = {
 	-- Leaving Pewter City
 	{2, {23,18}, {40,18}},
 	-- Route 3
-	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {c="trackEncounters",area="route3"}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {c="a",a="Shorts Kid"}, {s="potion",hp=19}, {13,4}, {s="talk",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {c="a",a="Route 3"}, {s="potionBeforeCocoons"}, {18,5}, {s="talk",dir="Right"}, {s="swapMove",move="horn_attack",to=0}, {18,6}, {22,6}, {22,5}, {s="potion",hp=4}, {24,5}, {s="talk",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
+	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {c="trackEncounters",area="route3"}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {c="a",a="Shorts Kid"}, {s="potion",hp=19}, {13,4}, {s="talk",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {c="a",a="Route 3"}, {s="potionBeforeCocoons"}, {18,5}, {s="talk",dir="Right"}, {s="swapMove",move="horn_attack",to=0}, {18,6}, {22,6}, {22,5}, {23,5}, {s="potion",hp=4}, {24,5}, {s="talk",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
 	-- To the Center
 	{15, {9,16}, {c="pp",on=false}, {12,16}, {12,6}, {11,6}, {11,5}},
 	-- PP up

@@ -192,9 +192,9 @@ function Strategies.trainerBattle()
 			return true
 		end
 		Battle.handleWild(battleStatus)
-		return false
+	else
+		Textbox.handle()
 	end
-	Textbox.handle()
 end
 
 function Strategies.opponentDamaged(factor)
