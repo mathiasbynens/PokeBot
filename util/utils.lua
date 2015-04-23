@@ -86,6 +86,13 @@ function Utils.increment(amount)
 	return amount + 1
 end
 
+function Utils.append(string, appendage, separator)
+	if not string then
+		return appendage
+	end
+	return string..separator..appendage
+end
+
 function Utils.multiplyString(string, times)
 	local result = string
 	for i=1, times-1 do

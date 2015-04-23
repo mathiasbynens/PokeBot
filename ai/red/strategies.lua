@@ -589,15 +589,31 @@ strategyFunctions.fightBrock = function()
 							rating = 0,
 						}
 						p(Pokemon.getDVs("nidoran"))
+						Bridge.chat("is checking Nidoran's stats at level 8... "..att.." attack, "..def.." defense, "..spd.." speed, "..scl.." special.")
 
 						local resetsForStats = att < 15 or spd < 14 or scl < 12
 						if not resetsForStats and RESET_FOR_TIME then
 							resetsForStats = att == 15 and spd == 14
 						end
 
-						local nidoranStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
 						if resetsForStats then
-							return Strategies.reset("stats", "Bad Nidoran - "..nidoranStatus)
+							local nidoranStatus
+							if att == 15 and spd == 14 then
+								nidoranStatus = Utils.append(nidoranStatus, "unrunnable attack/speed combination", ", ")
+							else
+								if att < 15 then
+									nidoranStatus = Utils.append(nidoranStatus, "unrunnable attack", ", ")
+								end
+								if spd < 14 then
+									nidoranStatus = Utils.append(nidoranStatus, "unrunnable speed", ", ")
+								end
+							end
+							if scl < 12 then
+								nidoranStatus = Utils.append(nidoranStatus, "unrunnable special", ", ")
+							end
+							if nidoranStatus then
+								return Strategies.reset("stats", "Bad Nidoran - "..nidoranStatus)
+							end
 						end
 						status.tries = 9001
 
@@ -628,7 +644,7 @@ strategyFunctions.fightBrock = function()
 							superlative = " min stat"
 							exclaim = "."
 						end
-						Bridge.chat("beat Brock with a"..superlative.." Nidoran"..exclaim.." "..nidoranStatus..", caught at level "..(stats.nidoran.level4 and "4" or "3")..".")
+						Bridge.chat("beat Brock with a"..superlative.." Nidoran"..exclaim.." Caught at level "..(stats.nidoran.level4 and "4" or "3")..".")
 					else
 						status.tries = status.tries + 1
 					end
