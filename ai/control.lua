@@ -101,8 +101,7 @@ local controlFunctions = {
 	moon1Exp = function()
 		if Control.getMoonExp then
 			minExp = 2704
-			local levels = Strategies.stats.nidoran.level4 and {9,10,11,12} or {10,11,12}
-			shouldFight = {{name="zubat",levels=levels}}
+			shouldFight = {{name="zubat",levels={9,10,11,12},exp9=69}}
 			oneHits = true
 		end
 	end,
@@ -110,7 +109,7 @@ local controlFunctions = {
 	moon2Exp = function()
 		if Control.getMoonExp then
 			minExp = 3011
-			shouldFight = {{name="zubat"}, {name="paras"}}
+			shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
 			oneHits = not withinOneKill(minExp)
 		end
 	end,
@@ -119,12 +118,8 @@ local controlFunctions = {
 		if Control.getMoonExp then
 			local expTotal = Pokemon.getExp()
 			minExp = 3798
-			if withinOneKill(minExp) then
-				shouldFight = {{name="zubat"}, {name="paras"}}
-				oneHits = false
-			else
-				shouldFight = nil
-			end
+			shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
+			oneHits = not withinOneKill(minExp)
 		end
 	end,
 
@@ -183,15 +178,21 @@ function Control.shouldFight()
 	if not shouldFight then
 		return false
 	end
-	local expTotal = Pokemon.getExp()
-	if expTotal < minExp then
+	local expRemaining = minExp - Pokemon.getExp()
+	if expRemaining > 0 then
 		local oid = Memory.value("battle", "opponent_id")
 		local opponentLevel = Memory.value("battle", "opponent_level")
-		for i,p in ipairs(shouldFight) do
-			if oid == Pokemon.getID(p.name) and (not p.levels or Utils.match(opponentLevel, p.levels)) then
+		for i,encounter in ipairs(shouldFight) do
+			if oid == Pokemon.getID(encounter.name) and (not encounter.levels or Utils.match(opponentLevel, encounter.levels)) then
 				if oneHits then
 					local move = Combat.bestMove()
 					if move and move.maxDamage * 0.925 < Memory.double("battle", "opponent_hp") then
+						return false
+					end
+				end
+				if expRemaining < 100 then
+					local getExp = encounter["exp"..opponentLevel]
+					if getExp and getExp < expRemaining then
 						return false
 					end
 				end
