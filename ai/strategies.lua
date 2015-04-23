@@ -185,13 +185,14 @@ function Strategies.damaged(factor)
 end
 
 function Strategies.trainerBattle()
-	if Battle.isActive() then
-		if not status.foughtTrainer then
-			if Battle.handleWild() then
-				status.foughtTrainer = true
-			end
+	local battleStatus = Memory.value("game", "battle")
+	if battleStatus > 0 then
+		if battleStatus == 2 then
+			Strategies.initialize("foughtTrainer")
+			return true
 		end
-		return true
+		Battle.handleWild(battleStatus)
+		return false
 	end
 	Textbox.handle()
 end
