@@ -896,7 +896,7 @@ strategyFunctions.potionForMankey = function()
 			return true
 		end
 	end
-	local healForDefense = 15 + (48 - stats.nidoran.defense)
+	local healForDefense = 16 + (14 - stats.nidoran.defense)
 	return strategyFunctions.potion({hp=healForDefense, yolo=8})
 end
 
