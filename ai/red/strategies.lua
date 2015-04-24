@@ -391,6 +391,20 @@ strategyFunctions.catchNidoran = function()
 				Input.cancel()
 			end
 		else
+			if Memory.value("battle", "menu") == 94 then
+				local resetLimit = Strategies.getTimeRequirement("nidoran")
+				local catchTarget
+				if catchableNidoran or opponent == "spearow" then
+					resetLimit = resetLimit + 0.33
+					catchTarget = Utils.capitalize(opponent)
+				else
+					resetLimit = resetLimit - 0.15
+					catchTarget = "Nidoran"
+				end
+				if Strategies.resetTime(resetLimit, "catch "..catchTarget) then
+					return true
+				end
+			end
 			Battle.handle()
 		end
 	else
