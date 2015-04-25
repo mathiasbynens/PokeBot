@@ -30,16 +30,8 @@ end
 
 -- HELPERS
 
-function Data.frames()
-	local totalFrames = Memory.value("time", "hours") * 60
-	totalFrames = (totalFrames + Memory.value("time", "minutes")) * 60
-	totalFrames = (totalFrames + Memory.value("time", "seconds")) * 60
-	totalFrames = totalFrames + Memory.value("time", "frames")
-	return totalFrames
-end
-
 function Data.setFrames()
-	Data.run.frames = Data.frames()
+	Data.run.frames = require("util.utils").frames()
 end
 
 function Data.increment(key)

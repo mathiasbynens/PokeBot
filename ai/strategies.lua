@@ -234,7 +234,6 @@ function Strategies.buffTo(buff, defLevel)
 		if defLevel and Memory.double("battle", "opponent_defense") > defLevel then
 			forced = buff
 		end
-		Control.ignoreMiss = forced ~= nil
 		Battle.automate(forced, true)
 	elseif status.foughtTrainer then
 		return true
@@ -1768,7 +1767,7 @@ Strategies.functions = {
 						gui.text(0, 14, "Name: "..Textbox.getNamePlaintext())
 						gui.text(0, 21, "Reset for time: "..tostring(RESET_FOR_TIME))
 						gui.text(0, 28, "Time: "..Utils.elapsedTime())
-						gui.text(0, 35, "Frames: "..Data.frames())
+						gui.text(0, 35, "Frames: "..Utils.frames())
 						client.setscreenshotosd(true)
 						client.screenshot()
 						client.setscreenshotosd(false)

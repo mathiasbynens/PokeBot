@@ -130,6 +130,14 @@ end
 
 -- TIME
 
+function Utils.frames()
+	local totalFrames = Memory.value("time", "hours") * 60
+	totalFrames = (totalFrames + Memory.value("time", "minutes")) * 60
+	totalFrames = (totalFrames + Memory.value("time", "seconds")) * 60
+	totalFrames = totalFrames + Memory.value("time", "frames")
+	return totalFrames
+end
+
 function Utils.igt()
 	local hours = Memory.value("time", "hours")
 	local mins = Memory.value("time", "minutes")
