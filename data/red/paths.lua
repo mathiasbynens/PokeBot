@@ -12,7 +12,7 @@ local Paths = {
 -- 1: RIVAL 1
 
 	-- Let's try this escape again
-	{0, {12,12}, {c="a",a="Pallet Town"}, {c="viridianExp"}, {c="encounters",limit=4}, {c="trackEncounters",area="route1"}, {9,12}, {9,2}, {10,2}, {10,-1}},
+	{0, {12,12}, {c="a",a="Pallet Town"}, {c="viridianExp"}, {c="encounters",limit=3}, {c="trackEncounters",area="route1"}, {9,12}, {9,2}, {10,2}, {10,-1}},
 	-- First encounters
 	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {11,2}, {11,-1}},
 	-- To the Mart
@@ -20,7 +20,7 @@ local Paths = {
 	-- Viridian Mart
 	{42, {2,5}, {3,5}, {3,8}},
 	-- Backtracking
-	{1, {29,20}, {c="encounters",limit=5}, {29,21}, {26,21}, {26,30}, {20,30}, {20,36}},
+	{1, {29,20}, {c="encounters",limit=4}, {29,21}, {26,21}, {26,30}, {20,30}, {20,36}},
 	-- Parkour
 	{12, {10, 0}, {10,3}, {8,3}, {8,18}, {9,18}, {9,21}, {12,21}, {12,24}, {10,24}, {10,36}},
 	-- To Oak's lab
@@ -28,7 +28,7 @@ local Paths = {
 	-- Parcel delivery
 	{40, {5,11}, {5,3}, {4,3}, {4,1}, {5,1}, {s="talk",dir="Down"}, {4,1}, {4,12}},
 	-- Leaving home
-	{0, {12,12}, {c="viridianBackupExp"}, {9,12}, {9,2}, {10,2}, {10,-1}},
+	{0, {12,12}, {c="viridianBackupExp"}, {c="encounters",limit=5}, {9,12}, {9,2}, {10,2}, {10,-1}},
 	-- The grass again!?
 	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {11,2}, {11,-1}},
 	-- Back to the Mart
@@ -38,18 +38,18 @@ local Paths = {
 	-- Sidequest
 	{1, {29,20}, {c="trackEncounters",area="nidoran"}, {15,20}, {15,17}, {-1, 17}},
 	-- Nidoran
-	{33, {39, 9}, {c="a",a="Nidoran grass"}, {c="nidoranBackupExp"}, {c="encounters",limit=7,extra="spearow"}, {35, 9}, {35,12}, {33,12}, {c="catchNidoran"}, {s="catchNidoran"}, {33,12}, {s="split"}, {37,12}, {37,9}, {40,9}},
+	{33, {39, 9}, {c="a",a="Nidoran grass"}, {c="nidoranBackupExp"}, {c="encounters",limit=6,extra="spearow"}, {35, 9}, {35,12}, {33,12}, {c="catchNidoran"}, {s="catchNidoran"}, {33,12}, {s="split"}, {37,12}, {37,9}, {40,9}},
 
 -- 2: NIDORAN
 
 	-- Out of Viridian City
-	{1, {0,17}, {c="a",a="Tree Potion"}, {c="encounters",limit=10,extra="spearow"}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17,4}, {s="grabTreePotion"}, {17,4}, {17, 0}, {17, -1}},
+	{1, {0,17}, {c="a",a="Tree Potion"}, {c="encounters",limit=8,extra="spearow"}, {16,17}, {16,16}, {18,16}, {18,6}, {s="dodgeViridianOldMan"}, {17,4}, {s="grabTreePotion"}, {17,4}, {17, 0}, {17, -1}},
 	-- To the Forest
 	{13, {7,71}, {7,57}, {4,57}, {4,52}, {10,52}, {10,44}, {3,44}, {3,43}},
 	-- Forest entrance
 	{50, {4,7}, {c="a",a="Viridian Forest"}, {c="trackEncounters",area="forest"}, {4,1}, {5,1}, {5,0}},
 	-- Viridian Forest
-	{51, {17,47}, {17,43}, {26,43}, {26,34}, {25,34}, {25,32}, {27,32}, {27,20}, {25,20}, {25,12}, {s="grabAntidote"}, {25,9}, {17,9}, {17,16}, {13,16}, {13,3}, {7,3}, {7,22}, {1,22}, {1,19}, {s="grabForestPotion"}, {1,18}, {s="fightWeedle"}, {c="encounters",limit=22,extra="paras"}, {1,16}, {c="potion",b=false}, {s="equipForBrock",anti=true}, {1,5}, {s="equipForBrock"}, {1,-1}},
+	{51, {17,47}, {17,43}, {26,43}, {26,34}, {25,34}, {25,32}, {27,32}, {27,20}, {25,20}, {25,12}, {s="grabAntidote"}, {25,9}, {17,9}, {17,16}, {13,16}, {13,3}, {7,3}, {7,22}, {1,22}, {1,19}, {s="grabForestPotion"}, {1,18}, {s="fightWeedle"}, {c="encounters",limit=19,extra="paras"}, {1,16}, {c="potion",b=false}, {s="equipForBrock",anti=true}, {1,5}, {s="equipForBrock"}, {1,-1}},
 	-- Forest exit
 	{47, {4,7}, {4,1}, {5,1}, {5,0}},
 	-- Road to Pewter City
