@@ -14,6 +14,7 @@ Have you found a seed that results in a run of 1:50:30 or better using the bot‚Ä
 | 1:50:14 | 396,885 | `1429594740` | A            | v1.4.4      | [Bumperpegasus](https://github.com/Bumperpegasus) |
 | 1:50:16 | 396,991 | `1429576268` | A            | v1.4.4      | [theroflcoptr](https://github.com/theroflcoptr) |
 | 1:50:19 | 397,161 |     `192969` | A            | v1.4.4      | [Mathias](https://mathiasbynens.be/)         |
+| 1:50:21 | 397,268 | `1429978298` | _            | v1.4.7      | ThePok√©Bot                                   |
 | 1:50:22 | 397,345 |   `91852936` | A            | v1.4.2      | [Mathias](https://mathiasbynens.be/)         |
 | 1:50:22 | 397,352 | `1428414915` | A            | v1.4.2      | [Gofigga](http://www.twitch.tv/gofigga)      |
 | 1:50:28 | 397,687 |    `1110064` | A            | v1.4.4      | [Mathias](https://mathiasbynens.be/)         |
