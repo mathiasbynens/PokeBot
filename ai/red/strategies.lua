@@ -51,16 +51,12 @@ end
 
 Strategies.timeRequirements = {
 
-	bulbasaur = function()
+	bulbasaur = function() --RESET
 		return 2.25
 	end,
 
 	nidoran = function() --RESET
-		local timeLimit = 6.33
-		if Pokemon.inParty("spearow") then
-			timeLimit = timeLimit + 0.6
-		end
-		return timeLimit
+		return 6.4 + timeSaveFor("spearow")
 	end,
 
 	old_man = function()
@@ -68,79 +64,65 @@ Strategies.timeRequirements = {
 	end,
 
 	brock = function()
-		local timeLimit = 11
-		if Pokemon.inParty("spearow") then
-			timeLimit = timeLimit + 0.5
-		end
-		return timeLimit
+		return 11 + timeSaveFor("spearow")
 	end,
 
-	shorts = function()
-		local timeLimit = 14
+	shorts = function() --TWEET
+		local timeLimit = 13.75 + timeSaveFor("spearow")
 		timeLimit = timeLimit + (3 - stats.nidoran.rating) * 0.2
-		if Pokemon.inParty("spearow") then
-			timeLimit = timeLimit + 0.5
-		end
 		return timeLimit
 	end,
 
-	mt_moon = function()
-		local timeLimit = 26.75
-		if stats.nidoran.attack > 15 and stats.nidoran.speed > 14 then
+	mt_moon = function() --RESET
+		local timeLimit = 26 + timeSaveFor("paras")
+		if Pokemon.info("nidoking", "level") >= 18 then
 			timeLimit = timeLimit + 0.33
+		elseif Pokemon.getExp() > 3730 then
+			timeLimit = timeLimit + 0.15
 		end
-		if Pokemon.inParty("paras") then
-			timeLimit = timeLimit + 0.75
+		if stats.nidoran.attack > 15 then
+			timeLimit = timeLimit + 0.25
+		end
+		if stats.nidoran.speed > 14 then
+			timeLimit = timeLimit + 0.25
 		end
 		return timeLimit
 	end,
 
 	mankey = function()
-		local timeLimit = 32.5
-		if Pokemon.inParty("paras") then
-			timeLimit = timeLimit + 0.75
-		end
-		return timeLimit
+		return 31.25 + timeSaveFor("paras")
 	end,
 
 	goldeen = function()
-		local timeLimit = 37 + timeForStats()
-		if Pokemon.inParty("paras") then
-			timeLimit = timeLimit + 0.75
-		end
-		return timeLimit
+		return 36.5 + timeForStats() + timeSaveFor("paras")
 	end,
 
-	misty = function()
-		local timeLimit = 39 + timeForStats()
-		if Pokemon.inParty("paras") then
-			timeLimit = timeLimit + 0.75
-		end
-		return timeLimit
+	misty = function() --PB
+		return 38 + timeForStats() + timeSaveFor("paras")
 	end,
 
 	vermilion = function()
-		return 43.5 + timeForStats()
+		return 42.5 + timeForStats()
 	end,
 
-	trash = function()
-		return 47 + timeForStats()
+	trash = function() --RESET
+		return 46.75 + timeForStats()
 	end,
 
 	safari_carbos = function()
-		return 70 + timeForStats()
+		return 68.5 + timeForStats()
 	end,
 
-	victory_road = function()
-		return 98.75 -- PB
+	victory_road = function() --PB
+		return 97.9
 	end,
 
 	e4center = function()
-		return 102
+		return 101.25
 	end,
 
 	blue = function()
-		return 108.5
+		return 107.5
 	end,
 
 	champion = function() --PB
@@ -276,7 +258,7 @@ strategyFunctions.tweetMisty = function()
 
 	if not Strategies.updates.brock and not Control.yolo then
 		local timeLimit = Strategies.getTimeRequirement("misty")
-		if not Strategies.overMinute(timeLimit - 0.25) then
+		if not Strategies.overMinute(timeLimit) then
 			local pbn = ""
 			if not Strategies.overMinute(timeLimit - 1) then
 				pbn = " (PB pace)"
@@ -293,7 +275,7 @@ strategyFunctions.tweetSurge = function()
 
 	if not Strategies.updates.misty then
 		local timeLimit = Strategies.getTimeRequirement("trash")
-		if not Strategies.overMinute(timeLimit + 0.75) then
+		if not Strategies.overMinute(timeLimit + 1) then
 			local elt = Utils.elapsedTime()
 			local pbn = ""
 
@@ -397,7 +379,7 @@ strategyFunctions.catchNidoran = function()
 				local resetLimit = Strategies.getTimeRequirement("nidoran")
 				local catchTarget
 				if catchableNidoran or opponent == "spearow" then
-					resetLimit = resetLimit + 0.33
+					resetLimit = resetLimit + 0.25
 					catchTarget = Utils.capitalize(opponent)
 				else
 					resetLimit = resetLimit - 0.15
