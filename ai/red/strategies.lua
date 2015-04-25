@@ -391,7 +391,7 @@ strategyFunctions.catchNidoran = function()
 				Input.cancel()
 			end
 		else
-			if Memory.value("battle", "menu") == 94 then
+			if Menu.onBattleSelect() then
 				local resetLimit = Strategies.getTimeRequirement("nidoran")
 				local catchTarget
 				if catchableNidoran or opponent == "spearow" then
@@ -840,7 +840,7 @@ strategyFunctions.rivalSandAttack = function(data)
 		end
 
 		local opponent = Battle.opponent()
-		if Memory.value("battle", "accuracy") < 7 then
+		if Combat.sandAttacked() then
 			local sacrifice
 			if opponent == "pidgeotto" then
 				local __, turnsToKill = Combat.bestMove()

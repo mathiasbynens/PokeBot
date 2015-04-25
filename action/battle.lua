@@ -79,7 +79,7 @@ local function openBattleMenu()
 	local col = Menu.getCol()
 	if battleMenu == 106 or (battleMenu == 94 and col == 5) then
 		return true
-	elseif battleMenu == 94 then
+	elseif Menu.onBattleSelect(battleMenu) then
 		local rowSelected = Memory.value("menu", "row")
 		if col == 9 then
 			if rowSelected == 1 then
@@ -168,7 +168,7 @@ end
 function Battle.run()
 	if not Battle.opponentAlive() then
 		Input.cancel()
-	elseif Memory.value("battle", "menu") ~= 94 then
+	elseif not Menu.onBattleSelect() then
 		if Memory.value("menu", "text_length") == 127 then
 			Input.press("B")
 		else
@@ -226,14 +226,13 @@ function Battle.fight(move, skipBuffs)
 end
 
 function Battle.swap(target)
-	local battleMenu = Memory.value("battle", "menu")
-	if Menu.onPokemonSelect(battleMenu) then
+	if Menu.onPokemonSelect() then
 		if Menu.getCol() == 0 then
 			Pokemon.select(target)
 		else
 			Input.press("A")
 		end
-	elseif battleMenu == 94 then
+	elseif Menu.onBattleSelect() then
 		local selected = Memory.value("menu", "selection")
 		if selected == 199 then
 			Input.press("A", 2)

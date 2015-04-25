@@ -6,6 +6,7 @@ local Strategies
 
 local Bridge = require "util.bridge"
 local Memory = require "util.memory"
+local Menu = require "util.menu"
 local Paint = require "util.paint"
 local Utils = require "util.utils"
 
@@ -293,8 +294,7 @@ function Control.encounter(battleState)
 	if battleState > 0 then
 		local wildBattle = battleState == 1
 		local isCritical
-		local battleMenu = Memory.value("battle", "menu")
-		if battleMenu == 94 then
+		if Menu.onBattleSelect() then
 			isCritical = false
 			Control.missed = false
 		elseif Memory.double("battle", "our_hp") == 0 then

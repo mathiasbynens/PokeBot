@@ -12,7 +12,7 @@ local alternateStart = 0
 
 Menu.pokemon = yellow and 51 or 103
 
--- Private functions
+-- PRIVATE
 
 local function getRow(menuType, scrolls)
 	if menuType and menuType == "settings" then
@@ -57,7 +57,7 @@ local function isCurrently(desired, menuType)
 end
 Menu.isCurrently = isCurrently
 
--- Menu
+-- HELPERS
 
 function Menu.getCol()
 	return Memory.value("menu", "column")
@@ -92,7 +92,7 @@ function Menu.cancel(desired, menuType)
 	return false
 end
 
--- Selections
+-- SELECT
 
 function Menu.balance(current, desired, inverted, looping, throttle)
 	if current == desired then
@@ -141,7 +141,7 @@ function Menu.setCol(desired)
 	return Menu.sidle(Menu.getCol(), desired)
 end
 
--- Options
+-- OPTIONS
 
 function Menu.setOption(name, desired)
 	if yellow then
@@ -170,10 +170,8 @@ function Menu.setOption(name, desired)
 	return false
 end
 
--- Pause menu
-
-function Menu.hasTextbox()
-	return Memory.value("battle", "menu") == (yellow and 19 or 95)
+function Menu.onBattleSelect()
+	return Memory.value("battle", "menu") == 94
 end
 
 function Menu.onPokemonSelect(battleMenu)
@@ -184,6 +182,12 @@ function Menu.onPokemonSelect(battleMenu)
 		battleMenu = battleMenu - 19
 	end
 	return battleMenu == 8 or battleMenu == 48 or battleMenu == 184 or battleMenu == 224
+end
+
+-- PAUSED
+
+function Menu.hasTextbox()
+	return Memory.value("battle", "menu") == (yellow and 19 or 95)
 end
 
 function Menu.isOpened()
