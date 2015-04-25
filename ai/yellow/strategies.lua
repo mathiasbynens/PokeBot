@@ -326,60 +326,7 @@ strategyFunctions.leerCaterpies = function()
 	return strategyFunctions.leer({{"caterpie", leerAmount}})
 end
 
-strategyFunctions.checkNidoStats = function()
-	local nidx = Pokemon.indexOf("nidoran")
-	if Pokemon.index(nidx, "level") == 8 then
-		local att = Pokemon.index(nidx, "attack")
-		local def = Pokemon.index(nidx, "defense")
-		local spd = Pokemon.index(nidx, "speed")
-		local scl = Pokemon.index(nidx, "special")
-		Bridge.stats(att.." "..def.." "..spd.." "..scl)
-		stats.nidoran = {
-			attack = att,
-			defense = def,
-			speed = spd,
-			special = scl,
-		}
-
-		local statDiff = (16 - att) + (15 - spd) + (13 - scl)
-		local resets = att < 15 or spd < 14 or scl < 12 --RISK
-		local nidoranStatus = "Att: "..att..", Def: "..def..", Speed: "..spd..", Special: "..scl
-		if resets then
-			return Strategies.reset("stats", "Bad Nidoran - "..nidoranStatus)
-		end
-		-- if def < 12 then
-		-- 	statDiff = statDiff + 1
-		-- end
-		local superlative
-		local exclaim = "!"
-		if statDiff == 0 then
-			if def == 14 then
-				superlative = "God"
-				exclaim = "! Kreygasm"
-			else
-				superlative = "Perfect"
-			end
-		elseif att == 16 and spd == 15 then
-			if statDiff == 1 then
-				superlative = "Great"
-			elseif statDiff == 2 then
-				superlative = "Good"
-			else
-				superlative = "Okay"
-			end
-		elseif statDiff == 1 then
-			superlative = "Good"
-		elseif statDiff == 2 then
-			superlative = "Okay"
-			exclaim = "."
-		else
-			superlative = "Min stat"
-			exclaim = "."
-		end
-		Bridge.chat(superlative.." Nidoran"..exclaim.." "..nidoranStatus)
-		return true
-	end
-end
+-- checkNidoranStats
 
 strategyFunctions.centerViridian = function()
 	return takeCenter(15, 2, 13, 25, 18)

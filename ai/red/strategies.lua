@@ -600,82 +600,8 @@ strategyFunctions.fightBrock = function()
 			end
 
 			if status.tries < 9000 then
-				local nidx = Pokemon.indexOf("nidoran")
-				if Pokemon.index(nidx, "level") == 8 then
-					local att = Pokemon.index(nidx, "attack")
-					local def = Pokemon.index(nidx, "defense")
-					local spd = Pokemon.index(nidx, "speed")
-					local scl = Pokemon.index(nidx, "special")
-					Bridge.stats(att.." "..def.." "..spd.." "..scl)
-					if status.tries > 300 then
-						stats.nidoran = {
-							attack = att,
-							defense = def,
-							speed = spd,
-							special = scl,
-							level4 = stats.nidoran.level4,
-							rating = 0,
-						}
-						p(Pokemon.getDVs("nidoran"))
-						Bridge.chat("is checking Nidoran's stats at level 8... "..att.." attack, "..def.." defense, "..spd.." speed, "..scl.." special.")
-
-						local resetsForStats = att < 15 or spd < 14 or scl < 12
-						if not resetsForStats and RESET_FOR_TIME then
-							resetsForStats = att == 15 and spd == 14
-						end
-
-						if resetsForStats then
-							local nidoranStatus
-							if att == 15 and spd == 14 then
-								nidoranStatus = Utils.append(nidoranStatus, "unrunnable attack/speed combination", ", ")
-							else
-								if att < 15 then
-									nidoranStatus = Utils.append(nidoranStatus, "unrunnable attack", ", ")
-								end
-								if spd < 14 then
-									nidoranStatus = Utils.append(nidoranStatus, "unrunnable speed", ", ")
-								end
-							end
-							if scl < 12 then
-								nidoranStatus = Utils.append(nidoranStatus, "unrunnable special", ", ")
-							end
-							if nidoranStatus then
-								return Strategies.reset("stats", "Bad Nidoran - "..nidoranStatus)
-							end
-						end
-						status.tries = 9001
-
-						local statDiff = (16 - att) + (15 - spd) + (13 - scl)
-						if def < 12 then
-							statDiff = statDiff + 1
-						end
-						if not stats.nidoran.level4 then
-							statDiff = statDiff + 1
-						end
-						stats.nidoran.rating = statDiff
-
-						local superlative
-						local exclaim = "!"
-						if statDiff == 0 then
-							superlative = " perfect"
-							exclaim = "! Kreygasm"
-						elseif att == 16 and spd == 15 then
-							if statDiff == 1 then
-								superlative = " great"
-							else
-								superlative = " good"
-							end
-						elseif statDiff <= 3 then
-							superlative = "n okay"
-							exclaim = "."
-						else
-							superlative = " min stat"
-							exclaim = "."
-						end
-						Bridge.chat("beat Brock with a"..superlative.." Nidoran"..exclaim.." Caught at level "..(stats.nidoran.level4 and "4" or "3")..".")
-					else
-						status.tries = status.tries + 1
-					end
+				if strategyFunctions.checkNidoranStats() then
+					return status.tries < 9000
 				end
 			end
 		end
