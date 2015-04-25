@@ -85,10 +85,16 @@ function Strategies.death(extra)
 	if Control.missed then
 		explanation = "Missed"
 		reason = "miss"
+	elseif Combat.isConfused() then
+		explanation = "Confusion'd"
+		reason = "confusion"
 	elseif Control.criticaled then
 		explanation = "Critical'd"
 		reason = "critical"
-	elseif Control.yolo and stats.nidoran then
+	elseif Combat.sandAttacked() then
+		explanation = "Sand-Attack'd"
+		reason = "accuracy"
+	elseif Control.yolo and stats.nidoran and stats.nidoran.attack then
 		explanation = "Yolo strats"
 		reason = "yolo"
 	else

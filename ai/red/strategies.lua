@@ -965,10 +965,15 @@ strategyFunctions.thrashGeodude = function()
 				Bridge.chat(" Thrash didn't finish the kill :( swapping to Squirtle for safety.")
 			end
 		elseif Pokemon.isOpponent("geodude") and Battle.opponentAlive() and Combat.isConfused() then
-			if Strategies.initialize() then
-				status.sacrificeSquirtle = not Control.yolo or Combat.inRedBar()
+			if Menu.onBattleSelect() and Strategies.initialize("shouldSacrifice") then
+				if not Control.yolo or Combat.inRedBar() then
+					status.sacrificeSquirtle = true
+				else
+					local __, turnsToKill = Combat.bestMove()
+					status.sacrificeSquirtle = turnsToKill > 1
+				end
 				if not status.sacrificeSquirtle then
-					Bridge.chat("is attempting to hit through confusion to avoid switching out to Squirtle...")
+					Bridge.chat("is attempting to hit through Confusion to avoid switching out to Squirtle...")
 				end
 			end
 		end
@@ -1058,16 +1063,18 @@ strategyFunctions.fightMisty = function()
 				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras")
 			end
 
-			if Strategies.initialize("sacrificed") then
-				local swapMessage = " Thrash didn't finish the kill :( "
-				if sacrifice then
-					swapMessage = swapMessage.."Swapping out to cure Confusion."
-				elseif Control.yolo then
-					swapMessage = swapMessage.."Attempting to hit through Confusion to save time."
-				else
-					swapMessage = swapMessage.."We'll have to hit through Confusion here."
+			if Menu.onBattleSelect() then
+				if Strategies.initialize("sacrificed") then
+					local swapMessage = " Thrash didn't finish the kill :( "
+					if sacrifice then
+						swapMessage = swapMessage.."Swapping out to cure Confusion."
+					elseif Control.yolo then
+						swapMessage = swapMessage.."Attempting to hit through Confusion to save time."
+					else
+						swapMessage = swapMessage.."We'll have to hit through Confusion here."
+					end
+					Bridge.chat(swapMessage)
 				end
-				Bridge.chat(swapMessage)
 			end
 			if sacrifice and Battle.sacrifice(sacrifice) then
 				return false

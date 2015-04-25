@@ -2,9 +2,10 @@ local Combat = {}
 
 local Movelist = require "data.movelist"
 local Opponents = require "data.opponents"
-local Utils = require "util.utils"
 
 local Memory = require "util.memory"
+local Utils = require "util.utils"
+
 local Pokemon = require "storage.pokemon"
 
 local damageMultiplier = { -- http://bulbapedia.bulbagarden.net/wiki/Type_chart#Generation_I
@@ -314,6 +315,10 @@ local function isConfused()
 	return Memory.raw(0x106B) > 0
 end
 Combat.isConfused = isConfused
+
+function Combat.sandAttacked()
+	return Memory.value("battle", "accuracy") < 7
+end
 
 -- HP
 

@@ -306,7 +306,7 @@ function Control.encounter(battleState)
 			if turnMarker == 100 or turnMarker == 128 then
 				local isMiss = Memory.value("battle", "miss") == 1
 				if isMiss then
-					if not Control.ignoreMiss and Battle.accurateAttack and Memory.value("battle", "accuracy") == 7 then
+					if not Control.ignoreMiss and Battle.accurateAttack and not Combat.sandAttacked() then
 						local exclaim = Strategies.deepRun and ";_; " or ""
 						Bridge.chat("gen 1 missed "..exclaim.."(1 in 256 chance)")
 					end
