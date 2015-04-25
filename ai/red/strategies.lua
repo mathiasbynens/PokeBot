@@ -1364,7 +1364,7 @@ end
 
 strategyFunctions.fightSilphMachoke = function()
 	if Strategies.trainerBattle() then
-		if Control.yolo and stats.nidoran.special > 44 then
+		if Control.yolo and stats.nidoran.specialDV >= 6 then
 			return Strategies.prepare("x_accuracy")
 		end
 		Battle.automate("thrash")
@@ -1389,8 +1389,11 @@ strategyFunctions.silphRival = function()
 	if Strategies.trainerBattle() then
 		if Strategies.initialize() then
 			if Control.yolo then
-				status.gyaradosDamage = Combat.healthFor("RivalGyarados")
-				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!")
+				local gyaradosDamage = Combat.healthFor("RivalGyarados")
+				if gyaradosDamage < Pokemon.index(0, "max_hp") then
+					Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!")
+					status.gyaradosDamage = gyaradosDamage
+				end
 			end
 		end
 
