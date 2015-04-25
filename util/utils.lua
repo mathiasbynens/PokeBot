@@ -4,8 +4,6 @@ local Memory = require "util.memory"
 
 local EMP = 1
 
-local yellow = YELLOW
-
 -- GLOBAL
 
 function p(...)
@@ -77,13 +75,6 @@ function Utils.nextCircularIndex(index, direction, totalCount)
 		nextIndex = 1
 	end
 	return nextIndex
-end
-
-function Utils.increment(amount)
-	if not amount then
-		return 1
-	end
-	return amount + 1
 end
 
 function Utils.append(string, appendage, separator)
@@ -170,14 +161,6 @@ function Utils.elapsedTime()
 	local mins = Memory.value("time", "minutes")
 	local hours = Memory.value("time", "hours")
 	return hours..":"..clockSegment(mins)..":"..clockSegment(secs)
-end
-
-function Utils.frames()
-	local totalFrames = Memory.value("time", "hours") * 60
-	totalFrames = (totalFrames + Memory.value("time", "minutes")) * 60
-	totalFrames = (totalFrames + Memory.value("time", "seconds")) * 60
-	totalFrames = totalFrames + Memory.value("time", "frames")
-	return totalFrames
 end
 
 return Utils

@@ -1,7 +1,9 @@
 local Walk = {}
 
+local Data = require "data.data"
+
 local Control = require "ai.control"
-local paths = require("data."..GAME_NAME..".paths")
+local paths = require("data."..Data.gameName..".paths")
 
 local Input = require "util.input"
 local Memory = require "util.memory"

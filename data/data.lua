@@ -1,9 +1,5 @@
 local Data
 
-local Bridge = require "util.bridge"
-local Utils = require "util.utils"
-local Pokemon = require "storage.pokemon"
-
 local version = 0
 if VERSION then
 	local vIndex = 2
@@ -13,22 +9,51 @@ if VERSION then
 	end
 end
 
+local yellowVersion = memory.getcurrentmemorydomainsize() > 30000
+
 Data = {
 	run = {},
 
+	yellow = yellowVersion,
+	gameName = yellowVersion and "yellow" or "red",
 	versionNumber = version,
 }
 
+-- PRIVATE
+
+local function increment(amount)
+	if not amount then
+		return 1
+	end
+	return amount + 1
+end
+
+-- HELPERS
+
+function Data.frames()
+	local totalFrames = Memory.value("time", "hours") * 60
+	totalFrames = (totalFrames + Memory.value("time", "minutes")) * 60
+	totalFrames = (totalFrames + Memory.value("time", "seconds")) * 60
+	totalFrames = totalFrames + Memory.value("time", "frames")
+	return totalFrames
+end
+
+function Data.setFrames()
+	Data.run.frames = Data.frames()
+end
+
 function Data.increment(key)
-	local incremented = Utils.increment(Data.run[key])
+	local incremented = increment(Data.run[key])
 	Data.run[key] = incremented
 	return incremented
 end
 
+-- REPORT
+
 function Data.reset(reason, areaName, map, px, py)
 	if STREAMING_MODE then
 		local report = Data.run
-		report.cutter = Pokemon.inParty("paras", "oddish", "sandshrew", "charmander")
+		report.cutter = require("storage.pokemon").inParty("paras", "oddish", "sandshrew", "charmander")
 
 		for key,value in pairs(report) do
 			if value == true or value == false then
@@ -37,6 +62,8 @@ function Data.reset(reason, areaName, map, px, py)
 		end
 
 		report.version = Data.versionNumber
+		report.gameName = Data.gameName
+
 		report.reset_area = areaName
 		report.reset_map = map
 		report.reset_x = px
@@ -44,10 +71,10 @@ function Data.reset(reason, areaName, map, px, py)
 		report.reset_reason = reason
 
 		if not report.frames then
-			report.frames = Utils.frames()
+			Data.setFrames()
 		end
 
-		Bridge.report(report)
+		require("util.bridge").report(report)
 	end
 	Data.run = {}
 end

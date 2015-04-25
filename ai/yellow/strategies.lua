@@ -3,6 +3,8 @@ local Strategies = require "ai.strategies"
 local Combat = require "ai.combat"
 local Control = require "ai.control"
 
+local Data = require "data.data"
+
 local Battle = require "action.battle"
 local Shop = require "action.shop"
 local Textbox = require "action.textbox"
@@ -96,7 +98,7 @@ local function nidoranDSum(enabled)
 		end
 		if status.path then
 			status.pathIndex = 1
-			status.startTime = Utils.frames() + 118
+			status.startTime = Data.frames() + 118
 		else
 			status.path = 0
 		end
@@ -107,7 +109,7 @@ local function nidoranDSum(enabled)
 	local encounterlessSteps = Memory.value("game", "encounterless")
 	if enabled and status.path ~= 0 then
 		local duration = status.path[status.pathIndex]
-		local currentTime = Utils.frames()
+		local currentTime = Data.frames()
 		if (currentTime - status.startTime) / 60 > duration then
 			status.startTime = currentTime
 			if status.pathIndex >= #status.path then

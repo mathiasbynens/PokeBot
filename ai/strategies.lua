@@ -7,6 +7,8 @@ local Battle = require "action.battle"
 local Textbox = require "action.textbox"
 local Walk = require "action.walk"
 
+local Data = require "data.data"
+
 local Bridge = require "util.bridge"
 local Input = require "util.input"
 local Memory = require "util.memory"
@@ -15,11 +17,9 @@ local Player = require "util.player"
 local Shop = require "action.shop"
 local Utils = require "util.utils"
 
-local Data = require "data.data"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
-local yellow = YELLOW
 local splitNumber, splitTime = 0, 0
 local resetting
 
@@ -449,13 +449,13 @@ function Strategies.completeCans()
 		local suffix = "!"
 		if status.tries <= 1 then
 			prefix = "PERFECT"
-		elseif status.tries <= (yellow and 2 or 3) then
+		elseif status.tries <= (Data.yellow and 2 or 3) then
 			prefix = "Amazing"
-		elseif status.tries <= (yellow and 4 or 6) then
+		elseif status.tries <= (Data.yellow and 4 or 6) then
 			prefix = "Great"
-		elseif status.tries <= (yellow and 6 or 9) then
+		elseif status.tries <= (Data.yellow and 6 or 9) then
 			prefix = "Good"
-		elseif status.tries <= (yellow and 10 or 22) then
+		elseif status.tries <= (Data.yellow and 10 or 22) then
 			prefix = "Ugh"
 			suffix = "."
 		else -- TODO trashcans WR
@@ -677,7 +677,7 @@ Strategies.functions = {
 
 	skill = function(data)
 		if completedSkillFor(data) then
-			if yellow then
+			if Data.yellow then
 				if not Menu.hasTextbox() then
 					return true
 				end
@@ -690,7 +690,7 @@ Strategies.functions = {
 		elseif not data.dir or Player.face(data.dir) then
 			if Pokemon.use(data.move) then
 				status.tries = status.tries + 1
-			elseif yellow and Menu.hasTextbox() then
+			elseif Data.yellow and Menu.hasTextbox() then
 				if Textbox.handle() then
 					return true
 				end
@@ -715,7 +715,7 @@ Strategies.functions = {
 		}
 
 		local main = Memory.value("menu", "main")
-		if main == (yellow and 144 or 228) then
+		if main == (Data.yellow and 144 or 228) then
 			local currentCity = Memory.value("game", "fly")
 			local destination = cities[data.dest]
 			local press
@@ -846,7 +846,7 @@ Strategies.functions = {
 		elseif Battle.isActive() then
 			status.canProgress = false
 			Battle.automate()
-		elseif main == (yellow and 23 or 123) then
+		elseif main == (Data.yellow and 23 or 123) then
 			status.canProgress = true
 			Input.press("B")
 		elseif Textbox.handle() then
@@ -911,7 +911,7 @@ Strategies.functions = {
 				return true
 			end
 		elseif Menu.pause() then
-			if yellow then
+			if Data.yellow then
 				if Inventory.contains("potion") and Pokemon.info("nidoran", "hp") < 15 then
 					Inventory.use("potion", "nidoran")
 					return false
@@ -1075,7 +1075,7 @@ Strategies.functions = {
 		end
 		local moonEncounters = Data.run.encounters_moon
 		if moonEncounters then
-			local catchPokemon = yellow and "sandshrew" or "paras"
+			local catchPokemon = Data.yellow and "sandshrew" or "paras"
 			local capsName = Utils.capitalize(catchPokemon)
 			local parasStatus
 			local conjunction = "but"
@@ -1120,7 +1120,7 @@ Strategies.functions = {
 			if Pokemon.info("nidoking", "level") ~= 20 then
 				return true
 			end
-			if yellow then
+			if Data.yellow then
 				p("RCE", Pokemon.getExp())
 			end
 			if Pokemon.getExp() > 5550 then
@@ -1138,7 +1138,7 @@ Strategies.functions = {
 			end
 		end
 		if not status.close then
-			local replacementMove = yellow and "tackle" or "leer"
+			local replacementMove = Data.yellow and "tackle" or "leer"
 			status.close = strategyFunctions.teach({move="thrash", item="rare_candy", replace=replacementMove})
 			status.updateStats = true
 		elseif Menu.close() then
@@ -1168,7 +1168,7 @@ Strategies.functions = {
 					return false
 				end
 				if column == 5 then
-					local replacementMove = yellow and "tackle" or "leer"
+					local replacementMove = Data.yellow and "tackle" or "leer"
 					local replaceIndex = Pokemon.moveIndex(replacementMove, "nidoking")
 					if replaceIndex then
 						Menu.select(replaceIndex - 1, true)
@@ -1197,7 +1197,7 @@ Strategies.functions = {
 
 	lassEther = function()
 		if Strategies.initialize() then
-			if yellow then
+			if Data.yellow then
 				if not Strategies.vaporeon or not Strategies.needs1Carbos() then
 					return true
 				end
@@ -1298,7 +1298,7 @@ Strategies.functions = {
 	end,
 
 	shopRepels = function()
-		local repelCount = yellow and 10 or 9
+		local repelCount = Data.yellow and 10 or 9
 		return Shop.transaction {
 			direction = "Up",
 			buy = {{name="super_repel", index=3, amount=repelCount}}
@@ -1450,7 +1450,7 @@ Strategies.functions = {
 			Strategies.setYolo("safari_carbos")
 			status.carbos = Inventory.count("carbos")
 		end
-		local minDV = yellow and 9 or 7
+		local minDV = Data.yellow and 9 or 7
 		if stats.nidoran.speedDV >= minDV then
 			return true
 		end
@@ -1528,7 +1528,7 @@ Strategies.functions = {
 		if Strategies.initialize() then
 			status.startCount = Inventory.count("carbos")
 		end
-		local minDV = yellow and 11 or 10
+		local minDV = Data.yellow and 11 or 10
 		if stats.nidoran.speedDV >= minDV then
 			px, py = 21, 20
 		else
@@ -1643,16 +1643,16 @@ Strategies.functions = {
 		if status.finishTime then
 			if not status.frames then
 				status.frames = 0
-				local victoryMessage = "Beat Pokemon "..Utils.capitalize(GAME_NAME).." in "..status.finishTime
+				local victoryMessage = "Beat Pokemon "..Utils.capitalize(Data.gameName).." in "..status.finishTime
 				if not Strategies.overMinute("champion") then
 					victoryMessage = victoryMessage..", a new PB!"
 				end
 				Strategies.tweetProgress(victoryMessage)
 				if Data.run.seed then
-					Data.run.frames = Utils.frames()
+					Data.setFrames()
 					print("v"..VERSION..": "..Data.run.frames.." frames, with seed "..Data.run.seed)
 
-					if (yellow or not INTERNAL or RESET_FOR_TIME) and not Strategies.replay then
+					if (Data.yellow or not INTERNAL or RESET_FOR_TIME) and not Strategies.replay then
 						print("Please save this seed number to share, if you would like proof of your run!")
 						print("A screenshot has been saved to the Gameboy\\Screenshots folder in BizHawk.")
 						gui.cleartext()
@@ -1661,7 +1661,7 @@ Strategies.functions = {
 						gui.text(0, 14, "Name: "..Textbox.getNamePlaintext())
 						gui.text(0, 21, "Reset for time: "..tostring(RESET_FOR_TIME))
 						gui.text(0, 28, "Time: "..Utils.elapsedTime())
-						gui.text(0, 35, "Frames: "..Utils.frames())
+						gui.text(0, 35, "Frames: "..Data.frames())
 						client.setscreenshotosd(true)
 						client.screenshot()
 						client.setscreenshotosd(false)
@@ -1689,14 +1689,14 @@ strategyFunctions = Strategies.functions
 function Strategies.execute(data)
 	local strategyFunction = strategyFunctions[data.s]
 	if not strategyFunction then
-		p("INVALID STRATEGY", data.s, GAME_NAME)
+		p("INVALID STRATEGY", data.s, Data.gameName)
 		return true
 	end
 	if strategyFunction(data) then
 		status = {tries=0}
 		Strategies.status = status
 		Strategies.completeGameStrategy()
-		if yellow then
+		if Data.yellow then
 			-- print(data.s)
 		end
 		if resetting then

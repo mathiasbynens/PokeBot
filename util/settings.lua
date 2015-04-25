@@ -3,26 +3,24 @@ local Settings = {}
 local Textbox = require "action.textbox"
 local Strategies = require "ai.strategies"
 
+local Data = require "data.data"
+
 local Bridge = require "util.bridge"
 local Input = require "util.input"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
 
-local Data = require "data.data"
-
 local START_WAIT = 99
 
-local yellow = YELLOW
-
 local settings_menu
-if yellow then
+if Data.yellow then
 	settings_menu = 93
 else
 	settings_menu = 94
 end
 
 local desired = {}
-if yellow then
+if Data.yellow then
 	desired.text_speed = 1
 	desired.battle_animation = 128
 	desired.battle_style = 64
@@ -33,7 +31,7 @@ else
 end
 
 local function isEnabled(name)
-	if yellow then
+	if Data.yellow then
 		local matching = {
 			text_speed = 0xF,
 			battle_animation = 128,
@@ -62,7 +60,7 @@ end
 
 function Settings.startNewAdventure(startWait)
 	local startMenu, withBattleStyle
-	if yellow then
+	if Data.yellow then
 		startMenu = Memory.raw(0x0F95) == 0
 		withBattleStyle = "battle_style"
 	else

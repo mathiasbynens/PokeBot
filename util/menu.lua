@@ -1,9 +1,11 @@
 local Menu = {}
 
+local Data = require "data.data"
+
 local Input = require "util.input"
 local Memory = require "util.memory"
 
-local yellow = GAME_NAME == "yellow"
+local yellow = Data.yellow
 
 local sliding = false
 local alternateStart = 0

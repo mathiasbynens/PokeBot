@@ -7,8 +7,6 @@ local Utils = require "util.utils"
 
 local Pokemon = require "storage.pokemon"
 
-local yellow = YELLOW
-
 local items = {
 	pokeball = 4,
 	bicycle = 6,
@@ -181,7 +179,7 @@ end
 function Inventory.use(item, poke, midfight)
 	if midfight then
 		local battleMenu = Memory.value("battle", "menu")
-		if battleMenu == 94 then
+		if Menu.onBattleSelect(battleMenu) then
 			local rowSelected = Memory.value("menu", "row")
 			if Menu.getCol() == 9 then
 				if rowSelected == 0 then

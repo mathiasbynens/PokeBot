@@ -9,10 +9,10 @@ local PAINT_ON     = true -- Display contextual information while the bot runs
 -- START CODE (hard hats on)
 
 VERSION = "1.4.5"
-YELLOW = memory.getcurrentmemorydomainsize() > 30000
-GAME_NAME = YELLOW and "yellow" or "red"
 
 local START_WAIT = 99
+
+local Data = require "data.data"
 
 local Battle = require "action.battle"
 local Textbox = require "action.textbox"
@@ -20,7 +20,7 @@ local Walk = require "action.walk"
 
 local Combat = require "ai.combat"
 local Control = require "ai.control"
-local Strategies = require("ai."..GAME_NAME..".strategies")
+local Strategies = require("ai."..Data.gameName..".strategies")
 
 local Bridge = require "util.bridge"
 local Input = require "util.input"
@@ -30,7 +30,6 @@ local Paint = require "util.paint"
 local Utils = require "util.utils"
 local Settings = require "util.settings"
 
-local Data = require "data.data"
 local Pokemon = require "storage.pokemon"
 
 local hasAlreadyStartedPlaying = false
@@ -63,7 +62,7 @@ end
 
 -- EXECUTE
 
-p("Welcome to PokeBot "..GAME_NAME.." version "..VERSION, true)
+p("Welcome to PokeBot "..Data.gameName.." version "..VERSION, true)
 
 Control.init()
 

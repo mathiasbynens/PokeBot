@@ -2,10 +2,11 @@ local Player = {}
 
 local Textbox = require "action.textbox"
 
+local Data = require "data.data"
+
 local Input = require "util.input"
 local Memory = require "util.memory"
 
-local yellow = YELLOW
 local facingDirections = {Up=8, Right=1, Left=2, Down=4}
 local fast = false
 
@@ -25,7 +26,7 @@ end
 function Player.interact(direction, extended)
 	if Player.face(direction) then
 		local speed = extended and 3 or 2
-		if yellow and instant then
+		if Data.yellow and instant then
 			fast = not fast
 			speed = fast and 1 or 2
 		end

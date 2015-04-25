@@ -1,5 +1,7 @@
 local Memory = {}
 
+local Data = require "data.data"
+
 local memoryNames = {
 	setting = {
 		text_speed = 0x0D3D,
@@ -119,10 +121,8 @@ local doubleNames = {
 	},
 }
 
-local yellow = YELLOW
-
 local function raw(address, forYellow)
-	if yellow and not forYellow and address > 0x0F12 and address < 0x1F00 then
+	if Data.yellow and not forYellow and address > 0x0F12 and address < 0x1F00 then
 		address = address - 1
 	end
 	return memory.readbyte(address)

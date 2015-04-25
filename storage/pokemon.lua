@@ -1,11 +1,11 @@
 local Pokemon = {}
 
+local Data = require "data.data"
+
 local Bridge = require "util.bridge"
 local Input = require "util.input"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
-
-local yellow = YELLOW
 
 local pokeIDs = {
 	rhydon = 1,
@@ -139,7 +139,7 @@ Pokemon.indexOf = indexOf
 local function fieldMoveIndex(move)
 	local moveIndex = 0
 	local menuSize = Memory.value("menu", "size")
-	if yellow then
+	if Data.yellow then
 		if move == "cut" then
 			if Pokemon.inParty("charmander") then
 				moveIndex = 1
