@@ -234,6 +234,7 @@ function Strategies.buffTo(buff, defLevel)
 		if defLevel and Memory.double("battle", "opponent_defense") > defLevel then
 			forced = buff
 		end
+		Control.ignoreMiss = forced ~= nil
 		Battle.automate(forced, true)
 	elseif status.foughtTrainer then
 		return true

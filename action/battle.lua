@@ -281,8 +281,10 @@ end
 
 function Battle.redeployNidoking()
 	if Pokemon.isDeployed("nidoking") then
+		Control.ignoreMiss = false
 		return false
 	end
+	Control.ignoreMiss = true
 	if Menu.onPokemonSelect() then
 		Pokemon.select("nidoking")
 	elseif Menu.hasTextbox() and Menu.getCol() == 1 then

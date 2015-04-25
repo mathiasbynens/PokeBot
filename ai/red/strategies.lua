@@ -595,6 +595,7 @@ strategyFunctions.fightBrock = function()
 							Bridge.chat("got Bided the same turn as Bubble. It'll need to last 3 turns (1 in 2 chance) for us to finish him before it hits...")
 						end
 					end
+					Control.ignoreMiss = forced ~= nil
 					Battle.fight(forced)
 				else
 					Input.cancel()
