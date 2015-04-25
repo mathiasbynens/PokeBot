@@ -4,13 +4,14 @@ local Battle
 local Combat = require "ai.combat"
 local Strategies
 
+local Data = require "data.data"
+
 local Bridge = require "util.bridge"
 local Memory = require "util.memory"
 local Menu = require "util.menu"
 local Paint = require "util.paint"
 local Utils = require "util.utils"
 
-local Data = require "data.data"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
@@ -22,8 +23,6 @@ local shouldCatch, attackIdx
 local extraEncounter, maxEncounters
 local battleYolo
 local encountersSection
-
-local yellow = YELLOW
 
 Control.areaName = "Unknown"
 Control.getMoonExp = true
@@ -96,7 +95,7 @@ local controlFunctions = {
 
 	startMtMoon = function()
 		Control.canDie(false)
-		Control.getMoonExp = not yellow
+		Control.getMoonExp = not Data.yellow
 	end,
 
 	moon1Exp = function()
@@ -208,9 +207,9 @@ function Control.canCatch(partySize)
 		partySize = Memory.value("player", "party_size")
 	end
 	local pokeballs = Inventory.count("pokeball")
-	local minimumCount = (yellow and 3 or 4) - partySize
+	local minimumCount = (Data.yellow and 3 or 4) - partySize
 	if pokeballs < minimumCount then
-		if yellow and Pokemon.inParty("nidoran", "nidorino", "nidoking") and Pokemon.inParty("pidgey", "spearow") then
+		if Data.yellow and Pokemon.inParty("nidoran", "nidorino", "nidoking") and Pokemon.inParty("pidgey", "spearow") then
 			return false
 		end
 		Strategies.reset("pokeballs", "Not enough PokeBalls", pokeballs)
@@ -230,7 +229,7 @@ function Control.shouldCatch(partySize)
 	if not shouldCatch then
 		return false
 	end
-	if yellow and not Inventory.contains("pokeball") then
+	if Data.yellow and not Inventory.contains("pokeball") then
 		return false
 	end
 	if not partySize then
@@ -274,7 +273,7 @@ function Control.set(data)
 	if controlFunction then
 		controlFunction(data)
 	else
-		p("INVALID CONTROL", data.c, GAME_NAME)
+		p("INVALID CONTROL", data.c, Data.gameName)
 	end
 end
 
@@ -384,7 +383,7 @@ end
 
 function Control.init()
 	Battle = require("action.battle")
-	Strategies = require("ai."..GAME_NAME..".strategies")
+	Strategies = require("ai."..Data.gameName..".strategies")
 end
 
 return Control

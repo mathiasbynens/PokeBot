@@ -108,7 +108,6 @@ function json.encode (v)
   assert(false,'encode attempt to encode unsupported type ' .. vtype .. ':' .. tostring(v))
 end
 
-
 --- Decodes a JSON string and returns the decoded value as a Lua data structure / value.
 -- @param s The string to scan.
 -- @param [startPos] Optional starting position where the JSON string is located. Defaults to 1.

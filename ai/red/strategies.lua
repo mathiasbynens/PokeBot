@@ -8,6 +8,8 @@ local Shop = require "action.shop"
 local Textbox = require "action.textbox"
 local Walk = require "action.walk"
 
+local Data = require "data.data"
+
 local Bridge = require "util.bridge"
 local Input = require "util.input"
 local Memory = require "util.memory"
@@ -15,7 +17,6 @@ local Menu = require "util.menu"
 local Player = require "util.player"
 local Utils = require "util.utils"
 
-local Data = require "data.data"
 local Inventory = require "storage.inventory"
 local Pokemon = require "storage.pokemon"
 
@@ -338,7 +339,7 @@ strategyFunctions.fightBulbasaur = function()
 	end
 	if Battle.isActive() and Battle.opponentAlive() then
 		local resetMessage, customReason
-		if Memory.double("battle", "our_attack") < 2 then
+		if Memory.double("battle", "our_attack") <= 2 then
 			resetMessage = "Growled to death."
 			customReason = true
 		else
@@ -368,7 +369,8 @@ strategyFunctions.catchNidoran = function()
 	if not Control.canCatch() then
 		return true
 	end
-	local catchableNidoran = Pokemon.isOpponent("nidoran") and Memory.value("battle", "opponent_level") > 2
+	local opponent = Battle.opponent()
+	local catchableNidoran = opponent == "nidoran" and Memory.value("battle", "opponent_level") > 2
 	local pokeballs = Inventory.count("pokeball")
 	local caught = Memory.value("player", "party_size") - 1
 	if pokeballs < (catchableNidoran and 5 or 6) - caught * 2 then
@@ -2028,7 +2030,7 @@ end
 
 function Strategies.initGame(midGame)
 	if midGame then
-		Strategies.setYolo("bulbasaur")
+		Strategies.setYolo("bulbasaur", true)
 		stats.squirtle = {
 			attack = 11,
 			defense = 11,

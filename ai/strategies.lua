@@ -122,8 +122,8 @@ function Strategies.resetTime(timeLimit, explanation, custom)
 	end
 end
 
-function Strategies.setYolo(name)
-	if not RESET_FOR_TIME then
+function Strategies.setYolo(name, forced)
+	if not forced and not RESET_FOR_TIME then
 		return false
 	end
 	local minimumTime = Strategies.getTimeRequirement(name)

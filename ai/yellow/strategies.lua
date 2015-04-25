@@ -923,7 +923,7 @@ end
 
 function Strategies.initGame(midGame)
 	if midGame then
-		-- Strategies.setYolo("")
+		-- Strategies.setYolo("", true)
 		if Pokemon.inParty("nidoking") then
 			local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("nidoking")
 			p(attDV, defDV, spdDV, sclDV)
