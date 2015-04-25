@@ -855,7 +855,7 @@ strategyFunctions.potionForMankey = function()
 	local yoloHP = 8
 	if Strategies.initialize() then
 		Strategies.setYolo("mankey")
-		if Pokemon.info("nidoking", "level") > 20 then
+		if Pokemon.info("nidoking", "level") >= 23 then
 			return true
 		end
 		local curr_hp = Combat.hp()
@@ -910,12 +910,15 @@ strategyFunctions.thrashGeodude = function()
 				if not Control.yolo or Combat.inRedBar() then
 					status.sacrificeSquirtle = true
 				else
-					local __, turnsToKill = Combat.bestMove()
-					status.sacrificeSquirtle = turnsToKill > 1
+					local __, turnsToKill, turnsToDie = Combat.bestMove()
+					status.sacrificeSquirtle = turnsToKill > 1 or turnsToDie == 1
 				end
 				if not status.sacrificeSquirtle then
 					Bridge.chat("is attempting to hit through Confusion to avoid switching out to Squirtle...")
 				end
+			end
+			if status.sacrificeSquirtle and Battle.sacrifice("squirtle") then
+				return false
 			end
 		end
 		Battle.automate()
