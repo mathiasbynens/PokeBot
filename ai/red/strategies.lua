@@ -851,14 +851,19 @@ end
 -- teachThrash
 
 strategyFunctions.potionForMankey = function()
+	local healForDefense = 16 + (14 - stats.nidoran.defense)
+	local yoloHP = 8
 	if Strategies.initialize() then
 		Strategies.setYolo("mankey")
 		if Pokemon.info("nidoking", "level") > 20 then
 			return true
 		end
+		local curr_hp = Combat.hp()
+		if Control.yolo and curr_hp < healForDefense and curr_hp >= yoloHP then
+			Bridge.chat("Attempting to stay in range of red-bar by skipping potioning before Mankey...")
+		end
 	end
-	local healForDefense = 16 + (14 - stats.nidoran.defense)
-	return strategyFunctions.potion({hp=healForDefense, yolo=8})
+	return strategyFunctions.potion({hp=healForDefense, yolo=yoloHP})
 end
 
 strategyFunctions.redbarMankey = function()
@@ -970,14 +975,13 @@ strategyFunctions.potionBeforeMisty = function(data)
 	end
 	healAmount = healAmount - (stats.nidoran.special - 43)
 
-	if not data.goldeen and not status.healed then
-		status.healed = true
+	if not data.goldeen and Strategies.initialize("healed") then
 		local message
 		local potionCount = Inventory.count("potion")
 		local needsToHeal = healAmount - Pokemon.index(0, "hp")
 		if potionCount * 20 < needsToHeal then
 			message = "ran too low on potions to adequately heal before Misty D:"
-		elseif healAmount < 60 then
+		elseif healAmount < 69 then
 			message = "is limiting heals to attempt to get closer to red-bar off Misty..."
 		end
 		if message then
