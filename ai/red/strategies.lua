@@ -421,7 +421,7 @@ strategyFunctions.catchNidoran = function()
 				Bridge.caught("nidoran")
 				status.canProgress = true
 				if not gotExperience then
-					Bridge.chat("is waiting in the grass for a suitable encounter for experience.", Pokemon.getExp())
+					Bridge.chat("is waiting in the grass for a suitable encounter for experience.")
 				end
 			end
 			if gotExperience then
@@ -1040,7 +1040,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 			message = "is limiting heals to attempt to get closer to red-bar off Misty..."
 		end
 		if message then
-			Bridge.chat(message, potionCount)
+			Bridge.chat(message, false, potionCount)
 		end
 	end
 	return strategyFunctions.potion({hp=healAmount, chain=data.chain})
@@ -1241,7 +1241,7 @@ strategyFunctions.potionBeforeSurge = function()
 		if Control.yolo then
 			local curr_hp = Combat.hp()
 			if curr_hp > yoloHp and curr_hp <= 21 then
-				Bridge.chat("is attempting to keep red-bar through Surge", curr_hp)
+				Bridge.chat("is attempting to keep red-bar through Surge")
 				return true
 			end
 		end
@@ -1449,7 +1449,7 @@ strategyFunctions.silphRival = function()
 		if Strategies.initialize() then
 			if Control.yolo then
 				status.gyaradosDamage = Combat.healthFor("RivalGyarados")
-				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!", status.gyaradosDamage.." "..Combat.redHP())
+				Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!")
 			end
 		end
 

@@ -51,7 +51,7 @@ function Strategies.hardReset(reason, message, extra, wait)
 	local map, px, py = Memory.value("game", "map"), Player.position()
 	Data.reset(reason, Control.areaName, map, px, py)
 
-	Bridge.chat(message, extra)
+	Bridge.chat(message, false, extra)
 	if wait and INTERNAL and not STREAMING_MODE then
 		strategyFunctions.wait()
 	else
@@ -462,7 +462,7 @@ function Strategies.completeCans()
 			prefix = "Reset me now"
 			suffix = " BibleThump"
 		end
-		Bridge.chat(" "..prefix..", "..status.tries.." try Trashcans"..suffix, Utils.elapsedTime())
+		Bridge.chat(" "..prefix..", "..status.tries.." try Trashcans"..suffix)
 		return true
 	end
 	local completePath = {

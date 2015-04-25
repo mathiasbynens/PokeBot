@@ -65,11 +65,13 @@ function Bridge.pollForName()
 	send("poll_name")
 end
 
-function Bridge.chat(message, extra, newLine)
-	if extra then
-		p(message.." || "..extra, newLine)
-	else
-		p(message, newLine)
+function Bridge.chat(message, suppressed, extra, newLine)
+	if not suppressed then
+		if extra then
+			p(message.." || "..extra, newLine)
+		else
+			p(message, newLine)
+		end
 	end
 	return send("msg", message)
 end
