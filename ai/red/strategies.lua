@@ -558,20 +558,22 @@ strategyFunctions.fightBrock = function()
 					if status.startBide - bideTurns >= 2 or turnsToKill <= 1 then
 						-- Bubble
 					elseif onixHP == status.canProgress then
-						if turnsToDie == 1 then
-							if Strategies.initialize("biding") then
-								Bridge.chat("is in range to die to a Tackle. Attempting to finish off Onix before Bide hits (1 in 2 chance).")
-							end
-						elseif turnsToKill == 2 and Control.yolo then
-							if Strategies.initialize("biding") then
-								Bridge.chat("got first-turn Bided. Too far behind to wait it out, so attempting to finish off Onix before Bide hits (1 in 2 chance).")
+						if turnsToKill == 2 and Control.yolo then
+							if onixHP == Memory.double("battle", "opponent_max_hp") and Strategies.initialize("biding") then
+								Bridge.chat("got first-turn Bided. Too far behind to wait it out, so attempting to finish off Onix before it hits (1 in 2 chance).")
 							end
 						else
-							if turnsToDie <= 2 and Inventory.contains("potion") then
+							if turnsToDie <= 2 and Combat.hp() < Combat.maxHP() - 5 and Inventory.contains("potion") then
 								Inventory.use("potion", "squirtle", true)
 								return false
 							end
-							forced = "tail_whip"
+							if turnsToDie == 1 then
+								if Strategies.initialize("biding") then
+									Bridge.chat("is in range to die to a Tackle. Attempting to finish off Onix before Bide hits (1 in 2 chance).")
+								end
+							else
+								forced = "tail_whip"
+							end
 						end
 					else
 						if Strategies.initialize("biding") then
