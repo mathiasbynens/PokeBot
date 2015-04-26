@@ -35,7 +35,7 @@ local Pokemon = require "storage.pokemon"
 local hasAlreadyStartedPlaying = false
 local oldSeconds
 local running = true
-local lastHP
+local lastHP, lastExp
 
 -- HELPERS
 
@@ -136,11 +136,18 @@ while true do
 		else
 			local battleState = Memory.value("game", "battle")
 			Control.encounter(battleState)
-			local curr_hp = Pokemon.index(0, "hp")
-			-- if curr_hp ~= lastHP then
-			-- 	Bridge.hp(curr_hp, Pokemon.index(0, "max_hp"))
-			-- 	lastHP = curr_hp
-			-- end
+
+			local curr_hp = Combat.hp()
+			local expChange = Memory.raw(0x117B)
+			if curr_hp ~= lastHP or expChange ~= lastExp then
+				local max_hp = Combat.maxHP()
+				if max_hp < curr_hp then
+					max_hp = curr_hp
+				end
+				lastExp = expChange
+				lastHP = curr_hp
+				Bridge.hp(curr_hp, max_hp, Pokemon.getExp(), Pokemon.getMaxExp(), Pokemon.index(0, "level"))
+			end
 			if curr_hp == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
 				Strategies.death(currentMap)
 			elseif Walk.strategy then

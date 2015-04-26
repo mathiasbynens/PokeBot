@@ -294,7 +294,14 @@ function Pokemon.isEvolving()
 end
 
 function Pokemon.getExp()
-	return Memory.raw(0x117A) * 256 + Memory.raw(0x117B)
+	local experience = Memory.raw(0x1179) * 256
+	experience = (experience + Memory.raw(0x117A)) * 256
+	return experience + Memory.raw(0x117B)
+end
+
+function Pokemon.getMaxExp()
+	local level = index(0, "level") + 1
+	return math.floor((6 / 5 * level^3) - (15 * level^2) + (100 * level) - 140)
 end
 
 function Pokemon.inRedBar()
