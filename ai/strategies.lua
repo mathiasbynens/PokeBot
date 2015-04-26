@@ -445,7 +445,10 @@ function Strategies.completeCans()
 	local px, py = Player.position()
 	if px == 4 and py == 6 then
 		status.tries = status.tries + 1
-		local timeLimit = Strategies.getTimeRequirement("trash") + 1.5
+		local timeLimit = Strategies.getTimeRequirement("trash") + 1
+		if Combat.inRedBar() then
+			timeLimit = timeLimit + 0.5
+		end
 		if Strategies.resetTime(timeLimit, "complete Trashcans ("..status.tries.." tries)") then
 			return true
 		end
