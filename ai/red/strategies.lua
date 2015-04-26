@@ -892,8 +892,8 @@ strategyFunctions.thrashGeodude = function()
 				if not Control.yolo or Combat.inRedBar() then
 					status.sacrificeSquirtle = true
 				else
-					local __, turnsToKill, turnsToDie = Combat.bestMove()
-					status.sacrificeSquirtle = turnsToKill > 1 or turnsToDie == 1
+					local __, turnsToKill = Combat.bestMove()
+					status.sacrificeSquirtle = not turnsToKill or turnsToKill > 1
 				end
 				if not status.sacrificeSquirtle then
 					Bridge.chat("is attempting to hit through Confusion to avoid switching out to Squirtle...")
@@ -947,13 +947,13 @@ strategyFunctions.potionBeforeMisty = function(data)
 	local canSpeedTie = stats.nidoran.speedDV >= 11
 	if Control.yolo then
 		if canTwoHit and stats.nidoran.speedDV >= 13 then
-			healAmount = 48
+			healAmount = 46
 		elseif canTwoHit or canSpeedTie then
 			healAmount = 66
 		end
 	else
 		if canTwoHit and stats.nidoran.speedDV >= 13 then
-			healAmount = 48
+			healAmount = 46
 		elseif canTwoHit and canSpeedTie then
 			healAmount = 66
 		end
@@ -966,7 +966,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 		local needsToHeal = healAmount - Pokemon.index(0, "hp")
 		if potionCount * 20 < needsToHeal then
 			message = "ran too low on potions to adequately heal before Misty D:"
-		elseif healAmount < 69 then
+		elseif healAmount < 60 then
 			message = "is limiting heals to attempt to get closer to red-bar off Misty..."
 		end
 		if message then
