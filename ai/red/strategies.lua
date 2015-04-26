@@ -202,8 +202,7 @@ local function willRedBar(forDamage)
 end
 
 local function potionForRedBar(damage)
-	local curr_hp, red_hp = Combat.hp(), Combat.redHP()
-	local max_hp = Pokemon.index(0, "max_hp")
+	local curr_hp, max_hp, red_hp = Combat.hp(), Combat.maxHP(), Combat.redHP()
 
 	local potions = {
 		{"potion", 20},
@@ -963,7 +962,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 	if not data.goldeen and Strategies.initialize("healed") then
 		local message
 		local potionCount = Inventory.count("potion")
-		local needsToHeal = healAmount - Pokemon.index(0, "hp")
+		local needsToHeal = healAmount - Combat.hp()
 		if potionCount * 20 < needsToHeal then
 			message = "ran too low on potions to adequately heal before Misty D:"
 		elseif healAmount < 60 then
@@ -1381,7 +1380,7 @@ strategyFunctions.silphRival = function()
 		if Strategies.initialize() then
 			if Control.yolo then
 				local gyaradosDamage = Combat.healthFor("RivalGyarados")
-				if gyaradosDamage < Pokemon.index(0, "max_hp") then
+				if gyaradosDamage < Combat.maxHP() then
 					Bridge.chat("is attempting to red-bar off Silph Rival. Get ready to spaghetti!")
 					status.gyaradosDamage = gyaradosDamage
 				end
@@ -1428,7 +1427,7 @@ strategyFunctions.silphRival = function()
 							end
 							forced = "ice_beam"
 						else
-							if Inventory.count("super_potion") > 2 and curr_hp + 50 > status.gyaradosDamage and curr_hp + 25 < Pokemon.index(0, "max_hp") then
+							if Inventory.count("super_potion") > 2 and curr_hp + 50 > status.gyaradosDamage and curr_hp + 25 < Combat.maxHP() then
 								Inventory.use("super_potion", nil, true)
 								return false
 							end
@@ -1878,14 +1877,14 @@ strategyFunctions.agatha = function()
 			return false
 		end
 		if Pokemon.isOpponent("gengar") then
-			local currentHP = Pokemon.info("nidoking", "hp")
+			local curr_hp = Pokemon.info("nidoking", "hp")
 			local xItem1, xItem2
 			if not Control.yolo then
 				xItem1, xItem2 = "x_accuracy", "x_speed"
 			else
 				xItem1 = "x_speed"
 			end
-			if not Control.yolo and currentHP <= 56 and not Strategies.isPrepared(xItem1, xItem2) then
+			if not Control.yolo and curr_hp <= 56 and not Strategies.isPrepared(xItem1, xItem2) then
 				local toPotion = Inventory.contains("full_restore", "super_potion")
 				if toPotion then
 					Inventory.use(toPotion, nil, true)
@@ -1951,7 +1950,7 @@ strategyFunctions.blue = function()
 			end
 		end
 
-		local boostFirst = Pokemon.index(0, "hp") < 55
+		local boostFirst = Combat.hp() < 55
 		local firstItem, secondItem
 		if boostFirst then
 			firstItem = status.xItem
@@ -1969,7 +1968,7 @@ strategyFunctions.blue = function()
 			if Strategies.initialize("skyAttacked") then
 				if not Strategies.isPrepared("x_accuracy", status.xItem) then
 					local msg = " Uh oh... First-turn Sky Attack could end the run here, "
-					if Pokemon.index(0, "hp") > skyDamage then
+					if Combat.hp() > skyDamage then
 						msg = msg.."no criticals pls D:"
 					elseif Strategies.canHealFor(healCutoff) then
 						msg = msg.."attempting to heal for it"

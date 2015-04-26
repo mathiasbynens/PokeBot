@@ -163,8 +163,7 @@ function Strategies.initialize(var)
 end
 
 function Strategies.canHealFor(damage)
-	local curr_hp = Pokemon.index(0, "hp")
-	local max_hp = Pokemon.index(0, "max_hp")
+	local curr_hp, max_hp = Combat.hp(), Combat.maxHP()
 	if max_hp - curr_hp > 3 then
 		local healChecks = {"full_restore", "super_potion", "potion"}
 		for idx,potion in ipairs(healChecks) do
@@ -179,7 +178,7 @@ function Strategies.hasHealthFor(opponent, extra)
 	if not extra then
 		extra = 0
 	end
-	local afterHealth = math.min(Pokemon.index(0, "hp") + extra, Pokemon.index(0, "max_hp"))
+	local afterHealth = math.min(Combat.hp() + extra, Combat.maxHP())
 	return afterHealth > Combat.healthFor(opponent)
 end
 
@@ -187,7 +186,7 @@ function Strategies.damaged(factor)
 	if not factor then
 		factor = 1
 	end
-	return Pokemon.index(0, "hp") * factor < Pokemon.index(0, "max_hp")
+	return Combat.hp() * factor < Combat.maxHP()
 end
 
 function Strategies.trainerBattle()
@@ -590,7 +589,7 @@ Strategies.functions = {
 	end,
 
 	potion = function(data)
-		local curr_hp = Pokemon.index(0, "hp")
+		local curr_hp = Combat.hp()
 		if curr_hp == 0 then
 			return false
 		end
@@ -603,7 +602,7 @@ Strategies.functions = {
 		if type(toHP) == "string" then
 			toHP = Combat.healthFor(toHP)
 		end
-		toHP = math.min(toHP, Pokemon.index(0, "max_hp"))
+		toHP = math.min(toHP, Combat.maxHP())
 		local toHeal = toHP - curr_hp
 		if toHeal > 0 then
 			local toPotion

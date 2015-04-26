@@ -1,5 +1,7 @@
 local Paint = {}
 
+local Combat = require "ai.combat"
+
 local Memory = require "util.memory"
 local Player = require "util.player"
 local Utils = require "util.utils"
@@ -18,11 +20,11 @@ function Paint.draw(currentMap)
 	drawText(0, 7, currentMap..": "..px.." "..py)
 
 	if Memory.value("battle", "our_id") > 0 then
-		local curr_hp = Pokemon.index(0, "hp")
+		local curr_hp = Combat.hp()
 		local hpStatus
 		if curr_hp == 0 then
 			hpStatus = "DEAD"
-		elseif curr_hp <= math.ceil(Pokemon.index(0, "max_hp") * 0.2) then
+		elseif curr_hp <= math.ceil(Combat.maxHP() * 0.2) then
 			hpStatus = "RED"
 		end
 		if hpStatus then

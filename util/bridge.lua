@@ -116,8 +116,8 @@ function Bridge.caught(name)
 	end
 end
 
-function Bridge.hp(curr, max)
-	send("hp", curr..","..max)
+function Bridge.hp(curr_hp, max_hp, curr_xp, max_xp, level)
+	send("hpxp", curr_hp..","..max_hp..","..curr_xp..","..max_xp..","..level)
 end
 
 function Bridge.liveSplit()

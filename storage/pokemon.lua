@@ -304,11 +304,6 @@ function Pokemon.getMaxExp()
 	return math.floor((6 / 5 * level^3) - (15 * level^2) + (100 * level) - 140)
 end
 
-function Pokemon.inRedBar()
-	local curr_hp, max_hp = index(0, "hp"), index(0, "max_hp")
-	return curr_hp / max_hp <= 0.2
-end
-
 function Pokemon.use(move)
 	local main = Memory.value("menu", "main")
 	local pokeName = Pokemon.forMove(move)

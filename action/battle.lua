@@ -30,14 +30,14 @@ end
 
 local function recover()
 	if Control.canRecover() then
-		local currentHP = Pokemon.index(0, "hp")
-		if currentHP > 0 then
-			local maxHP = Pokemon.index(0, "max_hp")
-			if currentHP < maxHP then
+		local curr_hp = Combat.hp()
+		if curr_hp > 0 then
+			local max_hp = Combat.maxHP()
+			if curr_hp < max_hp then
 				local first, second
 				if Control.preferredPotion == "full" then
 					first, second = "full_restore", "super_potion"
-					if maxHP - currentHP > 54 then
+					if max_hp - curr_hp > 54 then
 						first = "full_restore"
 						second = "super_potion"
 					else
@@ -45,7 +45,7 @@ local function recover()
 						second = "full_restore"
 					end
 				else
-					if Control.preferredPotion == "super" and maxHP - currentHP > 22 then
+					if Control.preferredPotion == "super" and max_hp - curr_hp > 22 then
 						first = "super_potion"
 						second = "potion"
 					else
@@ -54,7 +54,7 @@ local function recover()
 					end
 				end
 				local potion = Inventory.contains(first, second)
-				if potionsForHit(potion, currentHP, maxHP) then
+				if potionsForHit(potion, curr_hp, max_hp) then
 					Inventory.use(potion, nil, true)
 					return true
 				end

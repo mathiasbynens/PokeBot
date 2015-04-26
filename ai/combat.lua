@@ -326,8 +326,12 @@ function Combat.hp()
 	return Pokemon.index(0, "hp")
 end
 
+function Combat.maxHP()
+	return Pokemon.index(0, "max_hp")
+end
+
 function Combat.redHP()
-	return math.ceil(Pokemon.index(0, "max_hp") * 0.2)
+	return math.ceil(Combat.maxHP() * 0.2)
 end
 
 function Combat.inRedBar()
