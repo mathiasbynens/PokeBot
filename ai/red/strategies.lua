@@ -943,6 +943,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 
 	local healAmount = data.goldeen and 66 or 72
 	local canTwoHit = stats.nidoran.attackDV >= (Control.yolo and 8 or 9)
+	local isSpeedTie = stats.nidoran.speedDV == 11
 	local canSpeedTie = stats.nidoran.speedDV >= 11
 	if Control.yolo then
 		if canTwoHit and stats.nidoran.speedDV >= 13 then
@@ -967,6 +968,12 @@ strategyFunctions.potionBeforeMisty = function(data)
 			message = "ran too low on potions to adequately heal before Misty D:"
 		elseif healAmount < 60 then
 			message = "is limiting heals to attempt to get closer to red-bar off Misty..."
+		elseif not canSpeedTie then
+			message = "will need to get lucky with speed ties to beat Misty here..."
+		elseif not canSpeedTie then
+			message = "will need to get lucky to beat Misty here. We're outsped..."
+		elseif not canTwoHit then
+			message = "will need to get lucky with damage ranges to beat Misty here..."
 		end
 		if message then
 			Bridge.chat(message, false, potionCount)
