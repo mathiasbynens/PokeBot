@@ -1339,11 +1339,15 @@ Strategies.functions = {
 			" CUTSCENE HYPE!",
 			" Please, sit back and enjoy the cutscene.",
 			"is enjoying the scenery Kappa b",
-			" Remind me to get Mew after this ship leaves!",
+			" Wait, is it too late to get Mew from under the truck??",
 			" Cutscenes DansGame",
-			" Your regularly scheduled run will continue in just a moment.",
+			" Your regularly scheduled run will continue in just a moment. Thank you for your patience.",
 			" Guys I think the game softlocked Kappa",
 			" Perfect, I needed a quick bathroom break.",
+			" *yawn*",
+			" :z",
+			" I think that ship broke the ocean.",
+			" Ah, lovely weather today in Viridian City, isn't it?",
 		}
 		Bridge.chat(Utils.random(messages))
 		return true
