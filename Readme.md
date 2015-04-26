@@ -22,8 +22,6 @@ Running the PokéBot on your own machine is easy. You will need a Windows enviro
 
 2. Download the [BizHawk 1.6.1](http://sourceforge.net/projects/bizhawk/files/BizHawk/BizHawk-1.6.1.zip/download) emulator and extract the ZIP file anywhere you like to “install” it.
 
-    **Note:** BizHawk v1.6.1 (Windows only) is the only version known to work.
-
 3. Run [the BizHawk prerequisites installer](http://sourceforge.net/projects/bizhawk/files/Prerequisites/bizhawk_prereqs_v1.1.zip/download), which should update a C++ distributable needed by BizHawk.
 
 4. Procure a ROM file of Pokémon Red (you should personally own the game).
@@ -50,7 +48,7 @@ If you're interested in adapting the bot to other categories or games, we'd love
 
 ### Developers
 
-Kyle Coburn: Original concept, Red routing
+Kyle Coburn: Original concept, Red/Yellow routing
 
 Michael Jondahl: Combat algorithm, Java bridge for connecting the bot to Twitch chat, LiveSplit, Twitter, etc.
 
@@ -60,4 +58,8 @@ To our Twitch chat moderators who help answer questions, and make the stream a g
 
 To LiveSplit for providing custom component for integrating in-game time splits.
 
+To the [contributor community](https://github.com/kylecoburn/PokeBot/graphs/contributors) here, who have helped track seeds and improve the bot.
+
 To the Pokémon speedrunning community members who inspired the idea, and shared their knowledge on ways to improve the bot.
+
+_Enjoy!_
