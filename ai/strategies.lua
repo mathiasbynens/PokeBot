@@ -1063,6 +1063,12 @@ Strategies.functions = {
 			message = "beat Brock with"
 		end
 		message = message.." a"..superlative.." Nidoran"..exclaim.." Caught at level "..(stats.nidoran.level4 and "4" or "3").."."
+
+		if BEAST_MODE then
+			p("", true)
+			p("", true)
+			p("", true)
+		end
 		Bridge.chat(message)
 		return true
 	end,
@@ -1788,7 +1794,11 @@ Strategies.functions = {
 			elseif status.frames == 500 then
 				Bridge.chat("beat the game in "..status.finishTime.."!")
 			elseif status.frames > 1800 then
-				return Strategies.hardReset("won", "Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
+				Strategies.hardReset("won", "Back to the grind - you can follow on Twitter for updates on our next good run! https://twitter.com/thepokebot")
+				p("", true)
+				p("", true)
+				p("", true)
+				return true
 			end
 			status.frames = status.frames + 1
 		elseif Memory.value("menu", "shop_current") == 252 then

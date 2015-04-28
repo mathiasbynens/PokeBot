@@ -49,7 +49,7 @@ local controlFunctions = {
 	encounters = function(data)
 		if RESET_FOR_TIME then
 			local limit = data.limit
-			if BEAST_MODE then
+			if limit and BEAST_MODE then
 				limit = limit - math.ceil(limit * 0.333)
 			end
 			maxEncounters = limit
