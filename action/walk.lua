@@ -108,6 +108,7 @@ function Walk.traverse(region)
 			return completeStep(region)
 		end
 		Walk.strategy = tile
+		return false
 	elseif step(tile[1], tile[2]) then
 		Pokemon.updateParty()
 		return completeStep(region)

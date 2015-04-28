@@ -37,6 +37,7 @@ local hasAlreadyStartedPlaying = false
 local oldSeconds
 local running = true
 local lastHP, lastExp
+local previousMap
 
 -- HELPERS
 
@@ -94,9 +95,62 @@ end
 
 Strategies.init(hasAlreadyStartedPlaying)
 
--- Main loop
+-- LOOP
 
-local previousMap
+local function generateNextInput(currentMap)
+	if not Utils.ingame() then
+		if currentMap == 0 then
+			if running then
+				if not hasAlreadyStartedPlaying then
+					client.reboot_core()
+					hasAlreadyStartedPlaying = true
+				else
+					resetAll()
+				end
+			else
+				Settings.startNewAdventure(START_WAIT)
+			end
+		else
+			if not running then
+				Bridge.liveSplit()
+				running = true
+			end
+			Settings.choosePlayerNames()
+		end
+	else
+		local battleState = Memory.value("game", "battle")
+		Control.encounter(battleState)
+
+		local curr_hp = Combat.hp()
+		local expChange = Memory.raw(0x117B)
+		if curr_hp ~= lastHP or expChange ~= lastExp then
+			local max_hp = Combat.maxHP()
+			if max_hp < curr_hp then
+				max_hp = curr_hp
+			end
+			lastExp = expChange
+			lastHP = curr_hp
+			Bridge.hp(curr_hp, max_hp, Pokemon.getExp(), Pokemon.getMaxExp(), Pokemon.index(0, "level"))
+		end
+		if curr_hp == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
+			Strategies.death(currentMap)
+		elseif Walk.strategy then
+			if Strategies.execute(Walk.strategy) then
+				if Walk.traverse(currentMap) == false then
+					return generateNextInput(currentMap)
+				end
+			end
+		elseif battleState > 0 then
+			if not Control.shouldCatch(partySize) then
+				Battle.automate()
+			end
+		elseif Textbox.handle() then
+			if Walk.traverse(currentMap) == false then
+				return generateNextInput(currentMap)
+			end
+		end
+	end
+end
 
 while true do
 	local currentMap = Memory.value("game", "map")
@@ -115,54 +169,7 @@ while true do
 	end
 
 	if not Input.update() then
-		if not Utils.ingame() then
-			if currentMap == 0 then
-				if running then
-					if not hasAlreadyStartedPlaying then
-						client.reboot_core()
-						hasAlreadyStartedPlaying = true
-					else
-						resetAll()
-					end
-				else
-					Settings.startNewAdventure(START_WAIT)
-				end
-			else
-				if not running then
-					Bridge.liveSplit()
-					running = true
-				end
-				Settings.choosePlayerNames()
-			end
-		else
-			local battleState = Memory.value("game", "battle")
-			Control.encounter(battleState)
-
-			local curr_hp = Combat.hp()
-			local expChange = Memory.raw(0x117B)
-			if curr_hp ~= lastHP or expChange ~= lastExp then
-				local max_hp = Combat.maxHP()
-				if max_hp < curr_hp then
-					max_hp = curr_hp
-				end
-				lastExp = expChange
-				lastHP = curr_hp
-				Bridge.hp(curr_hp, max_hp, Pokemon.getExp(), Pokemon.getMaxExp(), Pokemon.index(0, "level"))
-			end
-			if curr_hp == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
-				Strategies.death(currentMap)
-			elseif Walk.strategy then
-				if Strategies.execute(Walk.strategy) then
-					Walk.traverse(currentMap)
-				end
-			elseif battleState > 0 then
-				if not Control.shouldCatch(partySize) then
-					Battle.automate()
-				end
-			elseif Textbox.handle() then
-				Walk.traverse(currentMap)
-			end
-		end
+		generateNextInput(currentMap)
 	end
 
 	if STREAMING_MODE then
