@@ -52,7 +52,7 @@ end
 Strategies.timeRequirements = {
 
 	bulbasaur = function() --RESET
-		return 2.25
+		return 2.225
 	end,
 
 	nidoran = function() --RESET
@@ -60,7 +60,7 @@ Strategies.timeRequirements = {
 	end,
 
 	old_man = function()
-		return 6.75 + timeSaveFor("spearow")
+		return 6.67 + timeSaveFor("spearow")
 	end,
 
 	brock = function()
@@ -74,7 +74,7 @@ Strategies.timeRequirements = {
 	end,
 
 	mt_moon = function() --RESET
-		local timeLimit = 26 + timeSaveFor("paras")
+		local timeLimit = 25.5 + timeSaveFor("paras")
 		if Pokemon.info("nidoking", "level") >= 18 then
 			timeLimit = timeLimit + 0.33
 		elseif Pokemon.getExp() > 3730 then
@@ -106,7 +106,7 @@ Strategies.timeRequirements = {
 	end,
 
 	trash = function() --RESET
-		return 46.75 + timeForStats()
+		return 46.5 + timeForStats()
 	end,
 
 	safari_carbos = function()
