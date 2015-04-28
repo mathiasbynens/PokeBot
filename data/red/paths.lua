@@ -111,7 +111,7 @@ local Paths = {
 -- 6: NUGGET BRIDGE
 
 	-- To Bill's
-	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="talk",dir="Up"}, {s="thrashGeodude"}, {10,5}, {s="hikerElixer"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="talk",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {35,6}, {35,4}, {36,4}, {s="talk",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="lassEther"}, {45,4}, {45,3}},
+	{36, {0,8}, {9,8}, {9,6}, {9,6}, {8,6}, {8,5}, {s="talk",dir="Up"}, {s="thrashGeodude"}, {10,5}, {s="hikerElixer"}, {10,4}, {13,4}, {13,6}, {15,6}, {15,4}, {17,4}, {17,7}, {18,7}, {s="talk",dir="Down"}, {20,7}, {20,8}, {22,8}, {22,6}, {23,6}, {s="potion",hp=5,yolo=0}, {35,6}, {35,4}, {36,4}, {s="talk",dir="Right"}, {36,5}, {38,5}, {38,4}, {s="lassEther"}, {45,4}, {45,3}},
 	-- Save Bill
 	{88, {2,7}, {2,5}, {5,5}, {s="confirm",dir="Right"}, {1,5}, {s="interact",dir="Up"}, {4,5}, {s="talk",dir="Up"}, {s="waitToTalk"}, {s="potionBeforeMisty",goldeen=true,chain=true}, {s="item",item="escape_rope"}},
 	-- To Misty
