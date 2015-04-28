@@ -404,7 +404,7 @@ strategyFunctions.catchNidoran = function()
 		else
 			if Menu.onBattleSelect() then
 				local resetLimit = Strategies.getTimeRequirement("nidoran")
-				local message
+				local message, customReason
 				if Pokemon.inParty("nidoran") then
 					message = "fight an encounter for experience"
 					resetLimit = resetLimit + 0.15
@@ -415,9 +415,16 @@ strategyFunctions.catchNidoran = function()
 						catchTarget = Utils.capitalize(opponent)
 					else
 						resetLimit = resetLimit - 0.1
-						catchTarget = "Nidoran"
+						if Data.run.encounters_rattata and Data.run.encounters_rattata >= 4 then
+							message = "Death by Rattata"
+							customReason = true
+						else
+							catchTarget = "Nidoran"
+						end
 					end
-					message = "catch "..catchTarget
+					if catchTarget then
+						message = "catch "..catchTarget
+					end
 				end
 				if Strategies.resetTime(resetLimit, message) then
 					return true
@@ -452,7 +459,7 @@ strategyFunctions.catchNidoran = function()
 		local resetMessage, customReason
 		if hasNidoran then
 			resetMessage = "get an encounter for experience before Brock"
-		elseif Data.run.encounters_rattata and Data.run.encounters_rattata > 4 then
+		elseif Data.run.encounters_rattata and Data.run.encounters_rattata >= 4 then
 			resetMessage = "Death by Rattata"
 			customReason = true
 		else
