@@ -324,14 +324,23 @@ strategyFunctions.fightBulbasaur = function()
 		end
 	end
 	if Battle.isActive() and Battle.opponentAlive() then
-		local resetMessage, customReason
-		if Memory.double("battle", "our_attack") <= 2 then
-			resetMessage = "Growled to death."
-			customReason = true
-		else
-			resetMessage = "beat Bulbasaur"
+		local attack = Memory.double("battle", "our_attack")
+		if attack > 0 and not status.growled then
+			if attack ~= status.attack then
+				p(attack, Memory.double("battle", "opponent_hp"))
+				status.attack = attack
+			end
+			local growled
+			if attack <= 2 then
+				growled = not Strategies.opponentDamaged(3)
+			elseif attack <= 3 then
+				growled = not Strategies.opponentDamaged(1.9)
+			end
+			if growled then
+				return Strategies.reset("time", "Growled to death.", attack.." "..Memory.double("battle", "opponent_hp"))
+			end
 		end
-		if Strategies.resetTime("bulbasaur", resetMessage, customReason) then
+		if Strategies.resetTime("bulbasaur", "beat Bulbasaur") then
 			return true
 		end
 	end
@@ -381,15 +390,22 @@ strategyFunctions.catchNidoran = function()
 		else
 			if Menu.onBattleSelect() then
 				local resetLimit = Strategies.getTimeRequirement("nidoran")
-				local catchTarget
-				if catchableNidoran or opponent == "spearow" then
-					resetLimit = resetLimit + 0.25
-					catchTarget = Utils.capitalize(opponent)
+				local message
+				if Pokemon.inParty("nidoran") then
+					message = "fight an encounter for experience"
+					resetLimit = resetLimit + 0.15
 				else
-					resetLimit = resetLimit - 0.15
-					catchTarget = "Nidoran"
+					local catchTarget
+					if catchableNidoran or opponent == "spearow" then
+						resetLimit = resetLimit + 0.15
+						catchTarget = Utils.capitalize(opponent)
+					else
+						resetLimit = resetLimit - 0.1
+						catchTarget = "Nidoran"
+					end
+					message = "catch "..catchTarget
 				end
-				if Strategies.resetTime(resetLimit, "catch "..catchTarget) then
+				if Strategies.resetTime(resetLimit, message) then
 					return true
 				end
 			end
