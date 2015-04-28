@@ -996,15 +996,14 @@ strategyFunctions.fightMisty = function()
 		end
 		local forced
 		if Battle.opponentAlive() and Combat.isConfused() then
-			local sacrifice
-			if not Control.yolo and stats.nidoran.speedDV >= 11 then
-				sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras")
+			if not status.sacrifice and not Control.yolo and stats.nidoran.speedDV >= 11 then
+				status.sacrifice = Pokemon.getSacrifice("pidgey", "spearow", "squirtle", "paras")
 			end
 
 			if Menu.onBattleSelect() then
 				if Strategies.initialize("sacrificed") then
 					local swapMessage = " Thrash didn't finish the kill :( "
-					if sacrifice then
+					if status.sacrifice then
 						swapMessage = swapMessage.."Swapping out to cure Confusion."
 					elseif Control.yolo then
 						swapMessage = swapMessage.."Attempting to hit through Confusion to save time."
@@ -1014,7 +1013,7 @@ strategyFunctions.fightMisty = function()
 					Bridge.chat(swapMessage)
 				end
 			end
-			if sacrifice and Battle.sacrifice(sacrifice) then
+			if status.sacrifice and Battle.sacrifice(status.sacrifice) then
 				return false
 			end
 		end
