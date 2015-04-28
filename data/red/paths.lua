@@ -14,9 +14,9 @@ local Paths = {
 	-- Let's try this escape again
 	{0, {12,12}, {c="a",a="Pallet Town"}, {c="viridianExp"}, {c="encounters",limit=3}, {c="trackEncounters",area="route1"}, {9,12}, {9,2}, {10,2}, {10,-1}},
 	-- First encounters
-	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {11,2}, {11,-1}},
+	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {10,2}, {10,-1}},
 	-- To the Mart
-	{1, {21,35}, {21,30}, {19,30}, {19,20}, {29,20}, {29,19}},
+	{1, {20,35}, {20,28}, {19,28}, {19,20}, {29,20}, {29,19}},
 	-- Viridian Mart
 	{42, {2,5}, {3,5}, {3,8}},
 	-- Backtracking
@@ -30,15 +30,15 @@ local Paths = {
 	-- Leaving home
 	{0, {12,12}, {c="viridianBackupExp"}, {c="encounters",limit=5}, {9,12}, {9,2}, {10,2}, {10,-1}},
 	-- The grass again!?
-	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {11,2}, {11,-1}},
+	{12, {10,35}, {10,30}, {8,30}, {8,24}, {12,24}, {12,20}, {9,20}, {9,14}, {14,14}, {s="dodgePalletBoy"}, {14,2}, {10,2}, {10,-1}},
 	-- Back to the Mart
-	{1, {21,35}, {21,30}, {19,30}, {19,20}, {29,20}, {29,19}},
+	{1, {20,35}, {20,28}, {19,28}, {19,20}, {29,20}, {29,19}},
 	-- Viridian Mart redux
 	{42, {3,7}, {3,5}, {2,5}, {s="shopViridianPokeballs"}, {3,5}, {3,8}},
 	-- Sidequest
 	{1, {29,20}, {c="trackEncounters",area="nidoran"}, {15,20}, {15,17}, {-1, 17}},
 	-- Nidoran
-	{33, {39, 9}, {c="a",a="Nidoran grass"}, {c="nidoranBackupExp"}, {c="encounters",limit=6,extra="spearow"}, {35, 9}, {35,12}, {33,12}, {c="catchNidoran"}, {s="catchNidoran"}, {33,12}, {s="split"}, {37,12}, {37,9}, {40,9}},
+	{33, {39, 9}, {c="a",a="Nidoran grass"}, {c="nidoranBackupExp"}, {c="encounters",limit=7,extra="spearow"}, {35, 9}, {35,12}, {33,12}, {c="catchNidoran"}, {s="catchNidoran"}, {33,12}, {s="split"}, {37,12}, {37,9}, {40,9}},
 
 -- 2: NIDORAN
 
@@ -68,7 +68,7 @@ local Paths = {
 	-- Leaving Pewter City
 	{2, {23,18}, {40,18}},
 	-- Route 3
-	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {c="trackEncounters",area="route3"}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {c="a",a="Shorts Kid"}, {s="potion",hp=19}, {13,4}, {s="talk",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {c="a",a="Route 3"}, {s="potionBeforeCocoons"}, {18,5}, {s="talk",dir="Right"}, {s="swapMove",move="horn_attack",to=0}, {18,6}, {22,6}, {22,5}, {23,5}, {s="potion",hp=4}, {24,5}, {s="talk",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
+	{14, {0,10}, {c="a",a="Route 3"}, {c="catchFlier"}, {c="pp",on=true}, {c="trackEncounters",area="route3"}, {s="battleModeSet"}, {8,10}, {8,8}, {11,8}, {11,6}, {s="bugCatcher"}, {11,4}, {12,4}, {c="a",a="Shorts Kid"}, {s="potionBeforeShorts"}, {13,4}, {s="talk",dir="Right"}, {s="shortsKid"}, {s="tweetAfterBrock"}, {13,5}, {c="a",a="Route 3"}, {s="potionBeforeCocoons"}, {18,5}, {s="talk",dir="Right"}, {s="swapMove",move="horn_attack",to=0}, {18,6}, {22,6}, {22,5}, {23,5}, {s="potion",hp=4}, {24,5}, {s="talk",dir="Down"}, {s="fightMetapod"}, {27,5}, {27,9}, {s="catchFlierBackup"}, {37,8}, {37,5}, {49,5}, {49,10}, {57,10}, {57,8}, {59,8}, {59,-1}},
 	-- To the Center
 	{15, {9,16}, {c="pp",on=false}, {12,16}, {12,6}, {11,6}, {11,5}},
 	-- PP up
@@ -122,13 +122,13 @@ local Paths = {
 -- 7: MISTY
 
 	-- Past the policeman
-	{3, {30,20}, {c="potion",b=true,yolo=true}, {8,20}, {8,12}, {27,12}, {27,11}},
+	{3, {30,20}, {8,20}, {8,12}, {27,12}, {27,11}},
 	-- Wrecked house
 	{62, {2,7}, {2,2}, {3,2}, {3,0}},
 	-- Cerulean Rocket
 	{3, {27,9}, {28,9}, {s="potionBeforeRocket"}, {33,9}, {33,18}, {36,18}, {36,31}, {25,31}, {25,36}},
 	-- Out of Cerulean
-	{16, {15,0}, {15,28}, {17,28}, {17,27}},
+	{16, {15,0}, {c="potion",b=true,yolo=true}, {15,28}, {17,28}, {17,27}},
 	-- Underground entrance
 	{71, {3,7}, {3,4}, {4,4}},
 	-- Underground to Vermilion
