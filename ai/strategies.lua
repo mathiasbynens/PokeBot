@@ -49,7 +49,7 @@ function Strategies.hardReset(reason, message, extra, wait)
 	end
 
 	local map, px, py = Memory.value("game", "map"), Player.position()
-	Data.reset(reason, Control.areaName, map, px, py)
+	Data.reset(reason, Control.areaName, map, px, py, stats)
 
 	Bridge.chat(message, false, extra)
 	if wait and INTERNAL and not STREAMING_MODE then

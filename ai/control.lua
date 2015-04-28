@@ -327,6 +327,7 @@ function Control.encounter(battleState)
 					encounters = encounters + 1
 					Paint.wildEncounters(encounters)
 					Bridge.encounter()
+					Data.increment("encounters")
 					if encountersSection then
 						Data.increment(encountersSection)
 

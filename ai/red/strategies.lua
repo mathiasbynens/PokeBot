@@ -304,14 +304,19 @@ end
 strategyFunctions.fightBulbasaur = function()
 	if status.tries < 9000 and Pokemon.index(0, "level") == 6 then
 		if status.tries > 200 then
-			stats.squirtle = {
+			local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("squirtle")
+			stats.starter = {
 				attack = Pokemon.index(0, "attack"),
 				defense = Pokemon.index(0, "defense"),
 				speed = Pokemon.index(0, "speed"),
 				special = Pokemon.index(0, "special"),
+				attackDV = attDV,
+				defenseDV = defDV,
+				speedDV = spdDV,
+				specialDV = sclDV,
 			}
-			if stats.squirtle.attack < 11 and stats.squirtle.special < 12 then
-				return Strategies.reset("stats", "Bad Squirtle - "..stats.squirtle.attack.." attack, "..stats.squirtle.special.." special")
+			if stats.starter.attack < 11 and stats.starter.special < 12 then
+				return Strategies.reset("stats", "Bad Squirtle - "..stats.starter.attack.." attack, "..stats.starter.special.." special")
 			end
 			status.tries = 9001
 		else
@@ -2028,7 +2033,7 @@ end
 function Strategies.initGame(midGame)
 	if midGame then
 		Strategies.setYolo("bulbasaur", true)
-		stats.squirtle = {
+		stats.starter = {
 			attack = 11,
 			defense = 11,
 			speed = 11,

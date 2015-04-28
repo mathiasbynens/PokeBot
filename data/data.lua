@@ -42,7 +42,7 @@ end
 
 -- REPORT
 
-function Data.reset(reason, areaName, map, px, py)
+function Data.reset(reason, areaName, map, px, py, stats)
 	if STREAMING_MODE then
 		local report = Data.run
 		report.cutter = require("storage.pokemon").inParty("paras", "oddish", "sandshrew", "charmander")
@@ -53,9 +53,24 @@ function Data.reset(reason, areaName, map, px, py)
 			end
 		end
 
-		report.version = Data.versionNumber
-		report.gameName = Data.gameName
+		local ns = stats.nidoran
+		if ns then
+			report.nido_attack = ns.attackDV
+			report.nido_defense = ns.defenseDV
+			report.nido_speed = ns.speedDV
+			report.nido_special = ns.specialDV
+			report.nido_level = ns.level4 and 4 or 3
+		end
+		local ss = stats.starter
+		if ss then
+			report.starter_attack = ss.attackDV
+			report.starter_defense = ss.defenseDV
+			report.starter_speed = ss.speedDV
+			report.starter_special = ss.specialDV
+		end
 
+
+		report.version = Data.versionNumber
 		report.reset_area = areaName
 		report.reset_map = map
 		report.reset_x = px
