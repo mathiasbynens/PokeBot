@@ -107,19 +107,24 @@ local controlFunctions = {
 	end,
 
 	moon2Exp = function()
-		if Control.getMoonExp then
+		if Control.getMoonExp and Strategies.stats.nidoran then
 			minExp = 3011
-			shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
-			oneHits = not withinOneKill(minExp)
+			local withinOne = withinOneKill(minExp)
+			if withinOne or Strategies.stats.nidoran.level4 then
+				shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
+				oneHits = not withinOne
+			end
 		end
 	end,
 
 	moon3Exp = function()
-		if Control.getMoonExp then
-			local expTotal = Pokemon.getExp()
+		if Control.getMoonExp and Strategies.stats.nidoran then
 			minExp = 3798
-			shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
-			oneHits = not withinOneKill(minExp)
+			local withinOne = withinOneKill(minExp)
+			if withinOne or Strategies.stats.nidoran.level4 then
+				shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
+				oneHits = not withinOne
+			end
 		end
 	end,
 
