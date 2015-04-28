@@ -48,7 +48,11 @@ local controlFunctions = {
 
 	encounters = function(data)
 		if RESET_FOR_TIME then
-			maxEncounters = data.limit
+			local limit = data.limit
+			if BEAST_MODE then
+				limit = limit - math.ceil(limit * 0.333)
+			end
+			maxEncounters = limit
 			extraEncounter = data.extra
 		end
 	end,
@@ -129,7 +133,10 @@ local controlFunctions = {
 	end,
 
 	catchNidoran = function()
-		shouldCatch = {{name="nidoran",levels={3,4}}, {name="spearow"}}
+		shouldCatch = {{name="nidoran",levels={3,4}}}
+		if not BEAST_MODE then
+			shouldCatch[2] = {name="spearow"}
+		end
 	end,
 
 	catchFlier = function()

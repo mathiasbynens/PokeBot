@@ -126,8 +126,13 @@ function Strategies.setYolo(name, forced)
 	if not forced and not RESET_FOR_TIME then
 		return false
 	end
-	local minimumTime = Strategies.getTimeRequirement(name)
-	local shouldYolo = Strategies.overMinute(minimumTime)
+	local shouldYolo
+	if BEAST_MODE then
+		shouldYolo = true
+	else
+		local minimumTime = Strategies.getTimeRequirement(name)
+		shouldYolo = Strategies.overMinute(minimumTime)
+	end
 	if Control.yolo ~= shouldYolo then
 		Control.yolo = shouldYolo
 		Control.setYolo(shouldYolo)

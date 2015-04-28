@@ -1,6 +1,7 @@
 -- OPTIONS
 
 RESET_FOR_TIME = false -- Set to true if you're trying to break the record, not just finish a run
+BEAST_MODE = false -- WARNING: Do not engage. Will yolo everything, and reset at every opportunity in the quest for 1:47.
 
 local CUSTOM_SEED  = nil -- Set to a known seed to replay it, or leave nil for random runs
 local NIDORAN_NAME = "A" -- Set this to the single character to name Nidoran (note, to replay a seed, it MUST match!)
@@ -55,7 +56,7 @@ local function resetAll()
 		p("RUNNING WITH A FIXED SEED ("..NIDORAN_NAME.." "..Data.run.seed.."), every run will play out identically!", true)
 	else
 		Data.run.seed = os.time()
-		print("PokeBot v"..VERSION..": starting a new run with seed "..Data.run.seed)
+		print("PokeBot v"..VERSION..": "..(BEAST_MODE and "BEAST MODE seed" or "starting a new run with seed").." "..Data.run.seed)
 	end
 	math.randomseed(Data.run.seed)
 end
@@ -67,11 +68,11 @@ p("Welcome to PokeBot "..Data.gameName.." version "..VERSION, true)
 Control.init()
 
 STREAMING_MODE = not Walk.init() and INTERNAL
-if STREAMING_MODE then
+if STREAMING_MODE or BEAST_MODE then
 	RESET_FOR_TIME = true
 end
 
-if CUSTOM_SEED then
+if CUSTOM_SEED or BEAST_MODE then
 	client.reboot_core()
 else
 	hasAlreadyStartedPlaying = Utils.ingame()

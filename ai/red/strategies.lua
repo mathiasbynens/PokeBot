@@ -52,10 +52,16 @@ end
 Strategies.timeRequirements = {
 
 	bulbasaur = function() --RESET
+		if BEAST_MODE then
+			return 1.99
+		end
 		return 2.225
 	end,
 
 	nidoran = function() --RESET
+		if BEAST_MODE then
+			return 6
+		end
 		return 6.4 + timeSaveFor("spearow")
 	end,
 
@@ -74,6 +80,10 @@ Strategies.timeRequirements = {
 	end,
 
 	mt_moon = function() --RESET
+		if BEAST_MODE then
+			return 24.75
+		end
+
 		local timeLimit = 25.5 + timeSaveFor("paras")
 		if Pokemon.info("nidoking", "level") >= 18 then
 			timeLimit = timeLimit + 0.33
@@ -106,6 +116,9 @@ Strategies.timeRequirements = {
 	end,
 
 	trash = function() --RESET
+		if BEAST_MODE then
+			return 45.75
+		end
 		return 46.5 + timeForStats()
 	end,
 
@@ -327,13 +340,14 @@ strategyFunctions.fightBulbasaur = function()
 		local attack = Memory.double("battle", "our_attack")
 		if attack > 0 and not status.growled then
 			if attack ~= status.attack then
-				p(attack, Memory.double("battle", "opponent_hp"))
+				-- p(attack, Memory.double("battle", "opponent_hp"))
 				status.attack = attack
 			end
 			local growled
-			if attack <= 2 then
+			local attackBaseline = BEAST_MODE and 2 or 0
+			if attack <= 2 + attackBaseline then
 				growled = not Strategies.opponentDamaged(3)
-			elseif attack <= 3 then
+			elseif attack <= 3 + attackBaseline then
 				growled = not Strategies.opponentDamaged(1.9)
 			end
 			if growled then
