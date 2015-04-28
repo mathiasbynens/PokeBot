@@ -1,5 +1,30 @@
 local Opponents = {
 
+	ShortsRattata = {
+		type2 = "normal",
+		type1 = "normal",
+		def = 14,
+		id = 165,
+		spec = 12,
+		hp = 29,
+		speed = 22,
+		level = 11,
+		att = 19,
+
+		moves = {
+			{
+				name = "Quick-Attack",
+				accuracy = 100,
+				max_pp = 30,
+				power = 40,
+				id = 98,
+				special = false,
+				outspeed = true,
+				move_type = "normal",
+			}
+		}
+	},
+
 	RivalGyarados = {
 		type1 = "water",
 		type2 = "flying",

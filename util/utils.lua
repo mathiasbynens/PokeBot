@@ -114,7 +114,7 @@ function Utils.canPotionWith(potion, forDamage, curr_hp, max_hp)
 	else
 		potion_hp = 20
 	end
-	return math.min(curr_hp + potion_hp, max_hp) >= forDamage - 1
+	return math.min(curr_hp + potion_hp, max_hp) > forDamage
 end
 
 function Utils.ingame()

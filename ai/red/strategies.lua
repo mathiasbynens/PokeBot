@@ -673,6 +673,11 @@ strategyFunctions.bugCatcher = function()
 	end
 end
 
+strategyFunctions.potionBeforeShorts = function()
+	local potionHP = Combat.healthFor("ShortsRattata") * 2
+	return strategyFunctions.potion({hp=potionHP})
+end
+
 strategyFunctions.shortsKid = function()
 	local fightingEkans = Pokemon.isOpponent("ekans")
 	if fightingEkans then
@@ -953,7 +958,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 	local isSpeedTie = stats.nidoran.speedDV == 11
 	local canSpeedTie = stats.nidoran.speedDV >= 11
 	if Control.yolo then
-		if canTwoHit and stats.nidoran.speedDV >= 13 then
+		if canTwoHit and stats.nidoran.speedDV >= 12 then
 			healAmount = 46
 		elseif canTwoHit or canSpeedTie then
 			healAmount = 66
