@@ -1066,7 +1066,7 @@ strategyFunctions.catchOddish = function()
 				Bridge.chat("found an Oddish without having to search in the grass Kreygasm")
 			end
 		else
-			Bridge.chat("is searching for an Oddish in the grass, to teach it Cut")
+			Bridge.chat("is searching for an Oddish in the grass, to teach it Cut.")
 		end
 	end
 	local battleValue = Memory.value("game", "battle")
