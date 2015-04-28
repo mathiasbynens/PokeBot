@@ -1365,7 +1365,7 @@ Strategies.functions = {
 	end,
 
 	announceFourTurn = function()
-		Bridge.chat("needs a 4-turn thrash (1 in 2 chance) to beat this dangerous trainer...")
+		Bridge.chat("needs to 4-turn Thrash, or hit through Confusion (each a 1 in 2 chance) to beat this dangerous trainer...")
 		return true
 	end,
 
