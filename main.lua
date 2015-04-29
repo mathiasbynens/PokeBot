@@ -69,19 +69,11 @@ p("Welcome to PokeBot "..Data.gameName.." version "..VERSION, true)
 Control.init()
 
 STREAMING_MODE = not Walk.init() and INTERNAL
-if STREAMING_MODE or BEAST_MODE then
-	RESET_FOR_TIME = true
-end
 
-if CUSTOM_SEED or BEAST_MODE then
+if not INTERNAL or CUSTOM_SEED then
 	client.reboot_core()
 else
 	hasAlreadyStartedPlaying = Utils.ingame()
-end
-
-if hasAlreadyStartedPlaying and RESET_FOR_TIME then
-	RESET_FOR_TIME = false
-	p("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.", true)
 end
 
 if STREAMING_MODE then
@@ -89,8 +81,16 @@ if STREAMING_MODE then
 		RESET_FOR_TIME = true
 	end
 	Bridge.init()
-elseif PAINT_ON then
-	Input.setDebug(true)
+elseif BEAST_MODE then
+	RESET_FOR_TIME = true
+else
+	if hasAlreadyStartedPlaying and RESET_FOR_TIME then
+		RESET_FOR_TIME = false
+		p("Disabling time-limit resets as the game is already running. Please reset the emulator and restart the script if you'd like to go for a fast time.", true)
+	end
+	if PAINT_ON then
+		Input.setDebug(true)
+	end
 end
 
 Strategies.init(hasAlreadyStartedPlaying)
