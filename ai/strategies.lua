@@ -100,7 +100,7 @@ function Strategies.death(extra)
 	elseif Combat.sandAttacked() then
 		explanation = "Sand-Attack'd"
 		reason = "accuracy"
-	elseif Control.yolo and stats.nidoran and stats.nidoran.attack then
+	elseif Control.yolo then
 		explanation = "Yolo strats"
 		reason = "yolo"
 	else
@@ -1007,11 +1007,11 @@ Strategies.functions = {
 			local nidoranStatus
 			if att < 15 and spd < 14 and scl < 12 then
 				nidoranStatus = Utils.random {
-					"just forget this ever happened",
-					"I hate everything",
+					"let's just forget this ever happened.",
+					"I hate everything BibleThump",
 					"perfect stats Kappa",
 					"there's always the next one...",
-					"worst possible stats",
+					"worst possible stats.",
 				}
 			else
 				if att == 15 and spd == 14 then
