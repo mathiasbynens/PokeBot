@@ -530,7 +530,7 @@ strategyFunctions.grabForestPotion = function()
 		local potionCount = Inventory.count("potion")
 		if Strategies.initialize() then
 			status.previousPotions = potionCount
-			status.needsExtraPotion = potionCount == 0 or Pokemon.info("squirtle", "hp") <= 16
+			status.needsExtraPotion = true
 		elseif status.needsExtraPotion then
 			if potionCount > status.previousPotions then
 				status.needsExtraPotion = false
