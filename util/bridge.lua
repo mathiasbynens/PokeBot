@@ -147,6 +147,10 @@ function Bridge.moonGuesses(enabled)
 	send("moon,"..(enabled and "on" or "off"))
 end
 
+function Bridge.moonResults(encounters, paras)
+	send("moonresults,"..encounters..","..(paras and "paras" or "none"))
+end
+
 function Bridge.reset()
 	send("reset")
 	timeStopped = false

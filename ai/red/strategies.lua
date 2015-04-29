@@ -261,7 +261,6 @@ local strategyFunctions = Strategies.functions
 -- General
 
 strategyFunctions.tweetAfterBrock = function()
-	Bridge.moonGuesses(true)
 	if stats.nidoran.rating < 2 then
 		if not Strategies.overMinute("shorts") then
 			Strategies.tweetProgress("On pace after Brock with a great Nidoran", "brock")

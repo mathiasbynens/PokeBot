@@ -1104,6 +1104,7 @@ Strategies.functions = {
 
 	catchFlierBackup = function()
 		if Strategies.initialize() then
+			Bridge.moonGuesses(true)
 			Control.canDie(true)
 		end
 		if not Control.canCatch() then
@@ -1203,7 +1204,8 @@ Strategies.functions = {
 			local conjunction = "but"
 			local goodEncounters = moonEncounters < 10
 			local catchDescription
-			if Pokemon.inParty(catchPokemon) then
+			local caughtCutter = Pokemon.inParty(catchPokemon)
+			if caughtCutter then
 				catchDescription = catchPokemon
 				if goodEncounters then
 					conjunction = "and"
@@ -1218,6 +1220,7 @@ Strategies.functions = {
 			end
 			Bridge.caught(catchDescription)
 			Bridge.chat(moonEncounters.." Moon encounters, "..conjunction.." "..parasStatus)
+			Bridge.moonResults(moonEncounters, caughtCutter)
 		end
 
 		Strategies.resetTime("mt_moon", "complete Mt. Moon")
