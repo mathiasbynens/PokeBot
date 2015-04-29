@@ -1154,9 +1154,6 @@ Strategies.functions = {
 		if Battle.handleWild() then
 			local usedMoonStone = not Inventory.contains("moon_stone")
 			if Strategies.initialize() then
-				if usedMoonStone then
-					return true
-				end
 				if data.early then
 					if not Control.getMoonExp then
 						return true
@@ -1175,11 +1172,12 @@ Strategies.functions = {
 				if Strategies.initialize("evolved") then
 					Bridge.caught("nidoking")
 				end
-				if Menu.close() then
+				if Strategies.closeMenuFor(data) then
 					return true
 				end
 			elseif not Inventory.use("moon_stone") then
 				Menu.pause()
+				status.menuOpened = true
 			end
 		end
 	end,
