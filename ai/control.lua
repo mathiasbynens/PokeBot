@@ -105,7 +105,7 @@ local controlFunctions = {
 	moon1Exp = function()
 		if Control.getMoonExp then
 			minExp = 2704
-			shouldFight = {{name="zubat",levels={9,10,11,12},exp9=69}}
+			shouldFight = {{name="zubat",levels={9,10,11,12},exp=7.67}}
 			oneHits = true
 		end
 	end,
@@ -115,8 +115,8 @@ local controlFunctions = {
 			minExp = 3011
 			local withinOne = withinOneKill(minExp)
 			if withinOne or Strategies.stats.nidoran.level4 then
-				shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
-				oneHits = not withinOne
+				shouldFight = {{name="zubat",exp=7.67}, {name="paras"}}
+				oneHits = not Strategies.stats.nidoran.level4 or not withinOne
 			end
 		end
 	end,
@@ -126,8 +126,8 @@ local controlFunctions = {
 			minExp = 3798
 			local withinOne = withinOneKill(minExp)
 			if withinOne or Strategies.stats.nidoran.level4 then
-				shouldFight = {{name="zubat",exp9=69}, {name="paras"}}
-				oneHits = not withinOne
+				shouldFight = {{name="zubat",exp=7.67}, {name="paras"}, {name="clefairy"}}
+				oneHits = not Strategies.stats.nidoran.level4 or not withinOne
 			end
 		end
 	end,
@@ -202,11 +202,9 @@ function Control.shouldFight()
 						return false
 					end
 				end
-				if expRemaining < 100 then
-					local getExp = encounter["exp"..opponentLevel]
-					if getExp and getExp < expRemaining then
-						return false
-					end
+				if expRemaining < 100 and encounter.exp then
+					local getExp = encounter.exp * opponentLevel
+					return getExp >= expRemaining
 				end
 				return true
 			end
