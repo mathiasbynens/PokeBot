@@ -1363,7 +1363,7 @@ Strategies.functions = {
 			" *yawn*",
 			" :z",
 			" I think that ship broke the ocean.",
-			" Ah, lovely weather today in Viridian City, isn't it?",
+			" Ah, lovely weather today in Vermilion City this time of year, isn't it?",
 		}
 		Bridge.chat(Utils.random(messages))
 		return true
