@@ -66,7 +66,11 @@ Strategies.timeRequirements = {
 	end,
 
 	old_man = function()
-		return 6.67 + timeSaveFor("spearow")
+		return 6.8 + timeSaveFor("spearow")
+	end,
+
+	forest = function()
+		return 9.5 + timeSaveFor("spearow")
 	end,
 
 	brock = function()
@@ -450,7 +454,9 @@ strategyFunctions.catchNidoran = function()
 				end
 			end
 			if gotExperience then
-				stats.nidoran = {level4=(Pokemon.info("nidoran", "level") == 4)}
+				p(Pokemon.getDVs("nidoran"))
+				local level4Nidoran = Pokemon.info("nidoran", "level") == 4
+				stats.nidoran = {level4=level4Nidoran}
 				return true
 			end
 			enableDSum = false
@@ -484,7 +490,14 @@ end
 
 strategyFunctions.grabTreePotion = function()
 	if Strategies.initialize() then
-		if Strategies.setYolo("old_man") or Pokemon.info("squirtle", "hp") > 16 then
+		if Strategies.setYolo("old_man") then
+			return true
+		end
+		local current = Utils.igt()
+		local limit = Strategies.getTimeRequirement("old_man") * 60
+		local diff = math.floor((limit - current) / 5)
+		p("grab", diff)
+		if Pokemon.info("squirtle", "hp") > 14 + diff then
 			return true
 		end
 	end
@@ -569,6 +582,11 @@ strategyFunctions.equipForBrock = function(data)
 		end
 	end
 	return strategyFunctions.swapNidoran()
+end
+
+strategyFunctions.exitForest = function()
+	Strategies.setYolo("forest")
+	return true
 end
 
 strategyFunctions.fightBrock = function()

@@ -51,7 +51,7 @@ local Paths = {
 	-- Viridian Forest
 	{51, {17,47}, {17,43}, {26,43}, {26,34}, {25,34}, {25,32}, {27,32}, {27,20}, {25,20}, {25,12}, {s="grabAntidote"}, {25,9}, {17,9}, {17,16}, {13,16}, {13,3}, {7,3}, {7,22}, {1,22}, {1,19}, {s="grabForestPotion"}, {1,18}, {s="fightWeedle"}, {c="encounters",limit=19,extra="paras"}, {1,16}, {c="potion",b=false}, {s="equipForBrock",anti=true}, {1,5}, {s="equipForBrock"}, {1,-1}},
 	-- Forest exit
-	{47, {4,7}, {4,1}, {5,1}, {5,0}},
+	{47, {4,7}, {s="exitForest"}, {4,1}, {5,1}, {5,0}},
 	-- Road to Pewter City
 	{13, {3,11}, {c="a",a="Pewter City"}, {3,8}, {8,8}, {8,-1}},
 	-- Pewter City
