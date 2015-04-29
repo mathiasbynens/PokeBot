@@ -430,7 +430,7 @@ strategyFunctions.catchNidoran = function()
 						message = "catch "..catchTarget
 					end
 				end
-				if Strategies.resetTime(resetLimit, message) then
+				if Strategies.resetTime(resetLimit, message, customReason) then
 					return true
 				end
 			end
@@ -495,9 +495,9 @@ strategyFunctions.grabTreePotion = function()
 		end
 		local current = Utils.igt()
 		local limit = Strategies.getTimeRequirement("old_man") * 60
-		local diff = math.floor((limit - current) / 5)
+		local diff = math.floor((limit - current) / 6)
 		p("grab", diff)
-		if Pokemon.info("squirtle", "hp") > 14 + diff then
+		if Pokemon.info("squirtle", "hp") > 12 + diff then
 			return true
 		end
 	end
