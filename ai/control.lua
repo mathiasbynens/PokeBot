@@ -50,7 +50,7 @@ local controlFunctions = {
 		if RESET_FOR_TIME then
 			local limit = data.limit
 			if limit and BEAST_MODE then
-				limit = limit - math.ceil(limit * 0.333)
+				limit = limit - math.ceil(limit * 0.3)
 			end
 			maxEncounters = limit
 			extraEncounter = data.extra

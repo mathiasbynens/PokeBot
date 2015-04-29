@@ -62,7 +62,7 @@ Strategies.timeRequirements = {
 		if BEAST_MODE then
 			return 6
 		end
-		return 6.4 + timeSaveFor("spearow")
+		return 6.45 + timeSaveFor("spearow")
 	end,
 
 	old_man = function()
