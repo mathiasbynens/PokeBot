@@ -130,7 +130,9 @@ local function generateNextInput(currentMap)
 			end
 			lastExp = expChange
 			lastHP = curr_hp
-			Bridge.hp(curr_hp, max_hp, Pokemon.getExp(), Pokemon.getMaxExp(), Pokemon.index(0, "level"))
+			local expForCurrentLevel = Pokemon.getExp() - Pokemon.getExpForLevelFromCurrent(0)
+			local nextLevelExp = Pokemon.getExpForLevelFromCurrent(1)
+			Bridge.hp(curr_hp, max_hp, expForCurrentLevel, nextLevelExp, Pokemon.index(0, "level"))
 		end
 		if curr_hp == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
 			Strategies.death(currentMap)

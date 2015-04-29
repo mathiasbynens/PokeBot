@@ -299,8 +299,8 @@ function Pokemon.getExp()
 	return experience + Memory.raw(0x117B)
 end
 
-function Pokemon.getMaxExp()
-	local level = index(0, "level") + 1
+function Pokemon.getExpForLevelFromCurrent(levelups)
+	local level = index(0, "level") + levelups
 	return math.floor((6 / 5 * level^3) - (15 * level^2) + (100 * level) - 140)
 end
 
