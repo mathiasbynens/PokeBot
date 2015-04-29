@@ -454,34 +454,38 @@ end
 function Strategies.completeCans()
 	local px, py = Player.position()
 	if px == 4 and py == 6 then
-		status.tries = status.tries + 1
+		local trashcanTries = status.tries + 1
+
 		local timeLimit = Strategies.getTimeRequirement("trash") + 1
 		if Combat.inRedBar() then
 			timeLimit = timeLimit + 0.5
 		end
-		if Strategies.resetTime(timeLimit, "complete Trashcans ("..status.tries.." tries)") then
-			return true
-		end
-		Strategies.setYolo("trash")
 
 		local prefix
 		local suffix = "!"
-		if status.tries <= 1 then
+		if trashcanTries <= 1 then
 			prefix = "PERFECT"
-		elseif status.tries <= (Data.yellow and 2 or 3) then
+		elseif trashcanTries <= (Data.yellow and 2 or 3) then
 			prefix = "Amazing"
-		elseif status.tries <= (Data.yellow and 4 or 6) then
+		elseif trashcanTries <= (Data.yellow and 4 or 6) then
 			prefix = "Great"
-		elseif status.tries <= (Data.yellow and 6 or 9) then
+		elseif trashcanTries <= (Data.yellow and 6 or 9) then
 			prefix = "Good"
-		elseif status.tries <= (Data.yellow and 10 or 22) then
+		elseif trashcanTries <= (Data.yellow and 10 or 22) then
 			prefix = "Ugh"
 			suffix = "."
 		else -- TODO trashcans WR
 			prefix = "Reset me now"
 			suffix = " BibleThump"
 		end
-		Bridge.chat(" "..prefix..", "..status.tries.." try Trashcans"..suffix)
+		Bridge.chat(" "..prefix..", "..trashcanTries.." try Trashcans"..suffix)
+
+		Bridge.trashResults(trashcanTries)
+
+		if Strategies.resetTime(timeLimit, "complete Trashcans ("..trashcanTries.." tries)") then
+			return true
+		end
+		Strategies.setYolo("trash")
 		return true
 	end
 	local completePath = {
@@ -1349,6 +1353,11 @@ Strategies.functions = {
 			Input.press("A", 0)
 			status.canProgress = true
 		end
+	end,
+
+	guessTrashcans = function(data)
+		Bridge.trashGuesses(data.enabled)
+		return true
 	end,
 
 	epicCutscene = function()

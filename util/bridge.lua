@@ -143,6 +143,7 @@ function Bridge.report(report)
 	send("report", json.encode(report))
 end
 
+-- GUESSING
 function Bridge.moonGuesses(enabled)
 	send("moon,"..(enabled and "on" or "off"))
 end
@@ -150,6 +151,16 @@ end
 function Bridge.moonResults(encounters, paras)
 	send("moonresults,"..encounters..","..(paras and "paras" or "none"))
 end
+
+function Bridge.trashGuesses(enabled)
+	send("trash,"..(enabled and "on" or "off"))
+end
+
+function Bridge.trashResults(tries)
+	send("trashresults,"..tries)
+end
+
+-- RESET
 
 function Bridge.reset()
 	send("reset")

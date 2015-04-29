@@ -152,7 +152,7 @@ local Paths = {
 	-- Old man Cut
 	{101, {0,7}, {0,4}, {4,4}, {4,3}, {s="talk",dir="Up"}, {4,5}, {0,5}, {0,7}},
 	-- Second deck out
-	{96, {36,4}, {36,12}, {3,12}, {3,11}, {2,11}, {2,4}},
+	{96, {36,4}, {s="guessTrashcans",enabled=true}, {36,12}, {3,12}, {3,11}, {2,11}, {2,4}},
 	-- First deck out
 	{95, {2,6}, {2,7}, {26,7}, {26,-1}},
 	-- Departure
@@ -160,7 +160,7 @@ local Paths = {
 	-- To Surge
 	{5, {18,29}, {18,26}, {30,26}, {30,14}, {15,14}, {15,17}, {s="potionBeforeSurge"}, {s="swap",item="repel",dest=0,chain=true}, {s="teach",move="cut",poke={"oddish","paras"},chain=true}, {s="teach",move="dig",poke={"paras","squirtle"},chain=true}, {s="skill",move="cut",done=0x0D4D}, {15,20}, {12,20}, {12,19}},
 	-- Trashcans
-	{92, {4,17}, {c="a",a="Surge's Gym"}, {4,16}, {2,16}, {2,11}, {s="trashcans"}, {4,6}, {4,3}, {5,3}, {5,2}, {s="talk",dir="Up"}, {s="fightSurge"}, {s="split"}, {s="tweetSurge"}, {4,2}, {4,13}, {5,13}, {5,18}},
+	{92, {4,17}, {c="a",a="Surge's Gym"}, {4,16}, {2,16}, {2,11}, {s="guessTrashcans",enabled=false}, {s="trashcans"}, {4,6}, {4,3}, {5,3}, {5,2}, {s="talk",dir="Up"}, {s="fightSurge"}, {s="split"}, {s="tweetSurge"}, {4,2}, {4,13}, {5,13}, {5,18}},
 
 -- 8: SURGE
 
