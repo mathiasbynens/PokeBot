@@ -261,6 +261,7 @@ local strategyFunctions = Strategies.functions
 -- General
 
 strategyFunctions.tweetAfterBrock = function()
+	Bridge.moonGuesses(true)
 	if stats.nidoran.rating < 2 then
 		if not Strategies.overMinute("shorts") then
 			Strategies.tweetProgress("On pace after Brock with a great Nidoran", "brock")
@@ -342,7 +343,7 @@ strategyFunctions.fightBulbasaur = function()
 	end
 	if Battle.isActive() and Battle.opponentAlive() then
 		local attack = Memory.double("battle", "our_attack")
-		if attack > 0 and not status.growled then
+		if attack > 0 and RESET_FOR_TIME and not status.growled then
 			if attack ~= status.attack then
 				-- p(attack, Memory.double("battle", "opponent_hp"))
 				status.attack = attack
@@ -413,21 +414,20 @@ strategyFunctions.catchNidoran = function()
 					message = "fight an encounter for experience"
 					resetLimit = resetLimit + 0.15
 				else
-					local catchTarget
 					if catchableNidoran or opponent == "spearow" then
 						resetLimit = resetLimit + 0.15
-						catchTarget = Utils.capitalize(opponent)
+						message = Utils.capitalize(opponent)
 					else
 						resetLimit = resetLimit - 0.1
-						if Data.run.encounters_rattata and Data.run.encounters_rattata >= 4 then
+						if opponent == "rattata" and Data.run.encounters_rattata and Data.run.encounters_rattata >= 4 then
 							message = "Death by Rattata"
 							customReason = true
 						else
-							catchTarget = "Nidoran"
+							message = "Nidoran"
 						end
 					end
-					if catchTarget then
-						message = "catch "..catchTarget
+					if not customReason then
+						message = "catch "..message
 					end
 				end
 				if Strategies.resetTime(resetLimit, message, customReason) then
@@ -462,17 +462,14 @@ strategyFunctions.catchNidoran = function()
 			enableDSum = false
 		end
 
-		local resetMessage, customReason
+		local resetMessage
 		if hasNidoran then
 			resetMessage = "get an encounter for experience before Brock"
-		elseif Data.run.encounters_rattata and Data.run.encounters_rattata >= 4 then
-			resetMessage = "Death by Rattata"
-			customReason = true
 		else
 			resetMessage = "find a suitable Nidoran"
 		end
 		local resetLimit = Strategies.getTimeRequirement("nidoran")
-		if Strategies.resetTime(resetLimit, resetMessage, customReason) then
+		if Strategies.resetTime(resetLimit, resetMessage) then
 			return true
 		end
 		if enableDSum then
@@ -493,12 +490,14 @@ strategyFunctions.grabTreePotion = function()
 		if Strategies.setYolo("old_man") then
 			return true
 		end
-		local current = Utils.igt()
-		local limit = Strategies.getTimeRequirement("old_man") * 60
-		local diff = math.floor((limit - current) / 6)
-		p("grab", diff)
-		if Pokemon.info("squirtle", "hp") > 12 + diff then
-			return true
+		if RESET_FOR_TIME then
+			local current = Utils.igt()
+			local limit = Strategies.getTimeRequirement("old_man") * 60
+			local diff = math.floor((limit - current) / 5)
+			p("grab", diff)
+			if Pokemon.info("squirtle", "hp") > 13 + diff then
+				return true
+			end
 		end
 	end
 	if Inventory.contains("potion") then
@@ -798,8 +797,6 @@ end
 -- catchFlierBackup
 
 -- 4: ROUTE 3
-
--- startMtMoon
 
 -- evolveNidorino
 

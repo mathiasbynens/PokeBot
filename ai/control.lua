@@ -100,6 +100,7 @@ local controlFunctions = {
 	startMtMoon = function()
 		Control.canDie(false)
 		Control.getMoonExp = not Data.yellow
+		Bridge.moonGuesses(false)
 	end,
 
 	moon1Exp = function()

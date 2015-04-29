@@ -143,6 +143,10 @@ function Bridge.report(report)
 	send("report", json.encode(report))
 end
 
+function Bridge.moonGuesses(enabled)
+	send("moon,"..(enabled and "on" or "off"))
+end
+
 function Bridge.reset()
 	send("reset")
 	timeStopped = false
