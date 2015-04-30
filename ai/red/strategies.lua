@@ -70,7 +70,7 @@ Strategies.timeRequirements = {
 	end,
 
 	forest = function()
-		return 9.5 + timeSaveFor("spearow")
+		return 9.4 + timeSaveFor("spearow")
 	end,
 
 	brock = function()
@@ -107,8 +107,8 @@ Strategies.timeRequirements = {
 		return 31.25 + timeSaveFor("paras")
 	end,
 
-	goldeen = function()
-		return 36.5 + timeForStats() + timeSaveFor("paras")
+	bills = function()
+		return 36 + timeForStats() + timeSaveFor("paras")
 	end,
 
 	misty = function() --PB
@@ -385,8 +385,7 @@ strategyFunctions.catchNidoran = function()
 	local opponent = Battle.opponent()
 	local catchableNidoran = opponent == "nidoran" and Memory.value("battle", "opponent_level") > 2
 	local pokeballs = Inventory.count("pokeball")
-	local caught = Memory.value("player", "party_size") - 1
-	if pokeballs < (catchableNidoran and 5 or 6) - caught * 2 then
+	if pokeballs < (catchableNidoran and 4 or 5) - (Pokemon.inParty("nidoran","spearow") and 1 or 0) then
 		return Strategies.reset("pokeballs", "Ran too low on PokeBalls", pokeballs)
 	end
 
@@ -997,7 +996,7 @@ end
 strategyFunctions.potionBeforeMisty = function(data)
 	if Strategies.initialize() then
 		if data.goldeen then
-			Strategies.setYolo("goldeen")
+			Strategies.setYolo("bills")
 			if Control.yolo and Combat.hp() > 7 then
 				return true
 			end
