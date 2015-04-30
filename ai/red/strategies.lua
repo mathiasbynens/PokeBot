@@ -452,7 +452,9 @@ strategyFunctions.catchNidoran = function()
 				end
 			end
 			if gotExperience then
-				p(Pokemon.getDVs("nidoran"))
+				if INTERNAL then
+					p(Pokemon.getDVs("nidoran"))
+				end
 				local level4Nidoran = Pokemon.info("nidoran", "level") == 4
 				stats.nidoran = {level4=level4Nidoran}
 				return true
@@ -612,7 +614,8 @@ strategyFunctions.fightBrock = function()
 				end
 				if turnsToKill then
 					local forced
-					if status.startBide - bideTurns >= 2 or turnsToKill <= 1 then
+					local turnsElapsed = status.startBide - bideTurns
+					if turnsElapsed >= 2 or turnsToKill <= 1 then
 						-- Bubble
 					elseif onixHP == status.canProgress then
 						if turnsToKill == 2 and Control.yolo then
@@ -625,7 +628,7 @@ strategyFunctions.fightBrock = function()
 								return false
 							end
 							if turnsToDie == 1 then
-								if Strategies.initialize("biding") then
+								if turnsElapsed == 0 and onixHP == Memory.double("battle", "opponent_max_hp") and Strategies.initialize("biding") then
 									Bridge.chat("is in range to die to a Tackle. Attempting to finish off Onix before Bide hits (1 in 2 chance).")
 								end
 							else
@@ -1012,6 +1015,8 @@ strategyFunctions.potionBeforeMisty = function(data)
 			healAmount = 46
 		elseif canTwoHit or canSpeedTie then
 			healAmount = 66
+		else
+			healAmount = healAmount - 4
 		end
 	else
 		if canTwoHit and stats.nidoran.speedDV >= 13 then
@@ -1030,7 +1035,7 @@ strategyFunctions.potionBeforeMisty = function(data)
 			message = "ran too low on potions to adequately heal before Misty D:"
 		elseif healAmount < 60 then
 			message = "is limiting heals to attempt to get closer to red-bar off Misty..."
-		elseif not canSpeedTie then
+		elseif isSpeedTie then
 			message = "will need to get lucky with speed ties to beat Misty here..."
 		elseif not canSpeedTie then
 			message = "will need to get lucky to beat Misty here. We're outsped..."
@@ -1058,10 +1063,10 @@ strategyFunctions.fightMisty = function()
 			if Menu.onBattleSelect() then
 				if Strategies.initialize("sacrificed") then
 					local swapMessage = " Thrash didn't finish the kill :( "
-					if status.sacrifice then
-						swapMessage = swapMessage.."Swapping out to cure Confusion."
-					elseif Control.yolo then
+					if Control.yolo then
 						swapMessage = swapMessage.."Attempting to hit through Confusion to save time."
+					elseif status.sacrifice then
+						swapMessage = swapMessage.."Swapping out to cure Confusion."
 					else
 						swapMessage = swapMessage.."We'll have to hit through Confusion here."
 					end
