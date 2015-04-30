@@ -199,7 +199,7 @@ function Control.shouldFight()
 			if oid == Pokemon.getID(encounter.name) and (not encounter.levels or Utils.match(opponentLevel, encounter.levels)) then
 				if oneHits then
 					local move = Combat.bestMove()
-					if move and move.maxDamage * 0.925 < Memory.double("battle", "opponent_hp") then
+					if move and move.maxDamage * 0.92 < Memory.double("battle", "opponent_hp") then
 						return false
 					end
 				end
