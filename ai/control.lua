@@ -340,17 +340,19 @@ function Control.encounter(battleState)
 					Bridge.encounter()
 					Data.increment("encounters")
 					if encountersSection then
-						Data.increment(encountersSection)
+						local sectionEncounters = Data.increment(encountersSection)
 
 						local opponent = Battle.opponent()
+						local encounterPrefix = ""
 						if opponent == "zubat" then
 							local zubatCount = Data.increment("encounters_zubat")
 							Data.run.encounters_zubat = zubatCount
-							if STREAMING_MODE then
-								Bridge.chat(Utils.multiplyString("NightBat", zubatCount), true)
-							end
+							encounterPrefix = "NightBat"
 						elseif opponent == "rattata" then
 							Data.run.encounters_rattata = Data.increment("encounters_rattata")
+						end
+						if encountersSection == "encounters_moon" and STREAMING_MODE then
+							Bridge.chat(encounterPrefix.." "..sectionEncounters, true)
 						end
 					end
 				end
