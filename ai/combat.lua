@@ -49,7 +49,10 @@ local disableThrash = false
 
 local floor = math.floor
 
-local function isDisabled(mid)
+local function isDisabled(move)
+	if type(move) == "string" then
+		move = Pokemon.moveID(move)
+	end
 	return mid == Memory.value("battle", "disabled")
 end
 Combat.isDisabled = isDisabled

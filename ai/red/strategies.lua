@@ -1607,7 +1607,7 @@ strategyFunctions.fightHypno = function()
 		local forced
 		if Pokemon.isOpponent("hypno") and not Strategies.damaged() then
 			if Pokemon.info("nidoking", "hp") > Combat.healthFor("KogaWeezing") * 0.9 then
-				if Combat.isDisabled(85) then
+				if Combat.isDisabled("thunderbolt") then
 					forced = "ice_beam"
 				else
 					forced = "thunderbolt"
@@ -1638,7 +1638,7 @@ strategyFunctions.fightKoga = function()
 					Inventory.use("pokeflute", nil, true)
 					return false
 				else
-					if Combat.isDisabled(85) then
+					if Combat.isDisabled("thunderbolt") then
 						forced = "ice_beam"
 					else
 						forced = "thunderbolt"

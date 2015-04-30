@@ -207,6 +207,10 @@ function Pokemon.getID(name)
 	return pokeIDs[name]
 end
 
+function Pokemon.moveID(move)
+	return moveList[move]
+end
+
 function Pokemon.getName(id)
 	for name,pid in pairs(pokeIDs) do
 		if pid == id then
