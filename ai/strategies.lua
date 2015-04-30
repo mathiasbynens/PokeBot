@@ -1609,10 +1609,12 @@ Strategies.functions = {
 		if Strategies.initialize() then
 			Strategies.setYolo("safari_carbos")
 			status.carbos = Inventory.count("carbos")
-		end
-		local minDV = Data.yellow and 9 or 7
-		if stats.nidoran.speedDV >= minDV then
-			return true
+
+			local minDV = Data.yellow and 9 or 7
+			if stats.nidoran.speedDV >= minDV then
+				return true
+			end
+			Bridge.chat(" This Nidoking has bad speed, so we'll need to go out of our way for the extra Carbos here.")
 		end
 		if Inventory.count("carbos") ~= status.carbos then
 			if Walk.step(20, 20) then
@@ -1681,15 +1683,20 @@ Strategies.functions = {
 	end,
 
 	cinnabarCarbos = function()
+		local minDV = Data.yellow and 11 or 10
+		local skipsCarbos = stats.nidoran.speedDV >= minDV
+		if Strategies.initialize() then
+			status.startCount = Inventory.count("carbos")
+			if not skipsCarbos then
+				Bridge.chat(" This Nidoking has mediocre speed, so we'll need to pick up the extra Carbos here.")
+			end
+		end
+
 		local px, py = Player.position()
 		if px == 21 then
 			return true
 		end
-		if Strategies.initialize() then
-			status.startCount = Inventory.count("carbos")
-		end
-		local minDV = Data.yellow and 11 or 10
-		if stats.nidoran.speedDV >= minDV then
+		if skipsCarbos then
 			px, py = 21, 20
 		else
 			if py == 20 then

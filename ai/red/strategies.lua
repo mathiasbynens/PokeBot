@@ -1437,8 +1437,11 @@ strategyFunctions.fightSilphMachoke = function()
 end
 
 strategyFunctions.silphCarbos = function()
-	if stats.nidoran.speedDV >= 8 then
-		return true
+	if Strategies.initialize() then
+		if stats.nidoran.speedDV >= 8 then
+			return true
+		end
+		Bridge.chat(" This Nidoking has bad speed, so we need the extra Carbos here.")
 	end
 	return strategyFunctions.interact({dir="Left"})
 end
