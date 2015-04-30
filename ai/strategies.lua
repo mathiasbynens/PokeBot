@@ -1361,7 +1361,7 @@ Strategies.functions = {
 	end,
 
 	epicCutscene = function()
-		local messages = {
+		Bridge.chatRandom(
 			" CUTSCENE HYPE!",
 			" Please, sit back and enjoy the cutscene.",
 			"is enjoying the scenery Kappa b",
@@ -1373,9 +1373,10 @@ Strategies.functions = {
 			" *yawn*",
 			" :z",
 			" I think that ship broke the ocean.",
-			" Ah, lovely weather today in Vermilion City this time of year, isn't it?",
-		}
-		Bridge.chat(Utils.random(messages))
+			" Ah, lovely weather in Vermilion City this time of year, isn't it?",
+			" As a devout practicing member of the Church of Going Fast, I find the depiction of this unskippable cutscene offensive, frankly.",
+			" Anyone else feel cheated we didn't actually get to ride to some far off land in that boat?"
+		)
 		return true
 	end,
 

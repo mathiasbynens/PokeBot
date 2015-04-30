@@ -1,6 +1,8 @@
 local Bridge = {}
 
-local json = require("external.json")
+local Utils = require "util.utils"
+
+local json = require "external.json"
 
 local socket
 if INTERNAL then
@@ -63,6 +65,10 @@ end
 function Bridge.pollForName()
 	Bridge.polling = true
 	send("poll_name")
+end
+
+function Bridge.chatRandom(...)
+	return Bridge.chat(Utils.random(arg))
 end
 
 function Bridge.chat(message, suppressed, extra, newLine)

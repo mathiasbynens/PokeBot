@@ -903,7 +903,7 @@ strategyFunctions.potionForMankey = function()
 		end
 		local curr_hp = Combat.hp()
 		if Control.yolo and curr_hp < healForDefense and curr_hp >= yoloHP then
-			Bridge.chat("Attempting to stay in range of red-bar by skipping potioning before Mankey...")
+			Bridge.chat("is attempting to stay in range of red-bar by skipping potioning before Mankey...")
 		end
 	end
 	return strategyFunctions.potion({hp=healForDefense, yolo=yoloHP})
@@ -1579,7 +1579,7 @@ strategyFunctions.potionBeforeHypno = function()
 	local healTarget
 	if healthUnderRedBar >= 0 then
 		if Strategies.initialize("warned") then
-			Bridge.chat("Attempting to carry red-bar through Koga. Hypno has a 1 in 4 chance to end the run with Confusion here...")
+			Bridge.chat("is attempting to carry red-bar through Koga. Hypno has a 1 in 4 chance to end the run with Confusion here...")
 		end
 		healTarget = "HypnoHeadbutt"
 		if useRareCandy then
