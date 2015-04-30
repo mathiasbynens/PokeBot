@@ -1187,6 +1187,22 @@ Strategies.functions = {
 		end
 	end,
 
+	fightGrimer = function()
+		if Strategies.trainerBattle() then
+			if Combat.isDisabled("horn_attack") and Strategies.initialize("disabled") then
+				local message = Utils.random {
+					"Last for 0 turns pretty please?",
+					"I guess it's time to tackle everything.",
+					"How could this... happen to me?",
+				}
+				Bridge.chat("WutFace Grimer just disabled Horn Attack. " + message)
+			end
+			Battle.automate()
+		elseif status.foughtTrainer then
+			return true
+		end
+	end,
+
 	helix = function()
 		if Battle.handleWild() then
 			if Inventory.contains("helix_fossil") then

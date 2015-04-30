@@ -83,7 +83,7 @@ local Paths = {
 	-- Mt. Moon B2
 	{60, {5,5}, {5,17}, {21,17}},
 	-- Mt. Moon B3
-	{61, {21,17}, {22,17}, {s="evolveNidoking",early=true,poke="paras"}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="potion",hp=11,yolo=6,chain=true}, {s="evolveNidoking",close=true}, {10,17}, {12,17}, {c="moon2Exp"}, {12,9}, {s="potion",hp=7}, {s="talk",dir="Up"}, {13,9}, {c="moon3Exp"}, {13,7}, {s="confirm",dir="Up"}, {13,5}, {12,5}, {12,4}, {3,4}, {3,7}, {5,7}},
+	{61, {21,17}, {22,17}, {s="evolveNidoking",early=true,poke="paras"}, {23,17}, {23,14}, {27,14}, {27,16}, {33,16}, {33,14}, {36,14}, {36,24}, {32, 24}, {32,31}, {10,31}, {10,18}, {s="potion",hp=11,yolo=6,chain=true}, {s="evolveNidoking",close=true}, {10,17}, {12,17}, {c="moon2Exp"}, {12,9}, {s="potion",hp=7}, {s="talk",dir="Up"}, {s="fightGrimer"}, {13,9}, {c="moon3Exp"}, {13,7}, {s="confirm",dir="Up"}, {13,5}, {12,5}, {12,4}, {3,4}, {3,7}, {5,7}},
 	-- Mt. Moon escape
 	{60, {23,3}, {27,3}},
 
