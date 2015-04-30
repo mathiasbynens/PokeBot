@@ -482,7 +482,7 @@ function Strategies.completeCans()
 
 		Bridge.trashResults(trashcanTries)
 
-		if Strategies.resetTime(timeLimit, "complete Trashcans ("..trashcanTries.." tries)") then
+		if Strategies.resetTime(timeLimit, "complete Trashcans") then
 			return true
 		end
 		Strategies.setYolo("trash")
@@ -991,6 +991,7 @@ Strategies.functions = {
 		local def = Pokemon.index(nidx, "defense")
 		local spd = Pokemon.index(nidx, "speed")
 		local scl = Pokemon.index(nidx, "special")
+		local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("nidoran")
 		stats.nidoran = {
 			attack = att,
 			defense = def,
@@ -998,6 +999,10 @@ Strategies.functions = {
 			special = scl,
 			level4 = stats.nidoran.level4,
 			rating = 0,
+			attackDV = attDV,
+			defenseDV = defDV,
+			speedDV = spdDV,
+			specialDV = sclDV,
 		}
 		Bridge.stats(att.." "..def.." "..spd.." "..scl)
 		Bridge.chat("is checking Nidoran's stats at level 8... "..att.." attack, "..def.." defense, "..spd.." speed, "..scl.." special.")
