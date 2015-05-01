@@ -1736,8 +1736,9 @@ strategyFunctions.fightGiovanniMachoke = function()
 		if Pokemon.isOpponent("machop") then
 			status.killedMachoke = true
 		elseif not status.killedMachoke then
-			if status.skipSpecial and Combat.hp() > 13 and Memory.value("battle", "opponent_last_move") == 116 then
-				Bridge.chat("got Focus Energy - which prevents Machoke criticalling - using an X Special to guarantee the last damage range.")
+			local __, turnsToDie = Combat.enemyAttack()
+			if status.skipSpecial and turnsToDie > 1 and Memory.value("battle", "opponent_last_move") == 116 then
+				Bridge.chat("got Focus Energy, which reduces Machoke's crit rate - using an X Special to guarantee the last damage range.")
 				status.skipSpecial = false
 			end
 			if not status.skipSpecial and not Strategies.prepare("x_special") then
