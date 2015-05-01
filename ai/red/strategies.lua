@@ -417,7 +417,7 @@ strategyFunctions.catchNidoran = function()
 						message = Utils.capitalize(opponent)
 					else
 						resetLimit = resetLimit - 0.1
-						if opponent == "rattata" and Data.run.encounters_rattata and Data.run.encounters_rattata >= 4 then
+						if opponent == "rattata" and Data.run.encounters_rattata and Data.run.encounters_rattata >= 5 then
 							message = "Death by Rattata"
 							customReason = true
 						else
@@ -762,11 +762,14 @@ strategyFunctions.shortsKid = function()
 		if Strategies.damaged(2) and stats.nidoran.speed == 15 then
 			forced = "horn_attack"
 		end
-		if Inventory.count("potion") < 8 then
-			if not Strategies.opponentDamaged() and Strategies.damaged(2) and Strategies.initialize("looper") then
+		local potions = Inventory.count("potion")
+		if potions <= 7 then
+			if Strategies.initialize("looper") then
 				Bridge.chat("Stuck in a heal loop, we're just going to have to risk it.")
 			end
 			disablePotion = true
+		elseif potions <= 8 then
+			disablePotion = not Strategies.damaged(2)
 		else
 			disablePotion = Control.yolo and not Strategies.damaged(2)
 		end
