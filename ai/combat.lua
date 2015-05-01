@@ -3,6 +3,7 @@ local Combat = {}
 local Movelist = require "data.movelist"
 local Opponents = require "data.opponents"
 
+local Bridge = require "util.bridge"
 local Memory = require "util.memory"
 local Utils = require "util.utils"
 
@@ -46,6 +47,7 @@ types[26] = "dragon"
 local savedEncounters = {}
 local conservePP = false
 local disableThrash = false
+local lastHP, lastExp
 
 local floor = math.floor
 
@@ -53,7 +55,7 @@ local function isDisabled(move)
 	if type(move) == "string" then
 		move = Pokemon.moveID(move)
 	end
-	return mid == Memory.value("battle", "disabled")
+	return move == Memory.value("battle", "disabled")
 end
 Combat.isDisabled = isDisabled
 
@@ -435,6 +437,21 @@ function Combat.enemyAttack()
 		return
 	end
 	return calcBestHit(enemy, ours, false)
+end
+
+function Combat.updateHP(curr_hp)
+	local expChange = Memory.raw(0x117B)
+	if curr_hp ~= lastHP or expChange ~= lastExp then
+		local max_hp = Combat.maxHP()
+		if max_hp < curr_hp then
+			max_hp = curr_hp
+		end
+		lastExp = expChange
+		lastHP = curr_hp
+		local expForCurrentLevel = Pokemon.getExp() - Pokemon.getExpForLevelFromCurrent(0)
+		local nextLevelExp = Pokemon.getExpForLevelFromCurrent(1)
+		Bridge.hp(curr_hp, max_hp, expForCurrentLevel, nextLevelExp, Pokemon.index(0, "level"))
+	end
 end
 
 return Combat

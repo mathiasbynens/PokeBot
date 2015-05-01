@@ -150,6 +150,7 @@ function Bridge.report(report)
 end
 
 -- GUESSING
+
 function Bridge.moonGuesses(enabled)
 	send("moon,"..(enabled and "on" or "off"))
 end

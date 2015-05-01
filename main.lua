@@ -36,7 +36,6 @@ local Pokemon = require "storage.pokemon"
 local hasAlreadyStartedPlaying = false
 local oldSeconds
 local running = true
-local lastHP, lastExp
 local previousMap
 
 -- HELPERS
@@ -122,18 +121,8 @@ local function generateNextInput(currentMap)
 		Control.encounter(battleState)
 
 		local curr_hp = Combat.hp()
-		local expChange = Memory.raw(0x117B)
-		if curr_hp ~= lastHP or expChange ~= lastExp then
-			local max_hp = Combat.maxHP()
-			if max_hp < curr_hp then
-				max_hp = curr_hp
-			end
-			lastExp = expChange
-			lastHP = curr_hp
-			local expForCurrentLevel = Pokemon.getExp() - Pokemon.getExpForLevelFromCurrent(0)
-			local nextLevelExp = Pokemon.getExpForLevelFromCurrent(1)
-			Bridge.hp(curr_hp, max_hp, expForCurrentLevel, nextLevelExp, Pokemon.index(0, "level"))
-		end
+		Combat.updateHP(curr_hp)
+
 		if curr_hp == 0 and not Control.canDie() and Pokemon.index(0) > 0 then
 			Strategies.death(currentMap)
 		elseif Walk.strategy then
