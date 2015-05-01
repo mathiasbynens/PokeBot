@@ -332,8 +332,8 @@ function Pokemon.use(move)
 	return true
 end
 
-function Pokemon.getDVs(name)
-	local index = Pokemon.indexOf(name)
+function Pokemon.getDVs(...)
+	local index = Pokemon.indexOf(...)
 	local baseAddress = getAddress(index)
 	local attackDefense = Memory.raw(baseAddress + 0x1B)
 	local speedSpecial = Memory.raw(baseAddress + 0x1C)

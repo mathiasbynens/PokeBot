@@ -116,7 +116,7 @@ Strategies.timeRequirements = {
 	end,
 
 	vermilion = function()
-		return 42.5 + timeForStats()
+		return 42.25 + timeForStats()
 	end,
 
 	trash = function() --RESET
@@ -2101,32 +2101,7 @@ function Strategies.initGame(midGame)
 			speed = 11,
 			special = 11,
 		}
-		if Pokemon.inParty("nidoking") then
-			local attDV, defDV, spdDV, sclDV = Pokemon.getDVs("nidoking")
-			p(attDV, defDV, spdDV, sclDV)
-			stats.nidoran = {
-				attack = 55,
-				defense = 45,
-				speed = 50,
-				special = 45,
-				rating = 1,
-				attackDV = attDV,
-				defenseDV = defDV,
-				speedDV = spdDV,
-				specialDV = sclDV,
-			}
-			riskGiovanni = canRiskGiovanni()
-		else
-			stats.nidoran = {
-				attack = 16,
-				defense = 12,
-				speed = 15,
-				special = 13,
-				level4 = true,
-				rating = 1,
-			}
-		end
-		p(stats.nidoran.attack, "x", stats.nidoran.speed, stats.nidoran.special)
+		riskGiovanni = canRiskGiovanni()
 	end
 end
 

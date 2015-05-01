@@ -241,8 +241,10 @@ end
 function Strategies.buffTo(buff, defLevel)
 	if Strategies.trainerBattle() then
 		local forced
-		if defLevel and Memory.double("battle", "opponent_defense") > defLevel then
-			forced = buff
+		if not Strategies.opponentDamaged() then
+			if defLevel and Memory.double("battle", "opponent_defense") > defLevel then
+				forced = buff
+			end
 		end
 		Battle.automate(forced, true)
 	elseif status.foughtTrainer then
@@ -1197,10 +1199,10 @@ Strategies.functions = {
 			if Combat.isDisabled("horn_attack") and Strategies.initialize("disabled") then
 				local message = Utils.random {
 					"Last for 0 turns pretty please?",
-					"I guess it's time to tackle everything.",
+					"Guess it's time to tackle everything.",
 					"How could this... happen to me?",
 				}
-				Bridge.chat("WutFace Grimer just disabled Horn Attack. " + message)
+				Bridge.chat("WutFace Grimer just disabled Horn Attack. "..message)
 			end
 			Battle.automate()
 		elseif status.foughtTrainer then
@@ -1880,6 +1882,33 @@ function Strategies.init(midGame)
 		Control.preferredPotion = "super"
 		Combat.factorPP(true)
 	end
+
+	local nido = Pokemon.inParty("nidoran", "nidorino", "nidoking")
+	if nido then
+		local attDV, defDV, spdDV, sclDV = Pokemon.getDVs(nido)
+		p(attDV, defDV, spdDV, sclDV)
+		stats.nidoran = {
+			rating = 1,
+			attackDV = attDV,
+			defenseDV = defDV,
+			speedDV = spdDV,
+			specialDV = sclDV,
+			level4 = true,
+		}
+		if nido == "nidoking" then
+			stats.nidoran.attack = 55
+			stats.nidoran.defense = 45
+			stats.nidoran.speed = 50
+			stats.nidoran.special = 45
+		else
+			stats.nidoran.attack = 16
+			stats.nidoran.defense = 12
+			stats.nidoran.speed = 15
+			stats.nidoran.special = 13
+		end
+		p(stats.nidoran.attack, "x", stats.nidoran.speed, stats.nidoran.special)
+	end
+
 	Strategies.initGame(midGame)
 end
 
