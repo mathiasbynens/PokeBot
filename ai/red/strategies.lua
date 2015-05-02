@@ -494,8 +494,7 @@ strategyFunctions.grabTreePotion = function()
 			local current = Utils.igt()
 			local limit = Strategies.getTimeRequirement("old_man") * 60
 			local diff = math.floor((limit - current) / 5)
-			p("grab", diff)
-			if Pokemon.info("squirtle", "hp") > 13 + diff then
+			if Pokemon.info("squirtle", "hp") > 14 + diff then
 				return true
 			end
 		end
