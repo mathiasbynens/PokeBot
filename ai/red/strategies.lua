@@ -1105,7 +1105,7 @@ strategyFunctions.catchOddish = function()
 	if Strategies.initialize() then
 		if caught then
 			if Pokemon.inParty("oddish") then
-				Bridge.chat("found an Oddish without having to search in the grass Kreygasm")
+				Bridge.chat("found an Oddish without having to search in the grass PogChamp")
 			end
 		else
 			Bridge.chat("is searching for an Oddish in the grass, to teach it Cut.")
@@ -1737,7 +1737,7 @@ strategyFunctions.fightGiovanniMachoke = function()
 			status.killedMachoke = true
 		elseif not status.killedMachoke then
 			local __, turnsToDie = Combat.enemyAttack()
-			if status.skipSpecial and turnsToDie > 1 and Memory.value("battle", "opponent_last_move") == 116 then
+			if turnsToDie and status.skipSpecial and turnsToDie > 1 and Memory.value("battle", "opponent_last_move") == 116 then
 				Bridge.chat("got Focus Energy, which reduces Machoke's crit rate - using an X Special to guarantee the last damage range.")
 				status.skipSpecial = false
 			end
